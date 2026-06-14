@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider, { redirectTo: "/" });
+    await signIn(provider, { redirectTo: "/profile/me" });
   }
 
   return (
@@ -418,7 +418,7 @@ export default function RegisterPage() {
           <SuccessModal
             onClose={() => {
               setSuccess(false);
-              router.push("/");
+              router.push("/profile/me");
               router.refresh();
             }}
           />

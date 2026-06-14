@@ -7,7 +7,7 @@ import type { Session } from "next-auth";
 import {
   LayoutDashboard, BarChart3, TrendingUp, FileText, Settings, ChevronLeft,
   PanelRightClose, X, BookOpen, Shield, Globe, Smile, Hash, Radio,
-  Youtube, Search, LogOut, User,
+  Youtube, Search, LogOut, User, Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -41,25 +41,17 @@ const sidebar: SidebarItem[] = [
     ],
   },
   {
-    label: "Content", href: "#", icon: FileText,
+    label: "Settings", href: "#", icon: Settings,
     children: [
       { label: "Articles", href: "/dashboard/content/articles", icon: FileText },
       { label: "YouTube", href: "/dashboard/content/youtube", icon: Youtube },
     ],
   },
-  {
-    label: "Management", href: "#", icon: Settings,
-    children: [
-      { label: "Keywords", href: "/dashboard/management/keywords", icon: Hash },
-      { label: "Sources", href: "/dashboard/management/sources", icon: Radio },
-    ],
-  },
-  { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 /* ─── Sidebar Nav ─────────────────────────────────── */
 
-function SidebarNav({ collapsed, onClose }: { collapsed: boolean; onClose?: () => void }) {
+function SidebarNav({ collapsed, onClose, sidebarItems }: { collapsed: boolean; onClose?: () => void; sidebarItems: SidebarItem[] }) {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<string[]>(["Data Intelligence"]);
 
@@ -76,7 +68,7 @@ function SidebarNav({ collapsed, onClose }: { collapsed: boolean; onClose?: () =
 
   return (
     <nav className={cn("flex flex-col gap-0.5", collapsed ? "items-center" : "px-2")}>
-      {sidebar.map((item) => {
+      {sidebarItems.map((item) => {
         const Icon = item.icon;
         const active = item.children
           ? item.children.some((c) => isActive(c.href))
@@ -155,6 +147,7 @@ function SidebarNav({ collapsed, onClose }: { collapsed: boolean; onClose?: () =
 export function DashboardShell({ session, children }: { session: Session; children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const userAvatar = session.user?.image;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -186,7 +179,7 @@ export function DashboardShell({ session, children }: { session: Session; childr
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
-          <SidebarNav collapsed={collapsed} />
+          <SidebarNav collapsed={collapsed} sidebarItems={sidebar} />
         </div>
 
         {!collapsed && (
@@ -232,7 +225,7 @@ export function DashboardShell({ session, children }: { session: Session; childr
                 <p className="truncate text-[8px] text-muted">{session.user?.email || ""}</p>
               </div>
             </div>
-            <SidebarNav collapsed={false} onClose={() => setMobileOpen(false)} />
+            <SidebarNav collapsed={false} onClose={() => setMobileOpen(false)} sidebarItems={sidebar} />
           </div>
         </div>
       )}
@@ -256,10 +249,24 @@ export function DashboardShell({ session, children }: { session: Session; childr
           <div className="flex-1" />
 
           <Link
+            href="/dashboard/account"
+            className="flex items-center gap-2 rounded-lg border border-border bg-surface/30 px-2 py-1.5 text-xs text-text transition-colors hover:border-primary/30"
+            aria-label="Account"
+          >
+            {userAvatar ? (
+              <img src={userAvatar} alt={session.user?.name || "User avatar"} className="h-6 w-6 rounded-md object-cover" />
+            ) : (
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary">
+                {session.user?.name?.charAt(0)?.toUpperCase() || "U"}
+              </span>
+            )}
+          </Link>
+
+          <Link
             href="/"
             className="flex items-center gap-1 text-[10px] text-muted transition-colors hover:text-text"
           >
-            <User className="h-3 w-3" />
+            <Home className="h-3 w-3" />
             Main Site
           </Link>
         </div>

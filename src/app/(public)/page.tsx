@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Lightbulb, Users, Award } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import Hero from "@/components/sections/hero";
@@ -9,31 +9,12 @@ import Blog from "@/components/sections/blog";
 import HowItWorks from "@/components/sections/how-it-works";
 import { Button } from "@/components/ui/button";
 
-const stats = [
-  { value: "3", label: "Study Programs" },
-  { value: "SD, TI, SI", label: "Cross-Major Collaboration" },
-  { value: "Project-Based", label: "Learning Ecosystem" },
-];
-
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
         <Hero />
-
-        <section className="border-y border-border bg-surface">
-          <div className="container-main py-10">
-            <div className="grid grid-cols-3 gap-6 text-center">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <p className="font-heading text-lg font-bold text-text md:text-2xl">{s.value}</p>
-                  <p className="text-[10px] text-muted md:text-xs">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <MarqueeSection />
 

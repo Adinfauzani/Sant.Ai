@@ -4,13 +4,10 @@ import Link from "next/link";
 import { ArrowRight, Github, Globe, Instagram, Youtube, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/* ─── Config ────────────────────────────────────────── */
-
 const platformLinks = [
   { label: "Home", href: "/" },
   { label: "Showcase", href: "/showcase" },
   { label: "Community", href: "/community" },
-  { label: "Showcase", href: "/showcase" },
   { label: "Events", href: "/events" },
   { label: "Data Intelligence", href: "/intelligence" },
 ];
@@ -21,13 +18,6 @@ const resourceLinks = [
   { label: "Project Handbook", href: "#" },
   { label: "Community Rules", href: "#" },
   { label: "FAQ", href: "#" },
-];
-
-const collaborationLinks = [
-  { label: "Join Community", href: "#" },
-  { label: "Submit Project", href: "/projects/create" },
-  { label: "Become Mentor", href: "#" },
-  { label: "Partnership", href: "#" },
 ];
 
 const socialLinks = [
@@ -44,8 +34,6 @@ const stats = [
   { value: "32", label: "Completed Projects" },
   { value: "6", label: "Data Insights" },
 ];
-
-/* ─── Sub-components ────────────────────────────────── */
 
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
@@ -70,12 +58,9 @@ function SocialIcon({ href, icon: Icon, label }: { href: string; icon: React.Ele
   );
 }
 
-/* ─── Main Footer ───────────────────────────────────── */
-
 export default function Footer() {
   return (
     <footer className="border-t border-border/50 bg-surface/30">
-      {/* ── Stats bar ── */}
       <div className="border-b border-border/50">
         <div className="container-main py-8">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -86,11 +71,9 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ── Main content ── */}
       <div className="container-main py-12 md:py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
-          {/* Brand */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
                 <span className="text-base font-bold text-white">S</span>
@@ -124,10 +107,9 @@ export default function Footer() {
             </div>
 
             <p className="mt-3 text-[10px] text-muted">
-              Universitas Saintek Muhammadiyah &middot; Fakultas Ilmu Komputer
+              Universitas Saintek Muhammadiyah · Fakultas Ilmu Komputer
             </p>
 
-            {/* Social */}
             <div className="mt-5 flex items-center gap-2">
               {socialLinks.map((s) => (
                 <SocialIcon key={s.label} {...s} />
@@ -135,63 +117,45 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-text">
-              Platform
-            </h4>
-            <ul className="space-y-2.5">
-              {platformLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-xs text-muted transition-colors hover:text-text"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <h4 className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-text">
+                Platform
+              </h4>
+              <ul className="space-y-2.5">
+                {platformLinks.map((link) => (
+                  <li key={`${link.label}-${link.href}`}>
+                    <Link
+                      href={link.href}
+                      className="text-xs text-muted transition-colors hover:text-text"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h4 className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-text">
-              Resources
-            </h4>
-            <ul className="space-y-2.5">
-              {resourceLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-xs text-muted transition-colors hover:text-text"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-text">
-              Collaboration
-            </h4>
-            <ul className="space-y-2.5">
-              {collaborationLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-xs text-muted transition-colors hover:text-text"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <h4 className="mb-4 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-text">
+                Resources
+              </h4>
+              <ul className="space-y-2.5">
+                {resourceLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-xs text-muted transition-colors hover:text-text"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* ── Newsletter ── */}
         <div className="mt-12 rounded-2xl border border-border/50 bg-gradient-to-br from-primary/[0.03] to-accent/[0.03] p-6 md:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
@@ -223,28 +187,22 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ── Bottom bar ── */}
       <div className="border-t border-border/50">
         <div className="container-main flex flex-col items-center justify-between gap-3 py-5 md:flex-row">
           <p className="text-[10px] text-muted">
             &copy; {new Date().getFullYear()} SANTET - Universitas Saintek Muhammadiyah
           </p>
           <p className="text-[10px] text-muted">
-            Fakultas Ilmu Komputer &middot;{" "}
-            <span className="text-blue-400">SD</span> &middot;{" "}
-            <span className="text-emerald-400">TI</span> &middot;{" "}
+            Fakultas Ilmu Komputer ·{" "}
+            <span className="text-blue-400">SD</span> ·{" "}
+            <span className="text-emerald-400">TI</span> ·{" "}
             <span className="text-purple-400">SI</span>
           </p>
-          <div className="flex items-center gap-3">
-            {["Privacy Policy", "Terms of Use", "Contact"].map((item) => (
-              <Link
-                key={item}
-                href="#"
-                className="text-[10px] text-muted transition-colors hover:text-text"
-              >
-                {item}
-              </Link>
-            ))}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[10px] text-muted">
+            <Link href="/legal/terms" className="transition-colors hover:text-text">Terms of Service</Link>
+            <Link href="/legal/privacy" className="transition-colors hover:text-text">Privacy Policy</Link>
+            <Link href="/legal/guidelines" className="transition-colors hover:text-text">Community Guidelines</Link>
+            <Link href="/legal/data" className="transition-colors hover:text-text">Data Policy</Link>
           </div>
         </div>
       </div>

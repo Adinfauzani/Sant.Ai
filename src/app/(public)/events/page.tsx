@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Calendar, Users, Mic, Trophy, MapPin, Clock, ArrowRight,
-  ChevronRight, BookOpen, Video, Download,
+  BookOpen, Video, Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/navbar";
@@ -140,6 +140,50 @@ function StatCard({ value, label, icon: Icon }: { value: string; label: string; 
 export default function EventsPage() {
   const [filter, setFilter] = useState("All Events");
   const [search, setSearch] = useState("");
+  const [activePastEventIndex, setActivePastEventIndex] = useState(0);
+  const pastEventsRef = useRef<HTMLDivElement>(null);
+
+  function scrollToPastEvent(index: number) {
+    const el = pastEventsRef.current;
+    if (!el) return;
+
+    const cards = Array.from(el.querySelectorAll<HTMLElement>("[data-past-event-card]"));
+    const target = cards[index] ?? cards[0];
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+    if (isMobile) {
+      el.scrollTo({
+        left: target.offsetLeft,
+        behavior: "smooth",
+      });
+    } else {
+      el.scrollTo({
+        top: target.offsetTop,
+        behavior: "smooth",
+      });
+    }
+
+    setActivePastEventIndex(index);
+  }
+
+  function scrollPastEvents(direction: -1 | 1) {
+    let nextIndex = activePastEventIndex + direction;
+
+    if (nextIndex >= pastEvents.length) nextIndex = 0;
+    if (nextIndex < 0) nextIndex = pastEvents.length - 1;
+
+    scrollToPastEvent(nextIndex);
+  }
+
+  useEffect(() => {
+    if (pastEvents.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      scrollPastEvents(1);
+    }, 10000);
+
+    return () => window.clearInterval(interval);
+  }, [activePastEventIndex]);
 
   const filtered = events.filter((e) => {
     if (filter !== "All Events" && e.category !== filter) return false;
@@ -218,7 +262,7 @@ export default function EventsPage() {
           </Link>
 
           {/* ── Event Grid ── */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((e, i) => (
               <motion.div
                 key={e.title}
@@ -261,28 +305,43 @@ export default function EventsPage() {
                 <p className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">Archive</p>
                 <h2 className="font-heading text-xl font-bold text-text">Past Events</h2>
               </div>
-              <Link href="#" className="flex items-center gap-1 text-[10px] font-medium text-primary transition-all hover:gap-1.5">
-                View All <ChevronRight className="h-3 w-3" />
-              </Link>
+              <div className="flex items-center gap-1.5">
+                {pastEvents.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => scrollToPastEvent(index)}
+                    className={`h-1.5 rounded-full transition-all ${
+                      index === activePastEventIndex ? "w-5 bg-primary" : "w-1.5 bg-border hover:bg-primary/60"
+                    }`}
+                    aria-label={`Go to past event ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {pastEvents.map((e) => (
-                <div key={e.title} className="group rounded-2xl border border-border bg-surface/50 overflow-hidden backdrop-blur-sm transition-all hover:border-primary/20">
-                  <div className={`h-2 bg-gradient-to-r ${e.cover}`} />
-                  <div className="p-4">
-                    <h3 className="font-heading text-sm font-semibold text-text transition-colors group-hover:text-primary">{e.title}</h3>
-                    <p className="mt-1 text-[10px] leading-relaxed text-muted">{e.summary}</p>
-                    <div className="mt-3 flex items-center justify-between text-[10px] text-muted">
-                      <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{e.date}</span>
-                      <span className="flex items-center gap-1"><Users className="h-3 w-3" />{e.attendees} attendees</span>
-                    </div>
-                    <div className="mt-3 flex gap-2">
-                      <Button size="sm" variant="ghost" className="flex-1 h-7 text-[10px] gap-1"><Video className="h-3 w-3" />Recording</Button>
-                      <Button size="sm" variant="ghost" className="flex-1 h-7 text-[10px] gap-1"><Download className="h-3 w-3" />Certificate</Button>
+            <div
+              ref={pastEventsRef}
+              className="overflow-x-auto snap-x pr-2 md:max-h-[520px] md:overflow-y-auto md:pr-0 md:snap-y [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border/60"
+            >
+              <div className="flex gap-4 md:grid md:grid-cols-2 md:gap-4">
+                {pastEvents.map((e) => (
+                  <div key={e.title} data-past-event-card className="min-w-[86vw] snap-start md:min-w-0 group rounded-2xl border border-border bg-surface/50 overflow-hidden backdrop-blur-sm transition-all hover:border-primary/20">
+                    <div className={`h-2 bg-gradient-to-r ${e.cover}`} />
+                    <div className="p-4">
+                      <h3 className="font-heading text-sm font-semibold text-text transition-colors group-hover:text-primary">{e.title}</h3>
+                      <p className="mt-1 text-[10px] leading-relaxed text-muted">{e.summary}</p>
+                      <div className="mt-3 flex items-center justify-between text-[10px] text-muted">
+                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{e.date}</span>
+                        <span className="flex items-center gap-1"><Users className="h-3 w-3" />{e.attendees} attendees</span>
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <Button size="sm" variant="ghost" className="flex-1 h-7 text-[10px] gap-1"><Video className="h-3 w-3" />Recording</Button>
+                        <Button size="sm" variant="ghost" className="flex-1 h-7 text-[10px] gap-1"><Download className="h-3 w-3" />Certificate</Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </section>
         </div>

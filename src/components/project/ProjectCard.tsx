@@ -134,7 +134,9 @@ export default function ProjectCard({
         />
 
         {accent && (
-          <div className={cn("pointer-events-none absolute inset-x-0 top-0 z-10 h-1.5 bg-gradient-to-r", accent)} />
+          <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[24px]">
+            <div className={cn("-mt-1 h-14 w-full bg-gradient-to-r", accent)} />
+          </div>
         )}
 
         <div className="relative">

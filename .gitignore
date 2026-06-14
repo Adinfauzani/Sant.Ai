@@ -32,6 +32,7 @@ pnpm-debug.log*
 
 # Prisma
 /src/generated/prisma
+prisma/migrations/**
 prisma/*.log
 
 # Testing and tooling

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import AuthProvider from "@/components/shared/auth-provider";
 import FirebaseProvider from "@/components/shared/firebase-provider";
 import "./globals.css";
@@ -11,17 +11,6 @@ const dancingScript = localFont({
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "SANTET | Sains & Technology",
@@ -42,11 +31,12 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body
-        className={`${dancingScript.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+        className={`${dancingScript.variable}`}
       >
         <AuthProvider>
           <FirebaseProvider>{children}</FirebaseProvider>
         </AuthProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

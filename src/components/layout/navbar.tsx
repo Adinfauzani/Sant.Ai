@@ -2,15 +2,17 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import {
-  Search, Bell, Menu, X, ChevronDown, LogOut, User, LayoutDashboard,
+  Search, Bell, Menu, X, LogOut, User, LayoutDashboard,
   FolderKanban, Settings, Sparkles, Home, Users, CalendarRange,
   BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 /* ─── Config ────────────────────────────────────────── */
 
@@ -22,11 +24,14 @@ const navLinks = [
   { label: "Data Intelligence", href: "/intelligence", icon: BarChart3 },
 ];
 
-const profileMenu = [
+const userProfileMenu = [
+  { label: "My Profile", href: "/profile/me", icon: User },
+  { label: "Settings", href: "#", icon: Settings },
+];
+
+const adminProfileMenu = [
+  { label: "My Profile", href: "/profile/me", icon: User },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "My Projects", href: "/showcase", icon: FolderKanban },
-  { label: "My Community", href: "/community", icon: Users },
-  { label: "My Profile", href: "/profile", icon: User },
   { label: "Settings", href: "#", icon: Settings },
 ];
 
@@ -89,6 +94,7 @@ function NavLink({
 /* ─── Main Navbar ───────────────────────────────────── */
 
 export default function Navbar() {
+  const router = useRouter();
   const { data: session } = useSession();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -120,6 +126,41 @@ export default function Navbar() {
   };
 
   const userInitial = session?.user?.name?.charAt(0).toUpperCase() ?? "U";
+  const userAvatar = session?.user?.image;
+  const userRole = session?.user?.role as string | undefined;
+  const isAdmin = userRole === "Admin" || userRole === "Sudo";
+  const visibleProfileMenu = isAdmin ? adminProfileMenu : userProfileMenu;
+
+  const handleProfileClick = () => {
+    setProfileOpen((open) => !open);
+  };
+
+  const handleIntelligenceSearch = () => {
+    setSearchOpen(false);
+
+    if (!isAdmin) {
+      toast.error("Akses ditolak. Fitur Data Intelligence hanya untuk Admin dan Sudo.");
+      return;
+    }
+
+    router.push("/intelligence");
+  };
+
+  const handleSearchAction = (label: string) => {
+    setSearchOpen(false);
+
+    if (label === "Projects") {
+      router.push("/showcase");
+      return;
+    }
+
+    if (label === "Communities") {
+      router.push("/community");
+      return;
+    }
+
+    handleIntelligenceSearch();
+  };
 
   return (
     <>
@@ -197,23 +238,45 @@ export default function Navbar() {
             {session?.user ? (
               <div className="relative" ref={profileRef}>
                 <button
-                  onClick={() => setProfileOpen(!profileOpen)}
+                  onClick={handleProfileClick}
                   className="flex items-center gap-2 rounded-lg p-1 transition-all hover:bg-surface"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-xs font-bold text-white shadow-sm md:h-8 md:w-8">
-                    {userInitial}
-                  </div>
-                  <ChevronDown className={cn("hidden h-3.5 w-3.5 text-muted transition-transform duration-200 sm:block", profileOpen && "rotate-180")} />
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt={session.user.name || "User avatar"}
+                      className="h-7 w-7 rounded-lg object-cover md:h-8 md:w-8"
+                    />
+                  ) : (
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-xs font-bold text-white shadow-sm md:h-8 md:w-8">
+                      {userInitial}
+                    </div>
+                  )}
                 </button>
 
                 {profileOpen && (
                   <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-border bg-surface/95 p-1 shadow-2xl shadow-black/30 backdrop-blur-xl">
                     <div className="border-b border-border px-3 py-2.5">
-                      <p className="text-sm font-semibold text-text">{session.user.name}</p>
-                      <p className="text-[11px] text-muted">{session.user.email}</p>
+                      <div className="flex items-center gap-3">
+                        {userAvatar ? (
+                          <img
+                            src={userAvatar}
+                            alt={session.user.name || "User avatar"}
+                            className="h-10 w-10 rounded-xl object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-sm font-bold text-white">
+                            {userInitial}
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-text">{session.user.name}</p>
+                          <p className="truncate text-[11px] text-muted">{session.user.email}</p>
+                        </div>
+                      </div>
                     </div>
                     <div className="py-1">
-                      {profileMenu.map((item) => (
+                      {visibleProfileMenu.map((item) => (
                         <Link
                           key={item.label}
                           href={item.href}
@@ -296,7 +359,7 @@ export default function Navbar() {
                 ].map((s) => (
                   <button
                     key={s.label}
-                    onClick={() => setSearchOpen(false)}
+                    onClick={() => handleSearchAction(s.label)}
                     className="flex items-center gap-3 bg-surface px-4 py-3 text-left transition-colors hover:bg-primary/5"
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -342,9 +405,29 @@ export default function Navbar() {
 
             <div className="my-4 h-px bg-border" />
 
+            {session?.user && (
+              <div className="mb-4 flex items-center gap-3 rounded-xl bg-surface/50 p-3">
+                {userAvatar ? (
+                  <img
+                    src={userAvatar}
+                    alt={session.user.name || "User avatar"}
+                    className="h-10 w-10 rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-sm font-bold text-white">
+                    {userInitial}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-text">{session.user.name}</p>
+                  <p className="truncate text-[10px] text-muted">{session.user.email}</p>
+                </div>
+              </div>
+            )}
+
             {session?.user ? (
               <div className="space-y-0.5">
-                {profileMenu.map((item) => (
+                {visibleProfileMenu.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}

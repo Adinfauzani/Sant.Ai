@@ -28,7 +28,7 @@ export default function Blog() {
           <p className="mb-1 font-mono text-xs font-semibold uppercase tracking-widest text-primary">
             Blog
           </p>
-          <h2 className="font-heading text-3xl font-bold tracking-tight text-text md:text-4xl">
+          <h2 className="font-heading text-2xl font-bold tracking-tight text-text md:text-3xl">
             Latest Articles
           </h2>
           <p className="mt-3 text-sm text-muted">
@@ -36,7 +36,7 @@ export default function Blog() {
           </p>
         </motion.div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((article, index) => (
             <motion.a
               key={article.slug}

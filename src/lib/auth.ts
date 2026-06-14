@@ -3,7 +3,10 @@ import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
+import { Plan, UserRole } from "@/generated/prisma/client";
 import { prisma } from "./db";
+
+const sudoGithubUsername = process.env.AUTH_SUDO_GITHUB_USERNAME || "Adinfauzani";
 
 const providers: NonNullable<NextAuthConfig["providers"]> = [
   Credentials({
@@ -33,6 +36,8 @@ const providers: NonNullable<NextAuthConfig["providers"]> = [
         email: user.email,
         name: user.name,
         image: user.avatar || null,
+        role: user.role,
+        plan: user.plan,
       };
     },
   }),
@@ -63,10 +68,28 @@ if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
   );
 }
 
+function getGithubUsername(profile: unknown) {
+  const profileRecord = profile as { login?: string } | undefined;
+  return typeof profileRecord?.login === "string" ? profileRecord.login : "";
+}
+
+function getRoleForGithubUser(existingRole?: UserRole | null, githubUsername = "") {
+  if (githubUsername.toLowerCase() === sudoGithubUsername.toLowerCase()) {
+    return UserRole.Sudo;
+  }
+
+  return existingRole || UserRole.User;
+}
+
+function getPlanForRole() {
+  return Plan.Free;
+}
+
 const authConfig: NextAuthConfig = {
   providers,
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60,
   },
   pages: {
     signIn: "/login",
@@ -83,6 +106,12 @@ const authConfig: NextAuthConfig = {
 
       if (!email) return false;
 
+      const githubUsername = account.provider === "github"
+        ? getGithubUsername(profile)
+        : "";
+      const role = getRoleForGithubUser(undefined, githubUsername);
+      const plan = getPlanForRole();
+
       const existing = await prisma.user.findUnique({
         where: { email },
       });
@@ -96,6 +125,16 @@ const authConfig: NextAuthConfig = {
             studyProgram: "TI",
             semester: 1,
             avatar: user.image || "",
+            role,
+            plan,
+          },
+        });
+      } else if (githubUsername) {
+        await prisma.user.update({
+          where: { email },
+          data: {
+            role,
+            plan,
           },
         });
       }
@@ -114,14 +153,28 @@ const authConfig: NextAuthConfig = {
       return true;
     },
     async jwt({ token, user }) {
-      if (user?.id) {
-        token.id = user.id;
+      const authUser = user as { id?: string; role?: UserRole; plan?: Plan; image?: string | null } | undefined;
+
+      if (authUser?.id) {
+        token.id = authUser.id;
+      }
+      if (authUser?.role) {
+        token.role = authUser.role;
+      }
+      if (authUser?.plan) {
+        token.plan = authUser.plan;
+      }
+      if (authUser?.image) {
+        token.image = authUser.image;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+        session.user.plan = token.plan as Plan;
+        session.user.image = token.image as string | null;
       }
       return session;
     },
