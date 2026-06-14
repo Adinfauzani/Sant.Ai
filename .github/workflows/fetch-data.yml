@@ -1,0 +1,14 @@
+name: Fetch Data (GNews)
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch GNews + YouTube
+        run: |
+          curl -sf "https://${{ vars.DOMAIN || 'santet.vercel.app' }}/api/cron/fetch-all?lang=id&country=id" || echo "fetch failed"

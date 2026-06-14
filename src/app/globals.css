@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-dancing-script), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --color-background: #09090B;
+  --color-surface: #111113;
+  --color-border: #1F1F23;
+  --color-primary: #2563EB;
+  --color-accent: #38BDF8;
+  --color-text: #FAFAFA;
+  --color-muted: #A1A1AA;
+  --color-card: #111113;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@utility container-main {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  @media (width >= 48rem) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@utility section-padding {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  @media (width >= 48rem) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+.article-content p {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  line-height: 1.8;
+}
+
+.article-content p + p {
+  margin-top: 1rem;
+}

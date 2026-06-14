@@ -1,0 +1,56 @@
+{
+  "name": "santet",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.3",
+    "@prisma/adapter-libsql": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@radix-ui/react-hover-card": "^1.1.16",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "bcryptjs": "^3.0.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "fast-xml-parser": "^5.8.0",
+    "firebase": "^12.14.0",
+    "framer-motion": "^12.6.0",
+    "lucide-react": "^0.475.0",
+    "next": "^16.0.0",
+    "next-auth": "5.0.0-beta.31",
+    "pg": "^8.21.0",
+    "prisma": "^7.8.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.0.2",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.13.0",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.22.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.3"
+  }
+}

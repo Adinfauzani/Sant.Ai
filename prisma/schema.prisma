@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  password         String
+  studyProgram     String
+  semester         Int      @default(1)
+  avatar           String   @default("")
+  bio              String   @default("")
+  reputationPoints Int      @default(0)
+  level            String   @default("Beginner")
+  createdAt        DateTime @default(now())
+
+  ownedProjects Project[]
+  teamMembers   TeamMember[]
+  contributions Contribution[]
+  ideas         Idea[]
+  castVotes     Vote[]
+  comments      Comment[]
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  title            String
+  description      String
+  problemStatement String   @default("")
+  status           String   @default("Open")
+  techStack        String   @default("")
+  demoLink         String   @default("")
+  resultSummary    String   @default("")
+  impactSummary    String   @default("")
+  creatorId        String
+  createdAt        DateTime @default(now())
+
+  creator       User           @relation(fields: [creatorId], references: [id])
+  teamMembers   TeamMember[]
+  projectRoles  ProjectRole[]
+  contributions Contribution[]
+  comments      Comment[]
+}
+
+model ProjectRole {
+  id           String @id @default(cuid())
+  projectId    String
+  studyProgram String
+  required     Int    @default(1)
+  filled       Int    @default(0)
+
+  project Project @relation(fields: [projectId], references: [id])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  role      String
+  joinedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+}
+
+model Idea {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  studyProgram String   @default("")
+  userId       String
+  voteCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id])
+  comments Comment[]
+  castVotes Vote[]
+}
+
+model Vote {
+  id     String @id @default(cuid())
+  ideaId String
+  userId String
+
+  idea  Idea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  user  User @relation(fields: [userId], references: [id])
+
+  @@unique([ideaId, userId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  ideaId    String?
+  projectId String?
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  idea    Idea?    @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Contribution {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String
+  points      Int
+  type        String
+  description String
+  createdAt   DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+}
+
+model Source {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  type      String
+  url       String         @default("")
+  rssUrl    String         @default("")
+  status    String         @default("active")
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  articles  Article[]
+  youtube   YouTubeVideo[]
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  sourceId    String
+  title       String
+  description String   @default("")
+  url         String   @unique
+  image       String   @default("")
+  category    String   @default("")
+  sentiment   String   @default("neutral")
+  content     String   @default("")
+  language    String   @default("id")
+  country     String   @default("id")
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  source Source @relation(fields: [sourceId], references: [id])
+}
+
+model YouTubeVideo {
+  id          String   @id @default(cuid())
+  videoId     String   @unique
+  sourceId    String
+  title       String
+  description String   @default("")
+  channelName String   @default("")
+  thumbnail   String   @default("")
+  views       Int      @default(0)
+  category    String   @default("")
+  language    String   @default("id")
+  country     String   @default("id")
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  source Source @relation(fields: [sourceId], references: [id])
+}
+
+model Keyword {
+  id        String   @id @default(cuid())
+  keyword   String   @unique
+  category  String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
