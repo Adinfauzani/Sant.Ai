@@ -1,10 +1,10 @@
 {
-  "name": "santet",
+  "name": "Santet",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -39,6 +39,16 @@
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.0.2",
     "zod": "^4.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@firebase/util",
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "protobufjs",
+      "sharp"
+    ]
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.0",
