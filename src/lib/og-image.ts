@@ -4,7 +4,7 @@ export async function scrapeOgImage(url: string): Promise<string> {
   try {
     const res = await fetch(url, {
       signal: AbortSignal.timeout(8000),
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; SantetBot/1.0)" },
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; SantAiBot/1.0)" },
     });
     if (!res.ok) return "";
     const html = await res.text();

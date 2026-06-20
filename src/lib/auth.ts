@@ -3,10 +3,18 @@ import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 import { Plan, UserRole } from "@/generated/prisma/client";
 import { prisma } from "./db";
+import { generateUsername } from "./reserved";
 
 const sudoGithubUsername = process.env.AUTH_SUDO_GITHUB_USERNAME || "Adinfauzani";
+
+function makeProviderConfig(provider: "github" | "google") {
+  return {
+    allowDangerousEmailAccountLinking: true,
+  };
+}
 
 const providers: NonNullable<NextAuthConfig["providers"]> = [
   Credentials({
@@ -36,6 +44,7 @@ const providers: NonNullable<NextAuthConfig["providers"]> = [
         email: user.email,
         name: user.name,
         image: user.avatar || null,
+        username: user.username,
         role: user.role,
         plan: user.plan,
       };
@@ -48,6 +57,7 @@ if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
+      ...makeProviderConfig("github"),
     }),
   );
 }
@@ -57,6 +67,7 @@ if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      ...makeProviderConfig("google"),
       authorization: {
         params: {
           prompt: "consent",
@@ -98,6 +109,43 @@ const authConfig: NextAuthConfig = {
     async signIn({ user, account, profile }) {
       if (account?.type !== "oauth") return true;
 
+      // ── Check for pending account linking ──
+      if (account.provider === "github" || account.provider === "google") {
+        try {
+          const cookieStore = await cookies();
+          const linkCookie = cookieStore.get("santet_link");
+          if (linkCookie?.value) {
+            const parsed = JSON.parse(linkCookie.value);
+            if (parsed.provider === account.provider && parsed.userId) {
+              await prisma.account.upsert({
+                where: { provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId } },
+                update: {
+                  access_token: account.access_token,
+                  refresh_token: account.refresh_token,
+                  expires_at: account.expires_at,
+                  id_token: account.id_token,
+                },
+                create: {
+                  userId: parsed.userId,
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token || "",
+                  refresh_token: account.refresh_token,
+                  expires_at: account.expires_at,
+                  token_type: account.token_type,
+                  scope: account.scope,
+                  id_token: account.id_token,
+                  session_state: account.session_state as string | null | undefined,
+                },
+              });
+              cookieStore.set("santet_link", "", { maxAge: 0, path: "/" });
+              return true;
+            }
+          }
+        } catch {}
+      }
+
       const email = typeof user.email === "string"
         ? user.email
         : typeof profile?.email === "string"
@@ -117,9 +165,11 @@ const authConfig: NextAuthConfig = {
       });
 
       if (!existing) {
+        const oauthName = user.name || email.split("@")[0];
         await prisma.user.create({
           data: {
-            name: user.name || email.split("@")[0],
+            name: oauthName,
+            username: generateUsername(oauthName),
             email,
             password: "",
             studyProgram: "TI",
@@ -145,15 +195,40 @@ const authConfig: NextAuthConfig = {
 
       if (!dbUser) return false;
 
+      // ── Create/update Account record ──
+      await prisma.account.upsert({
+        where: { provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId } },
+        update: {
+          access_token: account.access_token,
+          refresh_token: account.refresh_token,
+          expires_at: account.expires_at,
+          id_token: account.id_token,
+        },
+        create: {
+          userId: dbUser.id,
+          type: account.type,
+          provider: account.provider,
+          providerAccountId: account.providerAccountId,
+          access_token: account.access_token || "",
+          refresh_token: account.refresh_token,
+          expires_at: account.expires_at,
+          token_type: account.token_type,
+          scope: account.scope,
+          id_token: account.id_token,
+          session_state: account.session_state as string | null | undefined,
+        },
+      });
+
       user.id = dbUser.id;
       user.email = dbUser.email;
       user.name = dbUser.name;
       user.image = dbUser.avatar || undefined;
+      (user as any).username = dbUser.username;
 
       return true;
     },
     async jwt({ token, user }) {
-      const authUser = user as { id?: string; role?: UserRole; plan?: Plan; image?: string | null } | undefined;
+      const authUser = user as { id?: string; role?: UserRole; plan?: Plan; username?: string | null; image?: string | null } | undefined;
 
       if (authUser?.id) {
         token.id = authUser.id;
@@ -163,6 +238,9 @@ const authConfig: NextAuthConfig = {
       }
       if (authUser?.plan) {
         token.plan = authUser.plan;
+      }
+      if (authUser?.username) {
+        token.username = authUser.username;
       }
       if (authUser?.image) {
         token.image = authUser.image;
@@ -174,6 +252,7 @@ const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
         session.user.plan = token.plan as Plan;
+        session.user.username = token.username as string | null;
         session.user.image = token.image as string | null;
       }
       return session;

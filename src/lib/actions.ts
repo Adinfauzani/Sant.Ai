@@ -5,6 +5,7 @@ import { prisma } from "./db";
 import { auth, signIn } from "./auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { generateUsername } from "./reserved";
 
 const LEVEL_THRESHOLDS = [
   { level: "Beginner", min: 0 },
@@ -56,8 +57,10 @@ export async function registerUser(formData: FormData) {
 
   const hashed = await bcrypt.hash(password, 12);
 
+  const username = generateUsername(name);
+
   await prisma.user.create({
-    data: { name, email, password: hashed, studyProgram, semester },
+    data: { name, username, email, password: hashed, studyProgram, semester },
   });
 
   await signIn("credentials", { email, password, redirect: false });
@@ -213,14 +216,25 @@ export async function updateProfile(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
+  const name = formData.get("name") as string;
+  const username = formData.get("username") as string;
   const bio = formData.get("bio") as string;
   const avatar = (formData.get("avatar") as string) || "";
+  const website = formData.get("website") as string;
+  const location = formData.get("location") as string;
+
+  if (username) {
+    const existing = await prisma.user.findUnique({ where: { username } });
+    if (existing && existing.id !== session.user.id) {
+      throw new Error("Username already taken");
+    }
+  }
 
   await prisma.user.update({
     where: { id: session.user.id },
-    data: { bio, avatar },
+    data: { name, username, bio, avatar, website, location },
   });
 
-  revalidatePath(`/profile/${session.user.id}`);
+  revalidatePath(`/${session.user.username || username}`);
   revalidatePath("/dashboard");
 }

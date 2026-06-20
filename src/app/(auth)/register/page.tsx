@@ -47,11 +47,11 @@ function SuccessModal({ onClose }: { onClose: () => void }) {
           <Check className="h-8 w-8 text-white" />
         </div>
         <h2 className="mt-5 font-heading text-2xl font-bold text-text">
-          Welcome to SANTET
+          Welcome to Sant.Ai
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted">
           Your account is ready. Start collaborating, building projects, and
-          contributing to the Sains &amp; Technology ecosystem.
+          contributing to the Science, Technology &amp; Artificial Intelligence ecosystem.
         </p>
         <div className="mt-3 flex justify-center gap-1.5">
           <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 font-mono text-[10px] text-blue-400">SD</span>
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider, { redirectTo: "/profile/me" });
+    await signIn(provider, { redirectTo: "/" });
   }
 
   return (
@@ -133,7 +133,7 @@ export default function RegisterPage() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent">
               <span className="text-[10px] font-bold text-white">S</span>
             </div>
-            <span className="font-heading text-sm font-bold text-text">SANTET</span>
+            <span className="font-heading text-sm font-bold text-text">Sant.Ai</span>
           </span>
           <ChevronLeft className="h-4 w-4 transition-transform group-open:-rotate-90" />
         </summary>
@@ -160,7 +160,7 @@ export default function RegisterPage() {
                 Create Account
               </h1>
               <p className="mt-1 text-sm text-muted">
-                Join the Sains &amp; Technology ecosystem.
+                Join the Science, Technology &amp; Artificial Intelligence ecosystem.
               </p>
             </div>
 
@@ -360,7 +360,7 @@ export default function RegisterPage() {
                   className="mt-0.5 h-4 w-4 rounded border-border bg-background text-primary accent-primary"
                 />
                 <span className="text-[11px] leading-relaxed text-muted">
-                  I agree to the SANTET{" "}
+                  I agree to the Sant.Ai{" "}
                   <Link href="#" className="text-primary hover:underline">
                     Community Guidelines
                   </Link>
@@ -418,7 +418,7 @@ export default function RegisterPage() {
           <SuccessModal
             onClose={() => {
               setSuccess(false);
-              router.push("/profile/me");
+              router.push("/");
               router.refresh();
             }}
           />

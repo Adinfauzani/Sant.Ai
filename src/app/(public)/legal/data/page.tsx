@@ -5,13 +5,14 @@ import Link from "next/link";
 import { ChevronDown, Copy, Link2, Database, Search, ShieldCheck, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { getStorage, setStorage } from "@/lib/storage";
 import { LegalBackButton } from "@/components/legal/legal-card";
 
-const languages = ["English", "Bahasa Indonesia", "Arabic", "Japanese", "Korean", "Chinese (Simplified)"];
+const languages = ["English", "Bahasa Indonesia"];
 
 const translations = {
   English: {
-    subtitle: "How SANTET collects, organizes, and utilizes public information for research and analytics.",
+    subtitle: "How Sant.Ai collects, organizes, and utilizes public information for research and analytics.",
     lastUpdated: "Last Updated",
     readingTime: "Reading Time",
     language: "Language",
@@ -27,7 +28,7 @@ const translations = {
     sections: [
       { id: "purpose", title: "Purpose", list: ["Education", "Research", "Data Analysis", "Community Learning"] },
       { id: "data-sources", title: "Data Sources", list: ["RSS Feeds", "News Websites", "GNews API", "YouTube Data API"] },
-      { id: "attribution", title: "Attribution", paragraphs: ["Original ownership remains with the source publisher.", "SANTET acts as an aggregation and analytics platform."] },
+      { id: "attribution", title: "Attribution", paragraphs: ["Original ownership remains with the source publisher.", "Sant.Ai acts as an aggregation and analytics platform."] },
       { id: "educational-usage", title: "Educational Usage", list: ["Academic Research", "Student Projects", "Trend Analysis", "Technology Monitoring"] },
       { id: "data-accuracy", title: "Data Accuracy", paragraphs: ["Information originates from third-party providers.", "Accuracy depends on the original publisher."] },
       { id: "future-research-features", title: "Future Research Features", list: ["Sentiment Analysis", "Topic Modeling", "Trend Prediction", "AI Insights"] },
@@ -35,7 +36,7 @@ const translations = {
     ],
   },
   "Bahasa Indonesia": {
-    subtitle: "Bagaimana SANTET mengumpulkan, mengatur, dan memanfaatkan informasi publik untuk riset dan analitik.",
+    subtitle: "Bagaimana Sant.Ai mengumpulkan, mengatur, dan memanfaatkan informasi publik untuk riset dan analitik.",
     lastUpdated: "Terakhir Diperbarui",
     readingTime: "Waktu Baca",
     language: "Bahasa",
@@ -51,7 +52,7 @@ const translations = {
     sections: [
       { id: "purpose", title: "Tujuan", list: ["Pendidikan", "Riset", "Analisis Data", "Pembelajaran Komunitas"] },
       { id: "data-sources", title: "Sumber Data", list: ["RSS Feeds", "Situs Berita", "GNews API", "YouTube Data API"] },
-      { id: "attribution", title: "Atribusi", paragraphs: ["Kepemilikan asli tetap berada pada penerbit sumber.", "SANTET bertindak sebagai platform agregasi dan analitik."] },
+      { id: "attribution", title: "Atribusi", paragraphs: ["Kepemilikan asli tetap berada pada penerbit sumber.", "Sant.Ai bertindak sebagai platform agregasi dan analitik."] },
       { id: "educational-usage", title: "Penggunaan Edukatif", list: ["Riset Akademik", "Proyek Mahasiswa", "Analisis Tren", "Monitoring Teknologi"] },
       { id: "data-accuracy", title: "Akurasi Data", paragraphs: ["Informasi berasal dari penyedia pihak ketiga.", "Akurasi bergantung pada penerbit asli."] },
       { id: "future-research-features", title: "Fitur Riset Masa Depan", list: ["Analisis Sentimen", "Pemodelan Topik", "Prediksi Tren", "Wawasan AI"] },
@@ -59,7 +60,7 @@ const translations = {
     ],
   },
   Arabic: {
-    subtitle: "كيف تجمع SANTET المعلومات العامة وتنظمها وتستخدمها للبحث والتحليلات.",
+    subtitle: "كيف تجمع Sant.Ai المعلومات العامة وتنظمها وتستخدمها للبحث والتحليلات.",
     lastUpdated: "آخر تحديث",
     readingTime: "وقت القراءة",
     language: "اللغة",
@@ -75,7 +76,7 @@ const translations = {
     sections: [
       { id: "purpose", title: "الغرض", list: ["التعليم", "البحث", "تحليل البيانات", "تعلم المجتمع"] },
       { id: "data-sources", title: "مصادر البيانات", list: ["خلاصات RSS", "مواقع الأخبار", "GNews API", "YouTube Data API"] },
-      { id: "attribution", title: "الإسناد", paragraphs: ["تبقى الملكية الأصلية لناشر المصدر.", "تعمل SANTET كمنصة تجميع وتحليلات."] },
+      { id: "attribution", title: "الإسناد", paragraphs: ["تبقى الملكية الأصلية لناشر المصدر.", "تعمل Sant.Ai كمنصة تجميع وتحليلات."] },
       { id: "educational-usage", title: "الاستخدام التعليمي", list: ["البحث الأكاديمي", "مشاريع الطلاب", "تحليل الاتجاهات", "مراقبة التكنولوجيا"] },
       { id: "data-accuracy", title: "دقة البيانات", paragraphs: ["تأتي المعلومات من مزودين من جهات خارجية.", "تعتمد الدقة على الناشر الأصلي."] },
       { id: "future-research-features", title: "ميزات البحث المستقبلية", list: ["تحليل المشاعر", "نمذجة الموضوعات", "توقع الاتجاهات", "رؤى الذكاء الاصطناعي"] },
@@ -83,7 +84,7 @@ const translations = {
     ],
   },
   Japanese: {
-    subtitle: "SANTET が公開情報を研究と分析のために収集、整理、活用する方法。",
+    subtitle: "Sant.Ai が公開情報を研究と分析のために収集、整理、活用する方法。",
     lastUpdated: "最終更新",
     readingTime: "読了時間",
     language: "言語",
@@ -99,7 +100,7 @@ const translations = {
     sections: [
       { id: "purpose", title: "目的", list: ["教育", "研究", "データ分析", "コミュニティ学習"] },
       { id: "data-sources", title: "データソース", list: ["RSS フィード", "ニュースサイト", "GNews API", "YouTube Data API"] },
-      { id: "attribution", title: "帰属", paragraphs: ["元の所有権はソースの出版社に残ります。", "SANTET は集約および分析プラットフォームとして機能します。"] },
+      { id: "attribution", title: "帰属", paragraphs: ["元の所有権はソースの出版社に残ります。", "Sant.Ai は集約および分析プラットフォームとして機能します。"] },
       { id: "educational-usage", title: "教育利用", list: ["学術研究", "学生プロジェクト", "トレンド分析", "技術モニタリング"] },
       { id: "data-accuracy", title: "データの正確性", paragraphs: ["情報は第三者プロバイダーから提供されます。", "正確性は元の出版社に依存します。"] },
       { id: "future-research-features", title: "将来の研究機能", list: ["感情分析", "トピックモデリング", "トレンド予測", "AI インサイト"] },
@@ -107,7 +108,7 @@ const translations = {
     ],
   },
   Korean: {
-    subtitle: "SANTET 이 공개 정보를 수집하고 정리하여 연구 및 분석에 활용하는 방식입니다.",
+    subtitle: "Sant.Ai 이 공개 정보를 수집하고 정리하여 연구 및 분석에 활용하는 방식입니다.",
     lastUpdated: "최종 업데이트",
     readingTime: "읽는 시간",
     language: "언어",
@@ -123,7 +124,7 @@ const translations = {
     sections: [
       { id: "purpose", title: "목적", list: ["교육", "연구", "데이터 분석", "커뮤니티 학습"] },
       { id: "data-sources", title: "데이터 출처", list: ["RSS 피드", "뉴스 웹사이트", "GNews API", "YouTube Data API"] },
-      { id: "attribution", title: "출처 표기", paragraphs: ["원본 소유권은 출처 게시자에게 남아 있습니다.", "SANTET 은 집계 및 분석 플랫폼으로 작동합니다."] },
+      { id: "attribution", title: "출처 표기", paragraphs: ["원본 소유권은 출처 게시자에게 남아 있습니다.", "Sant.Ai 은 집계 및 분석 플랫폼으로 작동합니다."] },
       { id: "educational-usage", title: "교육적 활용", list: ["학술 연구", "학생 프로젝트", "트렌드 분석", "기술 모니터링"] },
       { id: "data-accuracy", title: "데이터 정확성", paragraphs: ["정보는 제3자 제공업체에서 제공됩니다.", "정확성은 원본 게시자에 따라 달라집니다."] },
       { id: "future-research-features", title: "미래 연구 기능", list: ["감정 분석", "토픽 모델링", "트렌드 예측", "AI 인사이트"] },
@@ -131,7 +132,7 @@ const translations = {
     ],
   },
   "Chinese (Simplified)": {
-    subtitle: "SANTET 如何收集、整理并利用公开信息进行研究与分析。",
+    subtitle: "Sant.Ai 如何收集、整理并利用公开信息进行研究与分析。",
     lastUpdated: "最后更新",
     readingTime: "阅读时间",
     language: "语言",
@@ -147,7 +148,7 @@ const translations = {
     sections: [
       { id: "purpose", title: "目的", list: ["教育", "研究", "数据分析", "社区学习"] },
       { id: "data-sources", title: "数据来源", list: ["RSS 订阅", "新闻网站", "GNews API", "YouTube Data API"] },
-      { id: "attribution", title: "归属", paragraphs: ["原始所有权仍归来源发布者所有。", "SANTET 作为聚合和分析平台运行。"] },
+      { id: "attribution", title: "归属", paragraphs: ["原始所有权仍归来源发布者所有。", "Sant.Ai 作为聚合和分析平台运行。"] },
       { id: "educational-usage", title: "教育用途", list: ["学术研究", "学生项目", "趋势分析", "技术监测"] },
       { id: "data-accuracy", title: "数据准确性", paragraphs: ["信息来自第三方提供商。", "准确性取决于原始发布者。"] },
       { id: "future-research-features", title: "未来研究功能", list: ["情感分析", "主题建模", "趋势预测", "AI 洞察"] },
@@ -166,12 +167,12 @@ export default function DataPolicyPage() {
   const content = translations[language];
 
   useEffect(() => {
-    const stored = localStorage.getItem("santet:data-language") as LanguageKey | null;
+    const stored = getStorage("data-language") as LanguageKey | null;
     if (stored && translations[stored]) setLanguage(stored);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("santet:data-language", language);
+    setStorage("data-language", language);
   }, [language]);
 
   useEffect(() => {

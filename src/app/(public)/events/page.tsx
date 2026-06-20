@@ -4,21 +4,12 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Calendar, Users, Mic, Trophy, MapPin, Clock, ArrowRight,
+  Calendar, Users, MapPin, Clock, ArrowRight,
   BookOpen, Video, Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
-
-/* ─── Data ──────────────────────────────────────────── */
-
-const stats = [
-  { value: "24", label: "Upcoming Events", icon: Calendar },
-  { value: "560+", label: "Registered Participants", icon: Users },
-  { value: "18", label: "Speakers", icon: Mic },
-  { value: "8", label: "Competitions", icon: Trophy },
-];
 
 const categories = [
   "All Events", "Workshop", "Seminar", "Hackathon",
@@ -68,7 +59,7 @@ const events = [
     date: "July 10, 2026", time: "15:00 - 17:30 WIB",
     location: "Ruang Diskusi FIF", category: "Community Meetup",
     participants: 18, status: "Open",
-    organizer: "SANTET Community",
+    organizer: "Sant.Ai Community",
     cover: "from-amber-600/30 to-orange-400/10", color: "from-amber-600 to-orange-500",
   },
   {
@@ -127,21 +118,12 @@ const statusColors: Record<string, string> = {
   Closed: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 
-function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
-  return (
-    <div className="rounded-xl border border-border/50 bg-surface/50 p-4 text-center backdrop-blur-sm transition-all hover:border-primary/20">
-      <Icon className="mx-auto h-5 w-5 text-primary" />
-      <p className="mt-1.5 font-heading text-xl font-bold text-text">{value}</p>
-      <p className="text-[10px] text-muted">{label}</p>
-    </div>
-  );
-}
-
 export default function EventsPage() {
   const [filter, setFilter] = useState("All Events");
   const [search, setSearch] = useState("");
   const [activePastEventIndex, setActivePastEventIndex] = useState(0);
   const pastEventsRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<(dir: -1 | 1) => void>(() => {});
 
   function scrollToPastEvent(index: number) {
     const el = pastEventsRef.current;
@@ -168,22 +150,24 @@ export default function EventsPage() {
 
   function scrollPastEvents(direction: -1 | 1) {
     let nextIndex = activePastEventIndex + direction;
-
     if (nextIndex >= pastEvents.length) nextIndex = 0;
     if (nextIndex < 0) nextIndex = pastEvents.length - 1;
-
     scrollToPastEvent(nextIndex);
   }
 
   useEffect(() => {
+    scrollRef.current = scrollPastEvents;
+  });
+
+  useEffect(() => {
     if (pastEvents.length <= 1) return;
 
-    const interval = window.setInterval(() => {
-      scrollPastEvents(1);
+    const id = window.setInterval(() => {
+      scrollRef.current(1);
     }, 10000);
 
-    return () => window.clearInterval(interval);
-  }, [activePastEventIndex]);
+    return () => window.clearInterval(id);
+  }, []);
 
   const filtered = events.filter((e) => {
     if (filter !== "All Events" && e.category !== filter) return false;
@@ -204,11 +188,8 @@ export default function EventsPage() {
               <p className="mb-1 font-mono text-xs font-semibold uppercase tracking-widest text-primary">Events</p>
               <h1 className="font-heading text-3xl font-bold tracking-tight text-text md:text-4xl">Events &amp; Activities</h1>
               <p className="mt-3 text-sm text-muted">
-                Discover workshops, competitions, hackathons, and technology events within the Sains &amp; Technology ecosystem.
+                Discover workshops, competitions, hackathons, and technology events within the Science, Technology &amp; Artificial Intelligence ecosystem.
               </p>
-            </div>
-            <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-              {stats.map((s) => <StatCard key={s.label} {...s} />)}
             </div>
           </div>
         </section>

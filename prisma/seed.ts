@@ -90,7 +90,7 @@ const keywords = [
 ];
 
 async function seed() {
-  console.log("Seeding SANTET Data Intelligence...\n");
+  console.log("Seeding Sant.Ai Data Intelligence...\n");
 
   for (const s of sources) {
     await prisma.source.upsert({

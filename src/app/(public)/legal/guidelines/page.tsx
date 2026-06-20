@@ -5,9 +5,10 @@ import Link from "next/link";
 import { ChevronDown, Copy, Link2, Heart, Lightbulb, Rocket, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { getStorage, setStorage } from "@/lib/storage";
 import { LegalBackButton } from "@/components/legal/legal-card";
 
-const languages = ["English", "Bahasa Indonesia", "Arabic", "Japanese", "Korean", "Chinese (Simplified)"];
+const languages = ["English", "Bahasa Indonesia"];
 
 const translations = {
   English: {
@@ -25,11 +26,11 @@ const translations = {
       { title: "Community First", description: "Protect the safety, integrity, and well-being of the ecosystem.", icon: ShieldCheck },
     ],
     sections: [
-      { id: "hero-message", title: "Welcome to SANTET", paragraphs: ["SANTET is a place where students, educators, researchers, and technology enthusiasts collaborate, learn, share ideas, and build meaningful projects together.", "Our goal is to create a community that is welcoming, respectful, and focused on growth."] },
+      { id: "hero-message", title: "Welcome to Sant.Ai", paragraphs: ["Sant.Ai is a place where students, educators, researchers, and technology enthusiasts collaborate, learn, share ideas, and build meaningful projects together.", "Our goal is to create a community that is welcoming, respectful, and focused on growth."] },
       { id: "our-values", title: "Our Values", cards: ["Respect", "Collaboration", "Integrity", "Responsibility"] },
       { id: "expected-behavior", title: "Expected Behavior", list: ["Help others learn", "Share knowledge openly", "Provide constructive feedback", "Participate respectfully", "Support collaboration", "Encourage innovation", "Maintain academic integrity", "Respect intellectual property"] },
       { id: "unacceptable-behavior", title: "Unacceptable Behavior", subsections: ["Harassment", "Hate Speech", "Spam", "Misinformation", "Impersonation", "Malicious Activity", "Academic Dishonesty"] },
-      { id: "projects-and-contributions", title: "Projects and Contributions", paragraphs: ["SANTET encourages members to build projects, share research, publish innovations, and collaborate with teams.", "Contributors retain ownership of their original work. Community members should respect licenses, attribution requirements, and intellectual property rights."] },
+      { id: "projects-and-contributions", title: "Projects and Contributions", paragraphs: ["Sant.Ai encourages members to build projects, share research, publish innovations, and collaborate with teams.", "Contributors retain ownership of their original work. Community members should respect licenses, attribution requirements, and intellectual property rights."] },
       { id: "community-discussions", title: "Community Discussions", list: ["Stay on topic", "Respect differing opinions", "Focus on ideas rather than individuals", "Provide evidence when making claims", "Engage professionally"] },
       { id: "reporting-concerns", title: "Reporting Concerns", list: ["Description of the issue", "Relevant links or references", "Additional context if available"] },
       { id: "enforcement", title: "Enforcement", list: ["Educational Reminder", "Content Removal", "Warning", "Temporary Restriction", "Temporary Suspension", "Permanent Ban"] },
@@ -51,11 +52,11 @@ const translations = {
       { title: "Komunitas Utama", description: "Lindungi keamanan, integritas, dan kesejahteraan ekosistem.", icon: ShieldCheck },
     ],
     sections: [
-      { id: "hero-message", title: "Selamat Datang di SANTET", paragraphs: ["SANTET adalah tempat mahasiswa, pendidik, peneliti, dan pencinta teknologi berkolaborasi, belajar, berbagi ide, dan membangun proyek yang bermakna bersama.", "Tujuan kami adalah menciptakan komunitas yang welcoming, saling menghargai, dan berfokus pada pertumbuhan."] },
+      { id: "hero-message", title: "Selamat Datang di Sant.Ai", paragraphs: ["Sant.Ai adalah tempat mahasiswa, pendidik, peneliti, dan pencinta teknologi berkolaborasi, belajar, berbagi ide, dan membangun proyek yang bermakna bersama.", "Tujuan kami adalah menciptakan komunitas yang welcoming, saling menghargai, dan berfokus pada pertumbuhan."] },
       { id: "our-values", title: "Nilai Kami", cards: ["Respect", "Collaboration", "Integrity", "Responsibility"] },
       { id: "expected-behavior", title: "Perilaku yang Diharapkan", list: ["Membantu orang lain belajar", "Berbagi pengetahuan secara terbuka", "Memberikan umpan balik konstruktif", "Berpartisipasi dengan saling menghargai", "Mendukung kolaborasi", "Mendorong inovasi", "Menjaga integritas akademik", "Menghormati kekayaan intelektual"] },
       { id: "unacceptable-behavior", title: "Perilaku yang Tidak Dapat Diterima", subsections: ["Harassment", "Hate Speech", "Spam", "Misinformation", "Impersonation", "Malicious Activity", "Academic Dishonesty"] },
-      { id: "projects-and-contributions", title: "Proyek dan Kontribusi", paragraphs: ["SANTET mendorong anggota untuk membangun proyek, berbagi riset, memublikasikan inovasi, dan berkolaborasi dengan tim.", "Kontributor tetap memiliki karya asli mereka. Anggota komunitas harus menghormati lisensi, atribusi, dan hak kekayaan intelektual."] },
+      { id: "projects-and-contributions", title: "Proyek dan Kontribusi", paragraphs: ["Sant.Ai mendorong anggota untuk membangun proyek, berbagi riset, memublikasikan inovasi, dan berkolaborasi dengan tim.", "Kontributor tetap memiliki karya asli mereka. Anggota komunitas harus menghormati lisensi, atribusi, dan hak kekayaan intelektual."] },
       { id: "community-discussions", title: "Diskusi Komunitas", list: ["Tetap sesuai topik", "Hormati perbedaan pendapat", "Fokus pada ide, bukan individu", "Sertakan bukti saat membuat klaim", "Berinteraksi secara profesional"] },
       { id: "reporting-concerns", title: "Melaporkan Masalah", list: ["Deskripsi masalah", "Tautan atau referensi terkait", "Konteks tambahan jika tersedia"] },
       { id: "enforcement", title: "Penegakan", list: ["Pengingat Edukatif", "Penghapusan Konten", "Peringatan", "Pembatasan Sementara", "Penangguhan Sementara", "Ban Permanen"] },
@@ -77,11 +78,11 @@ const translations = {
       { title: "المجتمع أولًا", description: "احمِ سلامة ونزاهة ورفاهية النظام البيئي.", icon: ShieldCheck },
     ],
     sections: [
-      { id: "hero-message", title: "مرحبًا بك في SANTET", paragraphs: ["SANTET مكان يتعاون فيه الطلاب والمعلمون والباحثون ومحبو التكنولوجيا ويتعلمون ويتبادلون الأفكار ويبنون مشاريع ذات معنى معًا.", "هدفنا هو إنشاء مجتمع مرحب ومحترم ويركز على النمو."] },
+      { id: "hero-message", title: "مرحبًا بك في Sant.Ai", paragraphs: ["Sant.Ai مكان يتعاون فيه الطلاب والمعلمون والباحثون ومحبو التكنولوجيا ويتعلمون ويتبادلون الأفكار ويبنون مشاريع ذات معنى معًا.", "هدفنا هو إنشاء مجتمع مرحب ومحترم ويركز على النمو."] },
       { id: "our-values", title: "قيمنا", cards: ["Respect", "Collaboration", "Integrity", "Responsibility"] },
       { id: "expected-behavior", title: "السلوك المتوقع", list: ["مساعدة الآخرين على التعلم", "مشاركة المعرفة بصراحة", "تقديم ملاحظات بناءة", "المشاركة باحترام", "دعم التعاون", "تشجيع الابتكار", "الحفاظ على النزاهة الأكاديمية", "احترام الملكية الفكرية"] },
       { id: "unacceptable-behavior", title: "السلوك غير المقبول", subsections: ["Harassment", "Hate Speech", "Spam", "Misinformation", "Impersonation", "Malicious Activity", "Academic Dishonesty"] },
-      { id: "projects-and-contributions", title: "المشاريع والمساهمات", paragraphs: ["تشجع SANTET الأعضاء على بناء المشاريع ومشاركة البحث ونشر الابتكارات والتعاون مع الفرق.", "يحتفظ المساهمون بملكية أعمالهم الأصلية. يجب على أعضاء المجتمع احترام التراخيص ومتطلبات الإسناد وحقوق الملكية الفكرية."] },
+      { id: "projects-and-contributions", title: "المشاريع والمساهمات", paragraphs: ["تشجع Sant.Ai الأعضاء على بناء المشاريع ومشاركة البحث ونشر الابتكارات والتعاون مع الفرق.", "يحتفظ المساهمون بملكية أعمالهم الأصلية. يجب على أعضاء المجتمع احترام التراخيص ومتطلبات الإسناد وحقوق الملكية الفكرية."] },
       { id: "community-discussions", title: "مناقشات المجتمع", list: ["ابق على الموضوع", "احترم الآراء المختلفة", "ركز على الأفكار لا الأفراد", "قدم أدلة عند طرح الادعاءات", "تفاعل باحتراف"] },
       { id: "reporting-concerns", title: "الإبلاغ عن المخاوف", list: ["وصف المشكلة", "روابط أو مراجع ذات صلة", "سياق إضافي إذا توفر"] },
       { id: "enforcement", title: "التنفيذ", list: ["تذكير تعليمي", "إزالة المحتوى", "تحذير", "قيود مؤقتة", "تعليق مؤقت", "حظر دائم"] },
@@ -103,11 +104,11 @@ const translations = {
       { title: "コミュニティ第一", description: "エコシステムの安全、誠実性、ウェルビーイングを守ります。", icon: ShieldCheck },
     ],
     sections: [
-      { id: "hero-message", title: "SANTET へようこそ", paragraphs: ["SANTET は、学生、教育者、研究者、テクノロジー愛好家が協力し、学び、アイデアを共有し、有意義なプロジェクトを一緒に作る場所です。", "私たちの目標は、歓迎され、尊重され、成長に焦点を当てたコミュニティを作ることです。"] },
+      { id: "hero-message", title: "Sant.Ai へようこそ", paragraphs: ["Sant.Ai は、学生、教育者、研究者、テクノロジー愛好家が協力し、学び、アイデアを共有し、有意義なプロジェクトを一緒に作る場所です。", "私たちの目標は、歓迎され、尊重され、成長に焦点を当てたコミュニティを作ることです。"] },
       { id: "our-values", title: "私たちの価値", cards: ["Respect", "Collaboration", "Integrity", "Responsibility"] },
       { id: "expected-behavior", title: "期待される行動", list: ["他者の学習を助ける", "知識をオープンに共有する", "建設的なフィードバックを提供する", "尊重して参加する", "コラボレーションを支援する", "イノベーションを奨励する", "学問的誠実性を保つ", "知的財産を尊重する"] },
       { id: "unacceptable-behavior", title: "容認されない行動", subsections: ["Harassment", "Hate Speech", "Spam", "Misinformation", "Impersonation", "Malicious Activity", "Academic Dishonesty"] },
-      { id: "projects-and-contributions", title: "プロジェクトと貢献", paragraphs: ["SANTET は、メンバーがプロジェクトを構築し、研究を共有し、イノベーションを発表し、チームと協力することを奨励します。", "貢献者はオリジナル作品の所有権を保持します。コミュニティメンバーはライセンス、帰属要件、知的財産権を尊重すべきです。"] },
+      { id: "projects-and-contributions", title: "プロジェクトと貢献", paragraphs: ["Sant.Ai は、メンバーがプロジェクトを構築し、研究を共有し、イノベーションを発表し、チームと協力することを奨励します。", "貢献者はオリジナル作品の所有権を保持します。コミュニティメンバーはライセンス、帰属要件、知的財産権を尊重すべきです。"] },
       { id: "community-discussions", title: "コミュニティディスカッション", list: ["トピックに沿って話す", "異なる意見も尊重する", "個人ではなくアイデアに集中する", "主張する際は証拠を示す", "プロフェッショナルに関与する"] },
       { id: "reporting-concerns", title: "懸念の報告", list: ["問題の説明", "関連リンクまたは参照", "利用可能な追加コンテキスト"] },
       { id: "enforcement", title: "執行", list: ["教育的リマインダー", "コンテンツ削除", "警告", "一時的制限", "一時的停止", "永久BAN"] },
@@ -129,11 +130,11 @@ const translations = {
       { title: "커뮤니티 우선", description: "에코시스템의 안전, 무결성, 웰빙을 보호합니다.", icon: ShieldCheck },
     ],
     sections: [
-      { id: "hero-message", title: "SANTET 에 오신 것을 환영합니다", paragraphs: ["SANTET 은 학생, 교육자, 연구자, 기술 애호가가 함께 협력하고 배우며 아이디어를 공유하고 의미 있는 프로젝트를 만드는 공간입니다.", "우리의 목표는 환영받고 존중받으며 성장에 집중하는 커뮤니티를 만드는 것입니다."] },
+      { id: "hero-message", title: "Sant.Ai 에 오신 것을 환영합니다", paragraphs: ["Sant.Ai 은 학생, 교육자, 연구자, 기술 애호가가 함께 협력하고 배우며 아이디어를 공유하고 의미 있는 프로젝트를 만드는 공간입니다.", "우리의 목표는 환영받고 존중받으며 성장에 집중하는 커뮤니티를 만드는 것입니다."] },
       { id: "our-values", title: "우리의 가치", cards: ["Respect", "Collaboration", "Integrity", "Responsibility"] },
       { id: "expected-behavior", title: "기대되는 행동", list: ["다른 사람의 학습을 돕기", "지식을 열린 방식으로 공유하기", "건설적인 피드백 제공하기", "존중하는 태도로 참여하기", "협업 지원하기", "혁신 장려하기", "학문적 진실성 유지하기", "지적 재산 존중하기"] },
       { id: "unacceptable-behavior", title: "용납되지 않는 행동", subsections: ["Harassment", "Hate Speech", "Spam", "Misinformation", "Impersonation", "Malicious Activity", "Academic Dishonesty"] },
-      { id: "projects-and-contributions", title: "프로젝트 및 기여", paragraphs: ["SANTET 은 멤버들이 프로젝트를 만들고 연구를 공유하며 혁신을 발표하고 팀과 협력하도록 장려합니다.", "기여자는 자신이 만든 원작의 소유권을 유지합니다. 커뮤니티 멤버는 라이선스, 출처 표기 요구사항, 지적 재산권을 존중해야 합니다."] },
+      { id: "projects-and-contributions", title: "프로젝트 및 기여", paragraphs: ["Sant.Ai 은 멤버들이 프로젝트를 만들고 연구를 공유하며 혁신을 발표하고 팀과 협력하도록 장려합니다.", "기여자는 자신이 만든 원작의 소유권을 유지합니다. 커뮤니티 멤버는 라이선스, 출처 표기 요구사항, 지적 재산권을 존중해야 합니다."] },
       { id: "community-discussions", title: "커뮤니티 토론", list: ["주제에 맞게 참여하기", "다른 의견 존중하기", "개인이 아닌 아이디어에 집중하기", "주장할 때 근거 제시하기", "전문적으로 소통하기"] },
       { id: "reporting-concerns", title: "문제 보고", list: ["문제 설명", "관련 링크 또는 참고 자료", "가능한 추가 맥락"] },
       { id: "enforcement", title: "시행", list: ["교육적 안내", "콘텐츠 삭제", "경고", "일시적 제한", "일시 정지", "영구 BAN"] },
@@ -155,11 +156,11 @@ const translations = {
       { title: "社区优先", description: "保护生态系统的安全、诚信与福祉。", icon: ShieldCheck },
     ],
     sections: [
-      { id: "hero-message", title: "欢迎来到 SANTET", paragraphs: ["SANTET 是一个学生、教育者、研究者和技术爱好者共同协作、学习、分享想法并构建有意义项目的地方。", "我们的目标是创建一个受欢迎、彼此尊重并专注于成长的社区。"] },
+      { id: "hero-message", title: "欢迎来到 Sant.Ai", paragraphs: ["Sant.Ai 是一个学生、教育者、研究者和技术爱好者共同协作、学习、分享想法并构建有意义项目的地方。", "我们的目标是创建一个受欢迎、彼此尊重并专注于成长的社区。"] },
       { id: "our-values", title: "我们的价值观", cards: ["Respect", "Collaboration", "Integrity", "Responsibility"] },
       { id: "expected-behavior", title: "期望行为", list: ["帮助他人学习", "开放分享知识", "提供建设性反馈", "尊重地参与", "支持协作", "鼓励创新", "保持学术诚信", "尊重知识产权"] },
       { id: "unacceptable-behavior", title: "不可接受的行为", subsections: ["Harassment", "Hate Speech", "Spam", "Misinformation", "Impersonation", "Malicious Activity", "Academic Dishonesty"] },
-      { id: "projects-and-contributions", title: "项目与贡献", paragraphs: ["SANTET 鼓励成员构建项目、分享研究、发布创新并与团队协作。", "贡献者保留其原创作品的 ownership。社区成员应尊重许可证、署名要求和知识产权。"] },
+      { id: "projects-and-contributions", title: "项目与贡献", paragraphs: ["Sant.Ai 鼓励成员构建项目、分享研究、发布创新并与团队协作。", "贡献者保留其原创作品的 ownership。社区成员应尊重许可证、署名要求和知识产权。"] },
       { id: "community-discussions", title: "社区讨论", list: ["围绕主题交流", "尊重不同意见", "关注想法而非个人", "提出主张时提供依据", "专业地参与讨论"] },
       { id: "reporting-concerns", title: "报告问题", list: ["问题描述", "相关链接或参考", "如有额外上下文"] },
       { id: "enforcement", title: "执行", list: ["教育提醒", "删除内容", "警告", "临时限制", "临时封禁", "永久封禁"] },
@@ -178,12 +179,12 @@ export default function GuidelinesPage() {
   const content = translations[language];
 
   useEffect(() => {
-    const stored = localStorage.getItem("santet:guidelines-language") as LanguageKey | null;
+    const stored = getStorage("guidelines-language") as LanguageKey | null;
     if (stored && translations[stored]) setLanguage(stored);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("santet:guidelines-language", language);
+    setStorage("guidelines-language", language);
   }, [language]);
 
   useEffect(() => {

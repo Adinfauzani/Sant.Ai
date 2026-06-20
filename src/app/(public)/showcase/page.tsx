@@ -4,23 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Eye, Heart, Users, Star, ArrowRight, Sparkles, Award,
-  Trophy,
+  Eye, Heart, Users, Star, ArrowRight, Award, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProjectCard, { ProjectCardGrid } from "@/components/project/ProjectCard";
 import type { ProjectCardData } from "@/components/project/ProjectCard";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
-
-/* ─── Data ──────────────────────────────────────────── */
-
-const stats = [
-  { value: "45+", label: "Published Projects", icon: Sparkles },
-  { value: "12", label: "Featured Projects", icon: Star },
-  { value: "85+", label: "Contributors", icon: Users },
-  { value: "2.4K", label: "Community Impact", icon: Heart },
-];
 
 const categories = [
   "All", "AI", "Machine Learning", "Data Analytics", "Web Application",
@@ -124,16 +114,6 @@ function toShowcaseProjectCard(project: (typeof showcaseProjects)[number]): Proj
   };
 }
 
-function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
-  return (
-    <div className="rounded-xl border border-border/50 bg-surface/50 p-4 text-center backdrop-blur-sm transition-all hover:border-primary/20">
-      <Icon className="mx-auto h-5 w-5 text-primary" />
-      <p className="mt-1.5 font-heading text-xl font-bold text-text">{value}</p>
-      <p className="text-[10px] text-muted">{label}</p>
-    </div>
-  );
-}
-
 export default function ShowcasePage() {
   const [filter, setFilter] = useState("All");
   const [sort, setSort] = useState("Most Popular");
@@ -168,9 +148,6 @@ export default function ShowcasePage() {
               <p className="mt-3 text-sm text-muted">
                 Explore innovative projects and solutions created by students of Fakultas Ilmu Komputer, Universitas Saintek Muhammadiyah.
               </p>
-            </div>
-            <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-              {stats.map((s) => <StatCard key={s.label} {...s} />)}
             </div>
           </div>
         </section>

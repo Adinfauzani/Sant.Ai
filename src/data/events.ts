@@ -63,7 +63,7 @@ export const events: EventDetail[] = [
       "Hadiah juara: IDR 5jt / 3jt / 2jt",
       "Mentoring dari praktisi industri",
       "Kesempatan magang di perusahaan partner",
-      "Poin reputasi SANTET",
+      "Poin reputasi Sant.Ai",
     ],
     contact: "BEM Fasilkom — bem.fasilkom@usm.ac.id",
   },

@@ -28,7 +28,7 @@ export function LegalLayout({ children }: { children: React.ReactNode }) {
               Trust, Privacy, and Responsible Collaboration
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
-              Transparansi kebijakan, privasi, standar komunitas, dan pemanfaatan data publik untuk ekosistem SANTET.
+              Transparansi kebijakan, privasi, standar komunitas, dan pemanfaatan data publik untuk ekosistem Sant.Ai.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-muted">
               <span className="rounded-full border border-border bg-surface/50 px-3 py-1.5">Last Updated: 14 Jun 2026</span>

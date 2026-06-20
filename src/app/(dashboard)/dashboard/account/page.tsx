@@ -48,7 +48,7 @@ export default async function AccountPage() {
       <div>
         <p className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">Dashboard</p>
         <h1 className="mt-2 font-heading text-2xl font-bold text-text md:text-3xl">Akun</h1>
-        <p className="mt-2 text-sm text-muted">Kelola informasi akun dashboard SANTET Anda.</p>
+        <p className="mt-2 text-sm text-muted">Kelola informasi akun dashboard Sant.Ai Anda.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

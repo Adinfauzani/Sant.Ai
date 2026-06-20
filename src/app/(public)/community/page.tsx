@@ -5,20 +5,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Search, Users, MessageSquare, Heart, Share2, Calendar,
-  ArrowRight, UserPlus, Sparkles, ChevronRight, Clock,
+  ArrowRight, UserPlus, ChevronRight, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 
 /* ─── Data ──────────────────────────────────────────── */
-
-const stats = [
-  { value: "180+", label: "Active Members", icon: Users },
-  { value: "45+", label: "Active Projects", icon: Sparkles },
-  { value: "320+", label: "Discussions", icon: MessageSquare },
-  { value: "25", label: "Top Contributors", icon: Users },
-];
 
 const categories = [
   "All", "Data Science", "Programming", "Web Development",
@@ -73,7 +66,7 @@ const feedPosts = [
   },
   {
     author: "Bunga Citra", program: "SD", avatar: "BC",
-    content: "Just published my first data analysis project on SANTET! Analyzed campus enrollment trends using Python and visualized with Tableau. Check it out!",
+    content: "Just published my first data analysis project on Sant.Ai! Analyzed campus enrollment trends using Python and visualized with Tableau. Check it out!",
     likes: 42, comments: 15, time: "5 hours ago",
   },
   {
@@ -99,16 +92,6 @@ const upcomingEvents = [
 const programColors: Record<string, string> = {
   SD: "bg-blue-500/15 text-blue-400", TI: "bg-emerald-500/15 text-emerald-400", SI: "bg-purple-500/15 text-purple-400",
 };
-
-function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
-  return (
-    <div className="rounded-xl border border-border/50 bg-surface/50 p-4 text-center backdrop-blur-sm transition-all hover:border-primary/20">
-      <Icon className="mx-auto h-5 w-5 text-primary" />
-      <p className="mt-1.5 font-heading text-xl font-bold text-text">{value}</p>
-      <p className="text-[10px] text-muted">{label}</p>
-    </div>
-  );
-}
 
 function Avatar({ name, className }: { name: string; className?: string }) {
   return (
@@ -141,9 +124,6 @@ export default function CommunityPage() {
               <p className="mt-3 text-sm text-muted">
                 Connect with students from Sains Data, Teknik Informatika, and Sistem Informasi to collaborate, innovate, and build impactful projects.
               </p>
-            </div>
-            <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-              {stats.map((s) => <StatCard key={s.label} {...s} />)}
             </div>
           </div>
         </section>

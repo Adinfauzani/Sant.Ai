@@ -36,14 +36,14 @@ export default function LoginPage() {
       setError("Invalid email or password. Please try again.");
       setLoading(false);
     } else {
-      router.push("/profile/me");
+      router.push("/");
       router.refresh();
     }
   }
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider, { redirectTo: "/profile/me" });
+    await signIn(provider, { redirectTo: "/" });
   }
 
   return (
@@ -55,7 +55,7 @@ export default function LoginPage() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent">
               <span className="text-[10px] font-bold text-white">S</span>
             </div>
-            <span className="font-heading text-sm font-bold text-text">SANTET</span>
+            <span className="font-heading text-sm font-bold text-text">Sant.Ai</span>
           </span>
           <ChevronLeft className="h-4 w-4 transition-transform group-open:-rotate-90" />
         </summary>
@@ -82,7 +82,7 @@ export default function LoginPage() {
                 Welcome Back
               </h1>
               <p className="mt-1 text-sm text-muted">
-                Continue your journey in the Sains &amp; Technology ecosystem.
+                Continue your journey in the Science, Technology &amp; Artificial Intelligence ecosystem.
               </p>
             </div>
 

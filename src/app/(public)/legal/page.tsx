@@ -6,12 +6,12 @@ export default function LegalPage() {
     <LegalLayout>
       <div className="space-y-6">
         <div className="rounded-2xl border border-border bg-surface/35 p-6 backdrop-blur-xl">
-          <p className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">SANTET Trust Center</p>
+          <p className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">Sant.Ai Trust Center</p>
           <h2 className="mt-3 font-heading text-3xl font-bold text-text md:text-4xl">
             Legal Center
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted md:text-base">
-            Transparency, Privacy, and Responsible Collaboration. Learn how SANTET protects user privacy,
+            Transparency, Privacy, and Responsible Collaboration. Learn how Sant.Ai protects user privacy,
             maintains community standards, and responsibly utilizes public information for education and research.
           </p>
         </div>
@@ -20,12 +20,12 @@ export default function LegalPage() {
           <LegalCard
             href="/legal/terms"
             title="Terms of Service"
-            description="Rules and responsibilities for using the SANTET ecosystem."
+            description="Rules and responsibilities for using the Sant.Ai ecosystem."
           />
           <LegalCard
             href="/legal/privacy"
             title="Privacy Policy"
-            description="How SANTET collects, stores, and protects user information."
+            description="How Sant.Ai collects, stores, and protects user information."
           />
           <LegalCard
             href="/legal/guidelines"
@@ -35,7 +35,7 @@ export default function LegalPage() {
           <LegalCard
             href="/legal/data"
             title="Data Policy"
-            description="How SANTET collects, organizes, and utilizes public information for research and analytics."
+            description="How Sant.Ai collects, organizes, and utilizes public information for research and analytics."
           />
         </div>
 
@@ -49,7 +49,7 @@ export default function LegalPage() {
           <div className="rounded-2xl border border-border bg-surface/35 p-5 backdrop-blur-xl">
             <h3 className="font-heading text-base font-bold text-text">User Trust</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              SANTET berkomitmen menyediakan ekosistem digital yang transparan, aman, kolaboratif, dan bertanggung jawab bagi mahasiswa.
+              Sant.Ai berkomitmen menyediakan ekosistem digital yang transparan, aman, kolaboratif, dan bertanggung jawab bagi mahasiswa.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-surface/35 p-5 backdrop-blur-xl">

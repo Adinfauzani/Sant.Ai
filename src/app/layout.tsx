@@ -3,23 +3,31 @@ import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import AuthProvider from "@/components/shared/auth-provider";
 import FirebaseProvider from "@/components/shared/firebase-provider";
+import ThemeProvider from "@/components/shared/theme-provider";
 import "./globals.css";
 
-const dancingScript = localFont({
-  src: "../../public/fonts/Dancing_Script/DancingScript-VariableFont_wght.ttf",
-  variable: "--font-dancing-script",
+const bodyFont = localFont({
+  src: "../../public/fonts/Couse/Cause-VariableFont_wght.ttf",
+  variable: "--font-body",
+  weight: "100 900",
   display: "swap",
 });
 
+const headingFont = localFont({
+  src: "../../public/fonts/JetBrains/JetBrainsMono[wght].ttf",
+  variable: "--font-heading",
+  weight: "100 900",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "SANTET | Sains & Technology",
+  title: "Sant.Ai | Science, Technology & Artificial Intelligence",
   description:
-    "Platform kolaborasi proyek antar mahasiswa Fakultas Ilmu Komputer Universitas Saintek Muhammadiyah. Bangun proyek nyata, bangun portofolio, bangun karir.",
+    "Building the Future Through Science, Technology, and AI — platform kolaborasi proyek antar mahasiswa Fakultas Ilmu Komputer Universitas Saintek Muhammadiyah.",
   openGraph: {
-    title: "SANTET | Sains & Technology",
+    title: "Sant.Ai | Science, Technology & Artificial Intelligence",
     description:
-      "Platform kolaborasi proyek antar mahasiswa Fakultas Ilmu Komputer Universitas Saintek Muhammadiyah.",
+      "Building the Future Through Science, Technology, and AI — platform kolaborasi proyek antar mahasiswa Fakultas Ilmu Komputer Universitas Saintek Muhammadiyah.",
   },
 };
 
@@ -29,13 +37,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="dark">
-      <body
-        className={`${dancingScript.variable}`}
-      >
-        <AuthProvider>
-          <FirebaseProvider>{children}</FirebaseProvider>
-        </AuthProvider>
+    <html lang="id" suppressHydrationWarning className={`${bodyFont.variable} ${headingFont.variable}`}>
+      <body>
+        <ThemeProvider>
+          <AuthProvider>
+            <FirebaseProvider>{children}</FirebaseProvider>
+          </AuthProvider>
+        </ThemeProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

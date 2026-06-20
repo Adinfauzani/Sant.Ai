@@ -154,7 +154,7 @@ export function DashboardShell({ session, children }: { session: Session; childr
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden border-r border-border bg-surface/30 backdrop-blur-sm md:flex flex-col transition-all duration-300",
+          "hidden border-r border-border bg-surface/30 backdrop-blur-sm md:flex flex-col transition-all duration-300 sticky top-0 h-screen z-10",
           collapsed ? "w-16" : "w-60",
         )}
       >

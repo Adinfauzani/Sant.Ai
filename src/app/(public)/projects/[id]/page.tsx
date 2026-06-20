@@ -31,23 +31,23 @@ export default async function ProjectDetailPage({ params }: Props) {
   const project = await prisma.project.findUnique({
     where: { id },
     include: {
-      creator: { select: { id: true, name: true, avatar: true, studyProgram: true } },
+      creator: { select: { id: true, name: true, username: true, avatar: true, studyProgram: true } },
       teamMembers: {
         include: {
-          user: { select: { id: true, name: true, avatar: true, studyProgram: true } },
+          user: { select: { id: true, name: true, username: true, avatar: true, studyProgram: true } },
         },
         orderBy: { joinedAt: "asc" },
       },
       projectRoles: true,
       comments: {
         include: {
-          user: { select: { id: true, name: true, avatar: true } },
+          user: { select: { id: true, name: true, username: true, avatar: true } },
         },
         orderBy: { createdAt: "desc" },
       },
       contributions: {
         include: {
-          user: { select: { id: true, name: true, avatar: true } },
+          user: { select: { id: true, name: true, username: true, avatar: true } },
         },
         orderBy: { createdAt: "desc" },
         take: 10,
@@ -209,7 +209,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                         </div>
                         <div>
                           <Link
-                            href={`/profile/${member.user.id}`}
+                            href={`/${member.user.username || member.user.id}`}
                             className="text-xs text-text hover:text-primary"
                           >
                             {member.user.name}

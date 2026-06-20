@@ -72,7 +72,7 @@ export async function fetchRSS() {
       console.log(`[RSS] Fetching ${source.name}...`);
       const res = await fetch(source.rssUrl, {
         signal: AbortSignal.timeout(15000),
-        headers: { "User-Agent": "Mozilla/5.0 (compatible; SantetBot/1.0)" },
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; SantAiBot/1.0)" },
       });
       if (!res.ok) {
         console.warn(`  HTTP ${res.status}`);

@@ -35,7 +35,7 @@ export function AuthBranding() {
             <span className="text-lg font-bold text-white">S</span>
           </div>
           <div>
-            <p className="text-base font-bold text-text">SANTET</p>
+            <p className="text-base font-bold text-text">Sant.Ai</p>
             <p className="text-[9px] font-medium tracking-[0.15em] text-muted">
               SAINS &amp; TECHNOLOGY
             </p>
