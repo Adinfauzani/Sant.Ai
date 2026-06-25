@@ -52,6 +52,16 @@
 - `ProfileRedirect` (`/profile/page.tsx`): auto-generates username from email for OAuth users instead of redirecting to `/login`
 - `VerifyOTP` component: amber banner indicating OTP is in server terminal when email fails
 
+### Changed
+- **Roles lowercase**: default role `"user"`, plan `"free"` (was `"User"`/`"Free"`)
+- **Sudo auto-assign**: `databaseHooks.account.create.after` — GitHub `@adinfauzani` + Google IDs `260724246` & `104172627992970621169` otomatis role `sudo`
+- **Username check**: pake `POST /api/auth/is-username-available` (fix 404)
+- **Linked accounts**: nampilin `@accountId` dari provider (e.g. `@adinfauzani`)
+- **Profile header**: settings icon doang di samping nama, logout pindah ke Settings → Security → Session
+- **Settings page**: + email change form, + logout section
+- **`EditProfileForm`**: real-time username availability indicator (checkmark/cross + debounce)
+- **`_verification.tsx`**: expandable form untuk change email
+
 ## [0.3.1] — 2026-06-26
 
 ### Added

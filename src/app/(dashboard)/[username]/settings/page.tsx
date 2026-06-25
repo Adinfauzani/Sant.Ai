@@ -11,7 +11,9 @@ interface Props {
 }
 
 interface AccountInfo {
+  id: string;
   providerId: string;
+  accountId: string;
 }
 
 export default async function SettingsPage({ params }: Props) {
@@ -27,6 +29,7 @@ export default async function SettingsPage({ params }: Props) {
   }) as AccountInfo[];
 
   const linkedProviders = accounts.map((a) => a.providerId);
+  const providerAccounts = accounts.filter((a) => a.providerId !== "credential");
   const hasPassword = linkedProviders.includes("credential");
   const allMethods = [...linkedProviders];
 
@@ -55,6 +58,7 @@ export default async function SettingsPage({ params }: Props) {
         emailVerified={session.user.emailVerified}
         email={session.user.email}
         linkedProviders={linkedProviders}
+        providerAccounts={providerAccounts}
         hasPassword={hasPassword}
         allMethods={allMethods}
         username={session.user.username}

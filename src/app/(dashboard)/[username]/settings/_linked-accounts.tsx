@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   linkedProviders: string[];
+  providerAccounts: { providerId: string; accountId: string }[];
   hasPassword: boolean;
   allMethods: string[];
   username: string | null | undefined;
@@ -20,7 +21,7 @@ const providerMeta: Record<string, { label: string; icon: React.ElementType; col
   credential: { label: "Password", icon: Mail, color: "text-emerald-500" },
 };
 
-export default function LinkedAccountsSection({ linkedProviders, hasPassword, allMethods, username }: Props) {
+export default function LinkedAccountsSection({ linkedProviders, providerAccounts, hasPassword, allMethods, username }: Props) {
   const router = useRouter();
   const [linking, setLinking] = useState<string | null>(null);
   const [unlinking, setUnlinking] = useState<string | null>(null);
@@ -71,6 +72,7 @@ export default function LinkedAccountsSection({ linkedProviders, hasPassword, al
           const isLinked = linkedProviders.includes(provider) || (provider === "credential" && hasPassword);
           const isLoading = linking === provider || unlinking === provider;
           const canUnlink = provider !== "credential" && isLinked && allMethods.length > 1;
+          const account = providerAccounts.find((a) => a.providerId === provider);
 
           return (
             <div
@@ -84,7 +86,7 @@ export default function LinkedAccountsSection({ linkedProviders, hasPassword, al
                 <div>
                   <p className="text-xs font-medium text-text">{meta.label}</p>
                   <p className="text-[10px] text-muted">
-                    {isLinked ? "Connected" : "Not connected"}
+                    {isLinked && account ? `@${account.accountId}` : isLinked ? "Connected" : "Not connected"}
                   </p>
                 </div>
               </div>

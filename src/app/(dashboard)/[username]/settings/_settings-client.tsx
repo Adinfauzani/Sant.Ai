@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { User, Link2, Shield, Palette, KeyRound, BadgeCheck, ChevronLeft } from "lucide-react";
+import { User, Link2, Shield, Palette, KeyRound, BadgeCheck, ChevronLeft, LogOut } from "lucide-react";
 import EditProfileForm from "./_edit-profile";
 import LinkedAccountsSection from "./_linked-accounts";
 import VerificationSection from "./_verification";
 import TwoFactorSection from "./_two-factor";
 import SetPasswordForm from "./_set-password";
 import AppearanceSection from "./_appearance";
+import LogoutButton from "@/components/profile/logout-button";
 
 const tabs = [
   { id: "profile", label: "Profile", icon: User },
@@ -23,6 +24,7 @@ interface Props {
   emailVerified: boolean;
   email: string;
   linkedProviders: string[];
+  providerAccounts: { providerId: string; accountId: string }[];
   hasPassword: boolean;
   allMethods: string[];
   username: string | null | undefined;
@@ -72,6 +74,15 @@ export default function SettingsClient(props: Props) {
 
       {/* Content */}
       <div className="min-w-0 flex-1">
+        {/* Back to Profile */}
+        <a
+          href={`/${props.username}`}
+          className="mb-4 flex items-center gap-1 text-[11px] text-muted hover:text-text"
+        >
+          <ChevronLeft className="h-3 w-3" />
+          Back to Profile
+        </a>
+
         {/* Mobile tab selector */}
         <div className="mb-6 flex gap-1 overflow-x-auto md:hidden">
           {tabs.map((tab) => {
@@ -110,6 +121,7 @@ export default function SettingsClient(props: Props) {
             <section className="rounded-lg border border-border bg-surface/5 p-4">
               <LinkedAccountsSection
                 linkedProviders={props.linkedProviders}
+                providerAccounts={props.providerAccounts}
                 hasPassword={props.hasPassword}
                 allMethods={props.allMethods}
                 username={props.username}
@@ -145,6 +157,19 @@ export default function SettingsClient(props: Props) {
                 twoFactorEnabled={props.twoFactorEnabled}
                 hasPassword={props.hasPassword}
               />
+            </section>
+
+            <section className="rounded-lg border border-border bg-surface/5 p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <LogOut className="h-4 w-4 text-red-500" />
+                <h2 className="text-sm font-semibold text-text">Session</h2>
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] text-muted">
+                  Sign out of your account on this device.
+                </p>
+                <LogoutButton />
+              </div>
             </section>
           </div>
         )}

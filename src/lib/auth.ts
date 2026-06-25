@@ -5,6 +5,7 @@ import { Pool } from "pg";
 import { dash } from "@better-auth/infra";
 import { sendVerificationEmail, sendPasswordResetEmail, sendOTP } from "./email";
 import { isReservedUsername } from "./reserved";
+import { prisma } from "./db";
 
 export interface AuthUser {
   id: string;
@@ -80,8 +81,8 @@ export const auth = betterAuth({
     additionalFields: {
       studyProgram: { type: "string", required: true, defaultValue: "TI" },
       semester: { type: "number", required: true, defaultValue: 1 },
-      role: { type: "string", required: true, defaultValue: "User" },
-      plan: { type: "string", required: true, defaultValue: "Free" },
+      role: { type: "string", required: true, defaultValue: "user" },
+      plan: { type: "string", required: true, defaultValue: "free" },
       avatar: { type: "string" },
       coverImage: { type: "string" },
       bio: { type: "string" },
@@ -93,6 +94,34 @@ export const auth = betterAuth({
     modelName: "user",
     changeEmail: {
       enabled: true,
+    },
+  },
+
+  databaseHooks: {
+    account: {
+      create: {
+        after: async (account: any) => {
+          const sudo: { providerId: string; accountId: string }[] = [
+            { providerId: "github", accountId: "adinfauzani" },
+            { providerId: "google", accountId: "260724246" },
+            { providerId: "google", accountId: "104172627992970621169" },
+          ];
+
+          const isSudo = sudo.some((s) => {
+            if (s.providerId !== account.providerId) return false;
+            const a = account.accountId?.toString().toLowerCase();
+            const b = s.accountId.toString().toLowerCase();
+            return a === b;
+          });
+
+          if (isSudo) {
+            await prisma.user.update({
+              where: { id: account.userId },
+              data: { role: "sudo" },
+            });
+          }
+        },
+      },
     },
   },
 

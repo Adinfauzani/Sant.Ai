@@ -19,8 +19,8 @@ model User {
   displayUsername  String?
   studyProgram     String    @default("TI")
   semester         Int       @default(1)
-  role             String    @default("User")
-  plan             String    @default("Free")
+  role             String    @default("user")
+  plan             String    @default("free")
   avatar           String    @default("")
   coverImage       String    @default("")
   bio              String    @default("")

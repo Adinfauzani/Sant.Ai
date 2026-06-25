@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 import { updateProfile } from "@/lib/actions";
-import { isValidUsername } from "@/lib/reserved";
+import { isValidUsername, isReservedUsername } from "@/lib/reserved";
+import { cn } from "@/lib/utils";
 
 interface Props {
   user: {
@@ -34,12 +36,53 @@ export default function EditProfileForm({ user }: Props) {
     location: user.location,
   });
 
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    const u = form.username;
+    if (!u || u === user.username) {
+      setUsernameAvailable(null);
+      setCheckingUsername(false);
+      return;
+    }
+    if (!isValidUsername(u) || isReservedUsername(u)) {
+      setUsernameAvailable(false);
+      setCheckingUsername(false);
+      return;
+    }
+
+    setCheckingUsername(true);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      const res = await fetch(`/api/auth/is-username-available`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u }),
+      });
+      const data = await res.json();
+      setUsernameAvailable(data?.data?.available ?? data?.available ?? false);
+      setCheckingUsername(false);
+    }, 400);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [form.username, user.username]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidUsername(form.username)) {
       toast.error("Username must be 2-30 characters, letters/numbers/hyphens/underscores only.");
       return;
     }
+
+    if (usernameAvailable === false) {
+      toast.error("Username is already taken.");
+      return;
+    }
+
     setSaving(true);
     try {
       const fd = new FormData();
@@ -63,6 +106,9 @@ export default function EditProfileForm({ user }: Props) {
     }
   };
 
+  const usernameTaken = form.username !== user.username && usernameAvailable === false;
+  const usernameOk = form.username !== user.username && usernameAvailable === true;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
@@ -76,11 +122,31 @@ export default function EditProfileForm({ user }: Props) {
 
       <div>
         <label className="mb-1 block text-xs font-medium text-text">Username</label>
-        <input
-          value={form.username}
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
-          className="w-full rounded border border-border bg-surface/10 px-3 py-2 text-xs text-text outline-none placeholder:text-muted/50"
-        />
+        <div className="relative">
+          <input
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            className={cn(
+              "w-full rounded border bg-surface/10 px-3 py-2 pr-8 text-xs text-text outline-none placeholder:text-muted/50",
+              usernameTaken ? "border-red-500" : usernameOk ? "border-emerald-500" : "border-border",
+            )}
+          />
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2">
+            {checkingUsername ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-muted" />
+            ) : usernameTaken ? (
+              <X className="h-3.5 w-3.5 text-red-500" />
+            ) : usernameOk ? (
+              <Check className="h-3.5 w-3.5 text-emerald-500" />
+            ) : null}
+          </span>
+        </div>
+        {usernameTaken && (
+          <p className="mt-1 text-[10px] text-red-500">Username is already taken</p>
+        )}
+        {usernameOk && (
+          <p className="mt-1 text-[10px] text-emerald-500">Username is available</p>
+        )}
       </div>
 
       <div>

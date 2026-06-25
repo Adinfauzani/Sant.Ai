@@ -39,19 +39,16 @@ export default function ProfileHeader({ user, isOwner }: Props) {
           )}
         </div>
         <div className="flex-1 pb-2">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-text md:text-2xl">{user.name}</h1>
             {isOwner && (
-              <>
-                <Link
-                  href={`/${user.username}/settings`}
-                  className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-[11px] text-muted transition-colors hover:bg-surface hover:text-text"
-                >
-                  <Settings className="h-3 w-3" />
-                  Settings
-                </Link>
-                <LogoutButton />
-              </>
+              <Link
+                href={`/${user.username}/settings`}
+                className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:bg-surface hover:text-text"
+                title="Settings"
+              >
+                <Settings className="h-3.5 w-3.5" />
+              </Link>
             )}
           </div>
           <p className="text-sm text-muted">@{user.username}</p>
