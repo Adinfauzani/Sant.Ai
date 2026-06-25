@@ -80,13 +80,6 @@ if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
       ...makeProviderConfig("google"),
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
   );
 }
@@ -120,6 +113,8 @@ const authConfig: NextAuthConfig = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.type !== "oauth") return true;
+
+      console.log("signIn: oauth callback", { provider: account?.provider, email: user?.email, name: user?.name });
 
       // ── Check for pending account linking ──
       if (account.provider === "github" || account.provider === "google") {
@@ -155,7 +150,7 @@ const authConfig: NextAuthConfig = {
               return true;
             }
           }
-        } catch {}
+        } catch (e) { console.error("signIn: linking cookie check failed", { provider: account.provider, error: String(e) }); }
       }
 
       const email = typeof user.email === "string"
@@ -179,19 +174,24 @@ const authConfig: NextAuthConfig = {
       if (!existing) {
         const oauthName = user.name || email.split("@")[0];
         const username = generateUsername(oauthName);
-        await prisma.user.create({
-          data: {
-            name: oauthName,
-            username,
-            email,
-            password: "",
-            studyProgram: "TI",
-            semester: 1,
-            avatar: user.image || "",
-            role,
-            plan,
-          },
-        });
+        try {
+          await prisma.user.create({
+            data: {
+              name: oauthName,
+              username,
+              email,
+              password: "",
+              studyProgram: "TI",
+              semester: 1,
+              avatar: user.image || "",
+              role,
+              plan,
+            },
+          });
+        } catch (err) {
+          console.error("signIn: prisma.user.create failed", { email, username, oauthName, error: String(err) });
+          return false;
+        }
       } else if (githubUsername) {
         await prisma.user.update({
           where: { email },
@@ -238,6 +238,7 @@ const authConfig: NextAuthConfig = {
       user.image = dbUser.avatar || undefined;
       (user as any).username = dbUser.username;
 
+      console.log("signIn: success", { provider: account?.provider, userId: dbUser.id, username: dbUser.username });
       return true;
     },
     async jwt({ token, user }) {

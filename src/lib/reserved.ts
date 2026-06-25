@@ -35,11 +35,16 @@ export function isValidUsername(username: string): boolean {
   return /^[a-zA-Z0-9_-]+$/.test(username);
 }
 
+function randomSuffix(): string {
+  return Math.random().toString(36).slice(2, 8);
+}
+
 export function generateUsername(name: string): string {
-  return name
+  const base = name
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "")
-    .slice(0, 30) || `user-${Date.now().toString(36)}`;
+    .slice(0, 24);
+  return `${base || "user"}-${randomSuffix()}`;
 }
