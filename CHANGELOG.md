@@ -22,6 +22,9 @@ All notable changes to Sant.Ai are documented here.
 ### Changed
 - Navbar avatar link: `<a href={`/${username}`}>` — always points to public profile, never to login for authenticated users
 
+### Fixed (Vercel deploy)
+- **Build never finishes on Vercel**: Removed `&& next dev --webpack` from `build` script — was starting dev server after build, causing infinite hang
+
 ---
 
 ## [0.2.1] - 2026-06-21
