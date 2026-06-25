@@ -8,6 +8,12 @@ import { Plan, UserRole } from "@/generated/prisma/client";
 import { prisma } from "./db";
 import { generateUsername } from "./reserved";
 
+if (!process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+}
+
 const sudoGithubUsername = process.env.AUTH_SUDO_GITHUB_USERNAME || "Adinfauzani";
 
 function makeProviderConfig(provider: "github" | "google") {
@@ -166,10 +172,11 @@ const authConfig: NextAuthConfig = {
 
       if (!existing) {
         const oauthName = user.name || email.split("@")[0];
+        const username = generateUsername(oauthName);
         await prisma.user.create({
           data: {
             name: oauthName,
-            username: generateUsername(oauthName),
+            username,
             email,
             password: "",
             studyProgram: "TI",

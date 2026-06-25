@@ -6,5 +6,5 @@ export default async function AccountPage() {
   if (session?.user?.username) {
     redirect(`/${session.user.username}`);
   }
-  redirect("/account/security");
+  redirect("/security");
 }

@@ -12,9 +12,9 @@ export default function AccountNav() {
 
   const links = [
     { label: "Profile", href: `/${session?.user?.username || "profile"}`, icon: User },
-    { label: "Security", href: "/account/security", icon: Shield },
-    { label: "Appearance", href: "/account/appearance", icon: Palette },
-    { label: "Notifications", href: "/account/notifications", icon: Bell },
+    { label: "Security", href: "/security", icon: Shield },
+    { label: "Appearance", href: "/appearance", icon: Palette },
+    { label: "Notifications", href: "/notifications", icon: Bell },
   ];
 
   return (

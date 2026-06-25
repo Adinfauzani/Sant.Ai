@@ -4,6 +4,23 @@ All notable changes to Sant.Ai are documented here.
 
 ---
 
+## [0.2.1] - 2026-06-21
+
+### Fixed
+- **NEXTAUTH_URL hardcoded to localhost**: Added auto-detect logic — uses `VERCEL_URL` on Vercel, `http://localhost:3000` locally. Removed `NEXTAUTH_URL` from `.env` to prevent stale imports on deploy
+- **Theme flash on refresh**: Inline script in `<head>` reads localStorage before React hydrates — no more flash to light mode
+- **Cookie consent glass styling**: Redesigned to match primitive auth pages (`border-2`, `bg-background/80 backdrop-blur-md`)
+- **Route restructure**: `/account/*` moved to `/security`, `/appearance`, `/notifications` — cleaner URLs
+- **Login redirect**: OAuth & credentials login now redirects to `/{username}` instead of `/`
+- **Reserved usernames**: Added `security`, `appearance`, `notifications`, `profile` to prevent route conflicts
+
+### Changed
+- Login/register redesigned: primitive/minimalist style (border-2, flat, no shadows, centered card layout)
+- `ThemeProvider` now reads localStorage synchronously in `useState` initializer (no more hydration lag)
+- `env.ts` cleaned up — removed unused variables
+
+---
+
 ## [0.2.0] - 2026-06-21
 
 ### Fixed
