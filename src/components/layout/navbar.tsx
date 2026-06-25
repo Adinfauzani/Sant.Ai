@@ -45,7 +45,7 @@ export default function Navbar() {
     if (username) {
       router.push(`/${username}`);
     } else {
-      router.push("/login");
+      router.push("/profile");
     }
   };
 
