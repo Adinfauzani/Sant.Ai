@@ -64,7 +64,7 @@ export async function registerUser(formData: FormData) {
   });
 
   await signIn("credentials", { email, password, redirect: false });
-  redirect("/");
+  redirect("/profile");
 }
 
 export async function loginUser(formData: FormData) {
@@ -73,7 +73,7 @@ export async function loginUser(formData: FormData) {
     password: formData.get("password") as string,
     redirect: false,
   });
-  redirect("/");
+  redirect("/profile");
 }
 
 export async function createProject(formData: FormData) {

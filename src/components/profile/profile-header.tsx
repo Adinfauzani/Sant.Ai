@@ -1,7 +1,7 @@
 "use client";
 
 import type { User } from "@/generated/prisma/client";
-import { MapPin, Globe, Calendar, Award, Pencil, Settings } from "lucide-react";
+import { MapPin, Globe, Calendar, Award, Settings } from "lucide-react";
 import Link from "next/link";
 import LogoutButton from "@/components/profile/logout-button";
 
@@ -43,15 +43,8 @@ export default function ProfileHeader({ user, isOwner }: Props) {
             <h1 className="text-xl font-bold text-text md:text-2xl">{user.name}</h1>
             {isOwner && (
               <>
-                <button
-                  onClick={() => document.getElementById("edit-profile-trigger")?.click()}
-                  className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-[11px] text-muted transition-colors hover:bg-surface hover:text-text"
-                >
-                  <Pencil className="h-3 w-3" />
-                  Edit profile
-                </button>
                 <Link
-                  href="/security"
+                  href={`/${user.username}/settings`}
                   className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-[11px] text-muted transition-colors hover:bg-surface hover:text-text"
                 >
                   <Settings className="h-3 w-3" />

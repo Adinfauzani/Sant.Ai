@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation";
-import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
 import ProfileHeader from "@/components/profile/profile-header";
 import ProfileTabs from "@/components/profile/profile-tabs";
-import EditProfileModal from "@/components/profile/edit-profile-modal";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isReservedUsername } from "@/lib/reserved";
@@ -44,17 +41,10 @@ export default async function ProfileLayout({ params, children }: Props) {
   const isOwner = session?.user?.id === user.id;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <div className="container-main py-8">
-          <ProfileHeader user={user} isOwner={isOwner} />
-          {isOwner && <EditProfileModal user={user} />}
-          <ProfileTabs username={username} />
-          <div className="mt-6">{children}</div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <>
+      <ProfileHeader user={user} isOwner={isOwner} />
+      <ProfileTabs username={username} />
+      <div className="mt-6">{children}</div>
+    </>
   );
 }

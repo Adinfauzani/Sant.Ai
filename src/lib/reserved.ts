@@ -23,6 +23,7 @@ const reserved = new Set([
   "settings",
   "showcase",
   "terms",
+  "unauthorized",
 ]);
 
 export function isReservedUsername(username: string): boolean {

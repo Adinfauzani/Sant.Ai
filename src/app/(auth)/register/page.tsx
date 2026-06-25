@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { Github, Loader2 } from "lucide-react";
 import { registerUser } from "@/lib/actions";
 
@@ -23,19 +23,25 @@ const rules = [
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [agreed, setAgreed] = useState(false);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [studyProgram, setStudyProgram] = useState("");
   const [semester, setSemester] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+
+  useEffect(() => {
+    if (session?.user?.username) {
+      router.push(`/${session.user.username}`);
+    }
+  }, [session, router]);
 
   const passwordErrors = useMemo(
     () => rules.map((r) => ({ label: r.label, pass: r.test(password) })),
@@ -74,7 +80,7 @@ export default function RegisterPage() {
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider, { redirectTo: "/" });
+    await signIn(provider);
   }
 
   if (success) {
@@ -93,12 +99,12 @@ export default function RegisterPage() {
           <button
             onClick={() => {
               setSuccess(false);
-              router.push("/");
+              router.push("/login");
               router.refresh();
             }}
             className="w-full border-2 border-text bg-text px-4 py-2 text-sm font-bold text-background hover:opacity-90"
           >
-            Go to Dashboard
+            Sign In
           </button>
         </div>
       </div>

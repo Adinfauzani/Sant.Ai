@@ -5,7 +5,6 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Link2, Link2Off, Loader2, Github, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -21,7 +20,7 @@ const providerMeta: Record<string, { label: string; icon: React.ElementType; col
   credentials: { label: "Password", icon: Mail, color: "text-emerald-500" },
 };
 
-export default function LinkedAccounts({ linkedProviders, hasPassword, allMethods, username }: Props) {
+export default function LinkedAccountsSection({ linkedProviders, hasPassword, allMethods, username }: Props) {
   const router = useRouter();
   const [linking, setLinking] = useState<string | null>(null);
   const [unlinking, setUnlinking] = useState<string | null>(null);
@@ -36,7 +35,7 @@ export default function LinkedAccounts({ linkedProviders, hasPassword, allMethod
         setLinking(null);
         return;
       }
-      await signIn(provider, { redirectTo: `/${username || "account/security"}` });
+      await signIn(provider, { redirectTo: `/${username || "settings"}` });
     } catch {
       toast.error("Failed to link account");
       setLinking(null);
@@ -65,10 +64,10 @@ export default function LinkedAccounts({ linkedProviders, hasPassword, allMethod
   const providers = ["google", "github", "credentials"] as const;
 
   return (
-    <div>
+    <section className="rounded-lg border border-border bg-surface/5 p-4">
       <div className="mb-3 flex items-center gap-2">
         <Link2 className="h-4 w-4 text-muted" />
-        <h3 className="text-sm font-medium text-text">Linked Accounts</h3>
+        <h2 className="text-sm font-semibold text-text">Linked Accounts</h2>
       </div>
       <p className="mb-4 text-[11px] text-muted">
         Connect your Google or GitHub accounts for easy sign-in.
@@ -126,6 +125,6 @@ export default function LinkedAccounts({ linkedProviders, hasPassword, allMethod
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }

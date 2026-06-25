@@ -4,6 +4,26 @@ All notable changes to Sant.Ai are documented here.
 
 ---
 
+## [0.2.2] - 2026-06-25
+
+### Added
+- **Middleware → Proxy migration**: Auth guards moved from `middleware.ts` to `proxy.ts` (Next.js 16 native)
+- **Edge auth guard**: `proxy.ts` decodes JWT via `getToken()`, protects `/dashboard/*` (role check) and `/profile` (auth check)
+- **403 page**: `/unauthorized` + `<Unauthorized>` component for dashboard role denial
+- **Reserved usernames**: `unauthorized` added to prevent route conflicts
+
+### Fixed
+- **Dashboard role leak**: Dashboard layout now checks `role in ["Sudo", "Admin"]`, returns 403 for "User" role (previously only checked `session?.user?.id`)
+- **Register OAuth dead-end**: Added `useEffect` + `useSession()` to register page — redirects to `/{username}` after OAuth callback (was staying on register page)
+- **Register success redirect**: "Go to Dashboard" → "Sign In" button that goes to `/login` instead of `/`
+- **Credentials login redirect**: Uses `getSession()` then `router.push("/{username}")` directly instead of `router.refresh()` (which could leave user on login page)
+- **Register OAuth redirect**: Removed explicit `redirectTo` — lets default redirect back to register page, then `useEffect` takes over
+
+### Changed
+- Navbar avatar link: `<a href={`/${username}`}>` — always points to public profile, never to login for authenticated users
+
+---
+
 ## [0.2.1] - 2026-06-21
 
 ### Fixed

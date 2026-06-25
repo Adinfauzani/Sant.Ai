@@ -45,7 +45,7 @@ export default function Navbar() {
     if (username) {
       router.push(`/${username}`);
     } else {
-      router.push("/security");
+      router.push("/login");
     }
   };
 
@@ -107,7 +107,7 @@ export default function Navbar() {
               </div>
 
               <a
-                href={session?.user?.username ? `/${session.user.username}` : "/security"}
+                href={session?.user?.username ? `/${session.user.username}` : "/login"}
                 className="flex h-8 w-8 items-center justify-center rounded-md bg-surface text-xs font-semibold text-text hover:opacity-80"
               >
                 {session.user.name?.charAt(0).toUpperCase() ?? "U"}
