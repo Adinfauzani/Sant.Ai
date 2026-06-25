@@ -110,6 +110,26 @@ const authConfig: NextAuthConfig = {
   pages: {
     signIn: "/login",
   },
+  cookies: {
+    pkceCodeVerifier: {
+      options: {
+        sameSite: "none",
+        secure: true,
+        httpOnly: true,
+        path: "/",
+        maxAge: 60 * 15,
+      },
+    },
+    state: {
+      options: {
+        sameSite: "none",
+        secure: true,
+        httpOnly: true,
+        path: "/",
+        maxAge: 60 * 15,
+      },
+    },
+  },
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.type !== "oauth") return true;
