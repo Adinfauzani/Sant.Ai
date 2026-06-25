@@ -74,7 +74,7 @@ export default function RegisterPage() {
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider, { redirectTo: "/account" });
+    await signIn(provider, { redirectTo: "/" });
   }
 
   if (success) {
