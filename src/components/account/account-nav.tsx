@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { User, Shield, Palette, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ export default function AccountNav() {
   const { data: session } = useSession();
 
   const links = [
-    { label: "Profile", href: `/${session?.user?.username || "profile"}`, icon: User },
+    { label: "Profile", href: `/${(session?.user as { username?: string } | undefined)?.username || "profile"}`, icon: User },
     { label: "Security", href: "/security", icon: Shield },
     { label: "Appearance", href: "/appearance", icon: Palette },
     { label: "Notifications", href: "/notifications", icon: Bell },

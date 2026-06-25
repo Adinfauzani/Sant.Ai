@@ -4,8 +4,9 @@ import { ArrowLeft, Users, Calendar, Link2, ArrowRight } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
-import { auth } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth";
 import { JoinProjectButton, CompleteProjectButton, ProjectCommentForm, ProjectComments } from "./client";
 
 interface Props {
@@ -26,7 +27,7 @@ const programColors: Record<string, string> = {
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { id } = await params;
-  const session = await auth();
+  const session = await getAuthSession(await headers());
 
   const project = await prisma.project.findUnique({
     where: { id },

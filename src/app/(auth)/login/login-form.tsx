@@ -1,14 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
-import { signIn, useSession, getSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { Github, Loader2 } from "lucide-react";
 
 export default function LoginForm() {
-  const router = useRouter();
-  const { data: session } = useSession();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
@@ -16,39 +13,26 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    if (session?.user?.username) {
-      router.push(`/${session.user.username}`);
-    }
-  }, [session, router]);
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const res = await signIn("credentials", {
+    const { error: err } = await authClient.signIn.email({
       email,
       password,
-      redirect: false,
     });
 
-    if (res?.error) {
+    if (err) {
       setError("Invalid email or password");
       setLoading(false);
-    } else {
-      const updatedSession = await getSession();
-      if (updatedSession?.user?.username) {
-        router.push(`/${updatedSession.user.username}`);
-      } else {
-        router.refresh();
-      }
     }
   }
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider);
+    await authClient.signIn.social({ provider: provider as "google" | "github" });
+    setOauthLoading(null);
   }
 
   return (

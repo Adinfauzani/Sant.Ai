@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Link2, Link2Off, Loader2, Github, Mail } from "lucide-react";
@@ -27,19 +27,8 @@ export default function LinkedAccountsSection({ linkedProviders, hasPassword, al
 
   const handleLink = async (provider: string) => {
     setLinking(provider);
-    try {
-      const res = await fetch(`/api/account/link/${provider}`, { method: "POST" });
-      if (!res.ok) {
-        const data = await res.json();
-        toast.error(data.error || "Failed to link");
-        setLinking(null);
-        return;
-      }
-      await signIn(provider, { redirectTo: `/${username || "settings"}` });
-    } catch {
-      toast.error("Failed to link account");
-      setLinking(null);
-    }
+    await signIn.social({ provider, callbackURL: `/${username || "settings"}` });
+    setLinking(null);
   };
 
   const handleUnlink = async (provider: string) => {

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SessionProvider, signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { getStorage, setStorage } from "@/lib/storage";
 import type { ReactNode } from "react";
@@ -12,14 +11,8 @@ const SESSION_TIMEOUT = 60 * 60 * 1000;
 
 function SessionTimeoutManager() {
   const router = useRouter();
-  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status !== "authenticated") {
-      setStorage("last-active", "");
-      return;
-    }
-
     const updateLastActive = () => {
       setStorage("last-active", String(Date.now()));
     };
@@ -29,12 +22,13 @@ function SessionTimeoutManager() {
 
     const interval = window.setInterval(() => {
       const lastActive = Number(getStorage("last-active") || Date.now());
-
-      if (Date.now() - lastActive >= SESSION_TIMEOUT) {
+      if (lastActive && Date.now() - lastActive >= SESSION_TIMEOUT) {
         setStorage("last-active", "");
-        signOut({ redirect: false }).then(() => {
-          toast.error("Sesi telah habis. Silakan login kembali.");
-          router.push("/login");
+        import("@/lib/auth-client").then(({ signOut }) => {
+          signOut().then(() => {
+            toast.error("Sesi telah habis. Silakan login kembali.");
+            router.push("/login");
+          });
         });
       }
     }, 60 * 1000);
@@ -45,7 +39,7 @@ function SessionTimeoutManager() {
       events.forEach((event) => window.removeEventListener(event, updateLastActive));
       window.clearInterval(interval);
     };
-  }, [router, status]);
+  }, [router]);
 
   return null;
 }
@@ -89,10 +83,10 @@ function CookieConsent() {
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   return (
-    <SessionProvider>
+    <>
       <SessionTimeoutManager />
       <CookieConsent />
       {children}
-    </SessionProvider>
+    </>
   );
 }

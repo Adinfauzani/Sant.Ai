@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { Mail, Shield, Trophy, User, Award } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Card } from "../_components";
 
@@ -19,7 +20,7 @@ function InfoRow({ icon: Icon, label, value }: { icon: React.ElementType; label:
 }
 
 export default async function AccountPage() {
-  const session = await auth();
+  const session = await getAuthSession(await headers());
 
   if (!session?.user) {
     redirect("/login");

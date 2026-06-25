@@ -3,9 +3,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { authClient, useSession } from "@/lib/auth-client";
 import { Github, Loader2 } from "lucide-react";
-import { registerUser } from "@/lib/actions";
 
 const studyPrograms = [
   { value: "SD", label: "Sains Data (SD)" },
@@ -27,8 +26,9 @@ export default function RegisterForm() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.username) {
-      router.push(`/${session.user.username}`);
+    const u = (session?.user as { username?: string } | undefined)?.username;
+    if (u) {
+      router.push(`/${u}`);
     }
   }, [session, router]);
   const [loading, setLoading] = useState(false);
@@ -50,6 +50,12 @@ export default function RegisterForm() {
   const passwordOk = passwordErrors.every((r) => r.pass);
   const confirmOk = confirm.length === 0 || password === confirm;
 
+  function generateUsername(name: string) {
+    const base = name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15);
+    const suffix = Math.random().toString(36).substring(2, 8);
+    return `${base}-${suffix}`;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!passwordOk || !agreed) return;
@@ -63,14 +69,29 @@ export default function RegisterForm() {
     setError("");
 
     try {
-      const form = new FormData();
-      form.set("name", name);
-      form.set("email", email);
-      form.set("studyProgram", studyProgram);
-      form.set("semester", semester);
-      form.set("password", password);
+      const username = generateUsername(name);
+      const { error: err } = await authClient.signUp.email({
+        name,
+        email,
+        password,
+      });
 
-      await registerUser(form);
+      if (err) {
+        throw new Error(err.message || err.code || "Registration failed");
+      }
+
+      // Sync: create Users.User record
+      const syncRes = await fetch("/api/sync-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, username, studyProgram: studyProgram || "TI", semester: parseInt(semester) || 1 }),
+      });
+
+      if (!syncRes.ok) {
+        const syncErr = await syncRes.json();
+        console.error("Sync failed:", syncErr);
+      }
+
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -80,7 +101,8 @@ export default function RegisterForm() {
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await signIn(provider);
+    await authClient.signIn.social({ provider: provider as "google" | "github" });
+    setOauthLoading(null);
   }
 
   if (success) {
@@ -99,12 +121,11 @@ export default function RegisterForm() {
           <button
             onClick={() => {
               setSuccess(false);
-              router.push("/login");
               router.refresh();
             }}
             className="w-full border-2 border-text bg-text px-4 py-2 text-sm font-bold text-background hover:opacity-90"
           >
-            Sign In
+            Go to Profile
           </button>
         </div>
       </div>

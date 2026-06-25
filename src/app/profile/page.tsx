@@ -2,20 +2,21 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 
 export default function ProfileRedirect() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, isPending } = useSession();
 
   useEffect(() => {
-    if (status === "loading") return;
-    if (status === "unauthenticated" || !session?.user?.username) {
+    if (isPending) return;
+    const u = (session?.user as { username?: string } | undefined)?.username;
+    if (!u) {
       router.push("/login");
     } else {
-      router.push(`/${session.user.username}`);
+      router.push(`/${u}`);
     }
-  }, [status, session, router]);
+  }, [isPending, session, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center">

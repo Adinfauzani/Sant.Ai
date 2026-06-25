@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Session } from "next-auth";
+import type { AuthSession } from "@/lib/auth";
 import {
   LayoutDashboard, BarChart3, TrendingUp, FileText, Settings, ChevronLeft,
   PanelRightClose, X, BookOpen, Shield, Globe, Smile, Hash, Radio,
@@ -144,7 +144,7 @@ function SidebarNav({ collapsed, onClose, sidebarItems }: { collapsed: boolean; 
 
 /* ─── Dashboard Shell ──────────────────────────────── */
 
-export function DashboardShell({ session, children }: { session: Session; children: React.ReactNode }) {
+export function DashboardShell({ session, children }: { session: AuthSession; children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const userAvatar = session.user?.image;

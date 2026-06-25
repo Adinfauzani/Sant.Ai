@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import ProfileHeader from "@/components/profile/profile-header";
 import ProfileTabs from "@/components/profile/profile-tabs";
-import { auth } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isReservedUsername } from "@/lib/reserved";
 
@@ -33,7 +34,7 @@ export default async function ProfileLayout({ params, children }: Props) {
         semester: true,
       },
     }),
-    auth(),
+    getAuthSession(await headers()),
   ]);
 
   if (!user) notFound();

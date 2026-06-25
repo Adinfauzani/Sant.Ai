@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { getAuthSession } from "@/lib/auth";
 
 export async function POST(
   _req: Request,
   { params }: { params: Promise<{ provider: string }> },
 ) {
-  const session = await auth();
+  const session = await getAuthSession(_req.headers);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
   }
@@ -16,22 +14,6 @@ export async function POST(
   if (provider !== "github" && provider !== "google") {
     return NextResponse.json({ error: "invalid provider" }, { status: 400 });
   }
-
-  const existing = await prisma.account.findFirst({
-    where: { userId: session.user.id, provider },
-  });
-  if (existing) {
-    return NextResponse.json({ error: "already linked" }, { status: 409 });
-  }
-
-  const cookieStore = await cookies();
-  cookieStore.set("santet_link", JSON.stringify({ userId: session.user.id, provider }), {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-    maxAge: 60 * 5,
-  });
 
   return NextResponse.json({ ok: true, provider });
 }

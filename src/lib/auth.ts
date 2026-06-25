@@ -1,297 +1,80 @@
-import NextAuth, { type NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import GitHub from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
-import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
-import { Plan, UserRole } from "@/generated/prisma/client";
-import { prisma } from "./db";
-import { generateUsername } from "./reserved";
+import { betterAuth } from "better-auth";
+import type { Session as BaseSession } from "better-auth";
+import { Pool } from "pg";
+import { dash } from "@better-auth/infra";
 
-const sudoGithubUsername = process.env.AUTH_SUDO_GITHUB_USERNAME || "Adinfauzani";
-
-function makeProviderConfig(provider: "github" | "google") {
-  return {
-    allowDangerousEmailAccountLinking: true,
-  };
+export interface AuthUser {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  name: string;
+  image?: string | null;
+  username: string;
+  studyProgram: string;
+  semester: number;
+  role: string;
+  plan: string;
+  avatar: string;
+  coverImage: string;
+  bio: string;
+  website: string;
+  location: string;
+  reputationPoints: number;
+  level: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const providers: NonNullable<NextAuthConfig["providers"]> = [
-  Credentials({
-    name: "credentials",
-    credentials: {
-      email: { label: "Email", type: "email" },
-      password: { label: "Password", type: "password" },
-    },
-    async authorize(credentials) {
-      if (!credentials?.email || !credentials?.password) return null;
+export type AuthSession = BaseSession & { user: AuthUser };
 
-      const email = credentials.email as string;
-      const password = credentials.password as string;
-
-      let user = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (user?.password) {
-        const isValid = await bcrypt.compare(password, user.password);
-        if (!isValid) return null;
-      } else {
-        const name = email.split("@")[0];
-        const hashed = await bcrypt.hash(password, 12);
-        user = await prisma.user.create({
-          data: {
-            name,
-            username: generateUsername(name),
-            email,
-            password: hashed,
-            studyProgram: "TI",
-            semester: 1,
-          },
-        });
-      }
-
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        image: user.avatar || null,
-        username: user.username,
-        role: user.role,
-        plan: user.plan,
-      };
-    },
-  }),
-];
-
-if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
-  providers.push(
-    GitHub({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
-      ...makeProviderConfig("github"),
-    }),
-  );
+export async function getAuthSession(headers: Headers): Promise<AuthSession | null> {
+  return auth.api.getSession({ headers }) as Promise<AuthSession | null>;
 }
 
-if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
-  providers.push(
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      ...makeProviderConfig("google"),
-    }),
-  );
-}
+const dbUrl = new URL(process.env.DATABASE_URL!);
+dbUrl.searchParams.set("options", "-c search_path=auth");
 
-function getGithubUsername(profile: unknown) {
-  const profileRecord = profile as { login?: string } | undefined;
-  return typeof profileRecord?.login === "string" ? profileRecord.login : "";
-}
+export const auth = betterAuth({
+  database: new Pool({ connectionString: dbUrl.toString() }),
+  secret: process.env.AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  basePath: "/api/auth",
 
-function getRoleForGithubUser(existingRole?: UserRole | null, githubUsername = "") {
-  if (githubUsername.toLowerCase() === sudoGithubUsername.toLowerCase()) {
-    return UserRole.Sudo;
-  }
-
-  return existingRole || UserRole.User;
-}
-
-function getPlanForRole() {
-  return Plan.Free;
-}
-
-const authConfig: NextAuthConfig = {
-  providers,
-  session: {
-    strategy: "jwt",
-    maxAge: 60 * 60,
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,
   },
-  pages: {
-    signIn: "/login",
-  },
-  cookies: {
-    pkceCodeVerifier: {
-      options: {
-        sameSite: "none",
-        secure: true,
-        httpOnly: true,
-        path: "/",
-        maxAge: 60 * 15,
-      },
+
+  socialProviders: {
+    google: {
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
     },
-    state: {
-      options: {
-        sameSite: "none",
-        secure: true,
-        httpOnly: true,
-        path: "/",
-        maxAge: 60 * 15,
-      },
+    github: {
+      clientId: process.env.AUTH_GITHUB_ID!,
+      clientSecret: process.env.AUTH_GITHUB_SECRET!,
     },
   },
-  callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.type !== "oauth") return true;
 
-      console.log("signIn: oauth callback", { provider: account?.provider, email: user?.email, name: user?.name });
-
-      // ── Check for pending account linking ──
-      if (account.provider === "github" || account.provider === "google") {
-        try {
-          const cookieStore = await cookies();
-          const linkCookie = cookieStore.get("santet_link");
-          if (linkCookie?.value) {
-            const parsed = JSON.parse(linkCookie.value);
-            if (parsed.provider === account.provider && parsed.userId) {
-              await prisma.account.upsert({
-                where: { provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId } },
-                update: {
-                  access_token: account.access_token,
-                  refresh_token: account.refresh_token,
-                  expires_at: account.expires_at,
-                  id_token: account.id_token,
-                },
-                create: {
-                  userId: parsed.userId,
-                  type: account.type,
-                  provider: account.provider,
-                  providerAccountId: account.providerAccountId,
-                  access_token: account.access_token || "",
-                  refresh_token: account.refresh_token,
-                  expires_at: account.expires_at,
-                  token_type: account.token_type,
-                  scope: account.scope,
-                  id_token: account.id_token,
-                  session_state: account.session_state as string | null | undefined,
-                },
-              });
-              cookieStore.set("santet_link", "", { maxAge: 0, path: "/" });
-              return true;
-            }
-          }
-        } catch (e) { console.error("signIn: linking cookie check failed", { provider: account.provider, error: String(e) }); }
-      }
-
-      const email = typeof user.email === "string"
-        ? user.email
-        : typeof profile?.email === "string"
-          ? profile.email
-          : "";
-
-      if (!email) return false;
-
-      const githubUsername = account.provider === "github"
-        ? getGithubUsername(profile)
-        : "";
-      const role = getRoleForGithubUser(undefined, githubUsername);
-      const plan = getPlanForRole();
-
-      const existing = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!existing) {
-        const oauthName = user.name || email.split("@")[0];
-        const username = generateUsername(oauthName);
-        try {
-          await prisma.user.create({
-            data: {
-              name: oauthName,
-              username,
-              email,
-              password: "",
-              studyProgram: "TI",
-              semester: 1,
-              avatar: user.image || "",
-              role,
-              plan,
-            },
-          });
-        } catch (err) {
-          console.error("signIn: prisma.user.create failed", { email, username, oauthName, error: String(err) });
-          return false;
-        }
-      } else if (githubUsername) {
-        await prisma.user.update({
-          where: { email },
-          data: {
-            role,
-            plan,
-          },
-        });
-      }
-
-      const dbUser = existing || await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!dbUser) return false;
-
-      // ── Create/update Account record ──
-      await prisma.account.upsert({
-        where: { provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId } },
-        update: {
-          access_token: account.access_token,
-          refresh_token: account.refresh_token,
-          expires_at: account.expires_at,
-          id_token: account.id_token,
-        },
-        create: {
-          userId: dbUser.id,
-          type: account.type,
-          provider: account.provider,
-          providerAccountId: account.providerAccountId,
-          access_token: account.access_token || "",
-          refresh_token: account.refresh_token,
-          expires_at: account.expires_at,
-          token_type: account.token_type,
-          scope: account.scope,
-          id_token: account.id_token,
-          session_state: account.session_state as string | null | undefined,
-        },
-      });
-
-      user.id = dbUser.id;
-      user.email = dbUser.email;
-      user.name = dbUser.name;
-      user.image = dbUser.avatar || undefined;
-      (user as any).username = dbUser.username;
-
-      console.log("signIn: success", { provider: account?.provider, userId: dbUser.id, username: dbUser.username });
-      return true;
+  user: {
+    additionalFields: {
+      username: { type: "string", required: true, unique: true, input: true },
+      studyProgram: { type: "string", required: true, defaultValue: "TI" },
+      semester: { type: "number", required: true, defaultValue: 1 },
+      role: { type: "string", required: true, defaultValue: "User" },
+      plan: { type: "string", required: true, defaultValue: "Free" },
+      avatar: { type: "string" },
+      coverImage: { type: "string" },
+      bio: { type: "string" },
+      website: { type: "string" },
+      location: { type: "string" },
+      reputationPoints: { type: "number" },
+      level: { type: "string" },
     },
-    async jwt({ token, user }) {
-      const authUser = user as { id?: string; role?: UserRole; plan?: Plan; username?: string | null; image?: string | null } | undefined;
-
-      if (authUser?.id) {
-        token.id = authUser.id;
-      }
-      if (authUser?.role) {
-        token.role = authUser.role;
-      }
-      if (authUser?.plan) {
-        token.plan = authUser.plan;
-      }
-      if (authUser?.username) {
-        token.username = authUser.username;
-      }
-      if (authUser?.image) {
-        token.image = authUser.image;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as UserRole;
-        session.user.plan = token.plan as Plan;
-        session.user.username = token.username as string | null;
-        session.user.image = token.image as string | null;
-      }
-      return session;
-    },
+    modelName: "user",
   },
-};
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+  plugins: [
+    dash(),
+  ],
+});

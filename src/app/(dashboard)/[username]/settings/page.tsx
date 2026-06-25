@@ -1,4 +1,5 @@
-import { auth } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
@@ -16,15 +17,14 @@ export default async function SettingsPage({ params }: Props) {
   const { username } = await params;
   if (isReservedUsername(username) && username !== "settings") notFound();
 
-  const session = await auth();
+  const session = await getAuthSession(await headers());
   if (!session?.user) redirect("/login");
   if (session.user.username !== username) redirect(`/${session.user.username}/settings`);
 
-  const [accounts, user] = await Promise.all([
-    prisma.account.findMany({
-      where: { userId: session.user.id },
-      select: { provider: true },
-    }),
+  const [bAccounts, user] = await Promise.all([
+    prisma.$queryRaw<Array<{ providerId: string }>>`
+      SELECT DISTINCT "providerId" FROM "auth"."account" WHERE "userId" = ${session.user.id}
+    `,
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
@@ -38,18 +38,16 @@ export default async function SettingsPage({ params }: Props) {
         website: true,
         studyProgram: true,
         semester: true,
-        password: true,
       },
     }),
   ]);
 
   if (!user) notFound();
 
-  const linkedProviders = accounts.map((a) => a.provider);
-  const hasPassword = !!(user.password && user.password !== "");
+  const linkedProviders = bAccounts.map((a) => a.providerId);
+  const hasPassword = false;
   const allMethods: string[] = [
     ...linkedProviders,
-    ...(hasPassword ? ["credentials"] : []),
   ];
 
   return (

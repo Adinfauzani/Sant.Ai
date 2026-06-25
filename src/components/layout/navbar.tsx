@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
 import { Menu, X, Bell, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,7 +41,7 @@ export default function Navbar() {
   };
 
   const goToProfile = () => {
-    const username = session?.user?.username;
+    const username = (session?.user as { username?: string } | undefined)?.username;
     if (username) {
       router.push(`/${username}`);
     } else {
@@ -107,10 +107,10 @@ export default function Navbar() {
               </div>
 
               <a
-                href={session?.user?.username ? `/${session.user.username}` : "/login"}
+                href={(session?.user as any)?.username ? `/${(session.user as any).username}` : "/login"}
                 className="flex h-8 w-8 items-center justify-center rounded-md bg-surface text-xs font-semibold text-text hover:opacity-80"
               >
-                {session.user.name?.charAt(0).toUpperCase() ?? "U"}
+                {session?.user?.name?.charAt(0).toUpperCase() ?? "U"}
               </a>
             </>
           )}

@@ -1,11 +1,10 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { prisma } from "./db";
-import { auth, signIn } from "./auth";
+import { getAuthSession } from "./auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { generateUsername } from "./reserved";
 
 const LEVEL_THRESHOLDS = [
   { level: "Beginner", min: 0 },
@@ -45,39 +44,8 @@ async function addContribution(
   });
 }
 
-export async function registerUser(formData: FormData) {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const studyProgram = formData.get("studyProgram") as string;
-  const semester = parseInt(formData.get("semester") as string) || 1;
-
-  const exists = await prisma.user.findUnique({ where: { email } });
-  if (exists) throw new Error("Email already registered");
-
-  const hashed = await bcrypt.hash(password, 12);
-
-  const username = generateUsername(name);
-
-  await prisma.user.create({
-    data: { name, username, email, password: hashed, studyProgram, semester },
-  });
-
-  await signIn("credentials", { email, password, redirect: false });
-  redirect("/profile");
-}
-
-export async function loginUser(formData: FormData) {
-  await signIn("credentials", {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    redirect: false,
-  });
-  redirect("/profile");
-}
-
 export async function createProject(formData: FormData) {
-  const session = await auth();
+  const session = await getAuthSession(await headers());
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const title = formData.get("title") as string;
@@ -120,7 +88,7 @@ export async function createProject(formData: FormData) {
 }
 
 export async function joinProject(projectId: string, role: string) {
-  const session = await auth();
+  const session = await getAuthSession(await headers());
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const user = await prisma.user.findUnique({
@@ -162,7 +130,7 @@ export async function joinProject(projectId: string, role: string) {
 }
 
 export async function completeProject(projectId: string) {
-  const session = await auth();
+  const session = await getAuthSession(await headers());
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const project = await prisma.project.findUnique({
@@ -197,7 +165,7 @@ export async function completeProject(projectId: string) {
 /* ── Ideas actions (removed — Ideas removed from navigation) ── */
 
 export async function addComment(formData: FormData) {
-  const session = await auth();
+  const session = await getAuthSession(await headers());
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const content = formData.get("content") as string;
@@ -213,7 +181,7 @@ export async function addComment(formData: FormData) {
 }
 
 export async function updateProfile(formData: FormData) {
-  const session = await auth();
+  const session = await getAuthSession(await headers());
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const name = formData.get("name") as string;
