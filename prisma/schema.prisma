@@ -19,7 +19,7 @@ model User {
   displayUsername  String?
   studyProgram     String    @default("TI")
   semester         Int       @default(1)
-  role             String    @default("user")
+  role             String    @default("User")
   plan             String    @default("free")
   avatar           String    @default("")
   coverImage       String    @default("")
@@ -28,6 +28,9 @@ model User {
   location         String    @default("")
   reputationPoints Int       @default(0)
   level            String    @default("Beginner")
+  readme           String    @default("")
+  readmeType       String    @default("text")
+  pinnedProjects   String    @default("[]")
   twoFactorEnabled Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt

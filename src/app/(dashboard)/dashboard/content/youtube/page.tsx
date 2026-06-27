@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, ChevronLeft, ChevronRight, Play, Film } from "lucide-react";
 import { Card } from "../../_components";
 import { fetchYouTube, type YouTubeItem } from "@/lib/data";
-import { YouTubeEmbed } from "@/components/shared/youtube-embed";
-import { usePolling } from "@/lib/use-polling";
+import { YouTubeEmbed } from "@/components/shared/youtubeEmbed";
+import { usePolling } from "@/lib/usePolling";
 
 function fmtDate(d: string) {
   return d ? new Date(d).toLocaleDateString("id-ID") : "";

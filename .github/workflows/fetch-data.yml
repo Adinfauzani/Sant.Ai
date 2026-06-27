@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Fetch GNews + YouTube
         run: |
-          curl -sf "https://${{ vars.DOMAIN || 'santet.vercel.app' }}/api/cron/fetch-all?lang=id&country=id" || echo "fetch failed"
+          curl -sf "https://${{ vars.DOMAIN || 'sainstech.vercel.app' }}/api/cron/fetch-all?lang=id&country=id" || echo "fetch failed"

@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Card } from "./_components";
 import { fetchDashboardStats, defaultStats, fetchArticles, fetchYouTube } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 const COLORS = ["#2563eb", "#8b5cf6", "#f59e0b", "#10b981", "#ef4444", "#06b6d4", "#ec4899"];
 

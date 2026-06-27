@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import ProfileHeader from "@/components/profile/profile-header";
-import ProfileTabs from "@/components/profile/profile-tabs";
+import ProfileHeader from "@/components/profile/profileHeader";
+import ProfileTabs from "@/components/profile/profileTabs";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isReservedUsername } from "@/lib/reserved";
@@ -45,7 +45,7 @@ export default async function ProfileLayout({ params, children }: Props) {
     <>
       <ProfileHeader user={user} isOwner={isOwner} />
       <ProfileTabs username={username} />
-      <div className="mt-6">{children}</div>
+      {children}
     </>
   );
 }

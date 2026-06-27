@@ -46,17 +46,11 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    autoSignIn: false,
+    requireEmailVerification: true,
     async sendResetPassword(data, request) {
       await sendPasswordResetEmail(data.user.email, data.url);
     },
-  },
-
-  emailVerification: {
-    sendVerificationEmail: async (data, request) => {
-      await sendVerificationEmail(data.user.email, data.url);
-    },
-    autoSignInAfterVerification: true,
   },
 
   socialProviders: {
@@ -81,7 +75,7 @@ export const auth = betterAuth({
     additionalFields: {
       studyProgram: { type: "string", required: true, defaultValue: "TI" },
       semester: { type: "number", required: true, defaultValue: 1 },
-      role: { type: "string", required: true, defaultValue: "user" },
+      role: { type: "string", required: true, defaultValue: "User" },
       plan: { type: "string", required: true, defaultValue: "free" },
       avatar: { type: "string" },
       coverImage: { type: "string" },
@@ -117,7 +111,7 @@ export const auth = betterAuth({
           if (isSudo) {
             await prisma.user.update({
               where: { id: account.userId },
-              data: { role: "sudo" },
+              data: { role: "Sudo" },
             });
           }
         },

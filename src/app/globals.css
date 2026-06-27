@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "highlight.js/styles/github-dark.css" layer(highlight);
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,20 +9,26 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   --color-background: #fff;
-  --color-surface: #f8f9fb;
-  --color-border: #e4e6ea;
+  --color-surface: #f4f5f7;
+  --color-border: #e2e4e9;
   --color-primary: #4f46e5;
+  --color-primary-soft: #4f46e508;
   --color-text: #18181b;
-  --color-muted: #71717a;
+  --color-muted: #8b8b93;
+  --color-accent: #06b6d4;
+  --color-ring: #4f46e520;
 }
 
 .dark {
-  --color-background: #09090b;
-  --color-surface: #111113;
-  --color-border: #27272a;
+  --color-background: #08080c;
+  --color-surface: #0e0e14;
+  --color-border: #1e1e26;
   --color-primary: #6366f1;
-  --color-text: #fafafa;
-  --color-muted: #a1a1aa;
+  --color-primary-soft: #6366f108;
+  --color-text: #efeff1;
+  --color-muted: #8b8b93;
+  --color-accent: #22d3ee;
+  --color-ring: #6366f120;
 }
 
 @theme {
@@ -33,8 +40,11 @@
   --color-surface: var(--color-surface);
   --color-border: var(--color-border);
   --color-primary: var(--color-primary);
+  --color-primary-soft: var(--color-primary-soft);
   --color-text: var(--color-text);
   --color-muted: var(--color-muted);
+  --color-accent: var(--color-accent);
+  --color-ring: var(--color-ring);
 }
 
 * {
@@ -98,6 +108,15 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 36rem;
 }
 
+@utility card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-ring);
+}
+
 .article-content p {
   color: var(--color-muted);
   font-size: 0.8125rem;
@@ -106,4 +125,233 @@ h1, h2, h3, h4, h5, h6 {
 
 .article-content p + p {
   margin-top: 1rem;
+}
+
+/* ─── GitHub README Compatibility Layer ─── */
+.github-readme {
+  max-width: none;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.github-readme > *:first-child { margin-top: 0; }
+.github-readme > *:last-child { margin-bottom: 0; }
+
+.github-readme p {
+  margin-block: 0.75rem;
+}
+
+.github-readme h1,
+.github-readme h2,
+.github-readme h3,
+.github-readme h4,
+.github-readme h5,
+.github-readme h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+.github-readme h1 { font-size: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.3rem; }
+.github-readme h2 { font-size: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.25rem; }
+.github-readme h3 { font-size: 1.125rem; }
+.github-readme h4 { font-size: 1rem; }
+.github-readme h5,
+.github-readme h6 { font-size: 0.875rem; }
+
+.github-readme img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.github-readme img[align="center"],
+.github-readme p[align="center"] img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.github-readme img[align="right"] { float: right; margin-left: 1rem; margin-bottom: 0.5rem; }
+.github-readme img[align="left"] { float: left; margin-right: 1rem; margin-bottom: 0.5rem; }
+
+.github-readme a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.github-readme a:hover { text-decoration: underline; }
+
+.github-readme hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.github-readme ul,
+.github-readme ol {
+  padding-left: 2rem;
+  margin-block: 0.75rem;
+}
+.github-readme ul { list-style-type: disc; }
+.github-readme ol { list-style-type: decimal; }
+.github-readme li { margin-block: 0.25rem; }
+.github-readme li > ul,
+.github-readme li > ol { margin-block: 0; }
+
+.github-readme blockquote {
+  margin-block: 0.75rem;
+  padding: 0.25rem 1rem;
+  border-left: 3px solid var(--color-primary);
+  color: var(--color-muted);
+  background: var(--color-primary-soft);
+  border-radius: 0 6px 6px 0;
+}
+
+.github-readme pre {
+  margin-block: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  -webkit-overflow-scrolling: touch;
+}
+.github-readme pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  border: none;
+}
+
+.github-readme code {
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  background: var(--color-surface);
+  font-size: 0.8125em;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+}
+
+.github-readme table {
+  display: block;
+  max-width: 100%;
+  width: max-content;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin-block: 1rem;
+  font-size: 0.8125rem;
+  -webkit-overflow-scrolling: touch;
+}
+.github-readme table th,
+.github-readme table td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+.github-readme table th {
+  background: var(--color-surface);
+  font-weight: 600;
+}
+.github-readme table tr:nth-child(even) td {
+  background: var(--color-primary-soft);
+}
+
+.github-readme input[type="checkbox"] {
+  margin-right: 0.375rem;
+  accent-color: var(--color-primary);
+  transform: scale(1.1);
+}
+
+.github-readme details {
+  margin-block: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.github-readme summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.github-readme details[open] summary {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.github-readme .highlight {
+  background: transparent;
+}
+
+.github-readme p > img:only-child,
+.github-readme p > a:only-child > img:only-child {
+  display: block;
+}
+
+.github-readme svg {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.github-readme p > a[href*="shields.io"] img,
+.github-readme p > img[src*="shields.io"] {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0.125rem 0.125rem;
+}
+
+.github-readme p > a[href*="github-readme-stats"] img,
+.github-readme p > img[src*="github-readme-stats"],
+.github-readme p > a[href*="github-profile-trophy"] img,
+.github-readme p > img[src*="github-profile-trophy"] {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.github-readme br {
+  content: "";
+  display: block;
+  margin: 0.25rem 0;
+}
+
+@keyframes github-readme-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.github-readme {
+  animation: github-readme-fade-in 0.3s ease-out;
+}
+
+@media (max-width: 767px) {
+  .github-readme {
+    font-size: 0.8125rem;
+  }
+  .github-readme pre {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+  .github-readme h1 { font-size: 1.25rem; }
+  .github-readme h2 { font-size: 1.125rem; }
+  .github-readme h3 { font-size: 1rem; }
+  .github-readme table { font-size: 0.75rem; }
+  .github-readme img[align="right"],
+  .github-readme img[align="left"] {
+    float: none;
+    display: block;
+    margin: 0.75rem auto;
+  }
+}
+
+@media (max-width: 767px) {
+  main {
+    padding-bottom: 5rem;
+  }
 }

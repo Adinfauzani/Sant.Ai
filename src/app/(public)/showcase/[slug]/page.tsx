@@ -4,7 +4,7 @@ import { ArrowLeft, Eye, Heart, TrendingUp, Github, ExternalLink, Users, CheckCi
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import { showcaseProjects, type ShowcaseDetail } from "@/data/showcase-projects";
+import { showcaseProjects, type ShowcaseDetail } from "@/data/showcaseProjects";
 
 export function generateStaticParams() {
   return showcaseProjects.map((p) => ({ slug: p.slug }));

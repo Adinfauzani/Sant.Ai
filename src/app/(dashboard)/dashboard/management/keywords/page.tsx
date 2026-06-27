@@ -5,7 +5,7 @@ import { Plus, Edit3, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
 import { fetchKeywords, type KeywordItem } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 export default function MgmtKeywordsPage() {
   const [items, setItems] = useState<KeywordItem[]>([]);

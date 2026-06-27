@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Link2, Link2Off, Loader2, Github, Mail } from "lucide-react";

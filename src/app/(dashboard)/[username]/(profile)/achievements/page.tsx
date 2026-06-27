@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Award, Users, GitBranch, Activity, Star, Target } from "lucide-react";
-import BadgeItem from "@/components/profile/badge-item";
+import BadgeItem from "@/components/profile/badgeItem";
 import { prisma } from "@/lib/db";
 import { isReservedUsername } from "@/lib/reserved";
 

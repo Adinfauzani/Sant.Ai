@@ -3,11 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { BookOpen, Play } from "lucide-react";
-import { YouTubeEmbed } from "@/components/shared/youtube-embed";
+import { YouTubeEmbed } from "@/components/shared/youtubeEmbed";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
 import { fetchArticles, fetchYouTube, fetchDashboardStats, ArticleItem, YouTubeItem } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 function fmtDate(d: string) {
   return d ? d.split("T")[0] : "";

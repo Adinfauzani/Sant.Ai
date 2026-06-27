@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.5.0] — 2026-06-27
+
+### Added
+- **3-column developer portfolio layout** — sidebar (288px, sticky) + main (flex-1) + right panel (240px)
+  - `profile-sidebar.tsx`: responsive avatar (`size-24`/`md:size-56`/`lg:size-72`), bio, meta, followers/following, org badge
+  - `profile-reputation.tsx`: animated XP Progress bar, level threshold colors, streak, weekly/monthly trends
+  - `profile-badges.tsx`: Radix HoverCard badge pills with description + earned/locked status
+  - `profile-tech-stack.tsx`: tech pills with logo abbreviation + Radix Tooltip
+  - `profile-statistics.tsx`: 2-column stat dashboard cards (reputation, projects, contributions, ideas, teams)
+  - `profile-activity-timeline.tsx`: IntersectionObserver fade-in + staggered delay, points badge
+  - `profile-community-card.tsx`: community list cards with role badge, member count
+- `.github-readme` CSS styling layer (~180 lines in `globals.css`) — covers headings, tables, images, code, blockquotes, lists, details/summary, shields.io badges, GitHub stats cards, SVG, alignment attributes, mobile overrides, fade-in
+- **Radix UI shadcn-style wrappers**: `tabs.tsx`, `tooltip.tsx`, `avatar.tsx`, `scroll-area.tsx`, `separator.tsx`
+- **Premium design tokens**: `--color-primary-soft`, `--color-accent`, `--color-ring`, `card-hover` utility
+- **Project documentation**: `SECURITY.md`, `COLLABORATION.md`, `SETUP.md`
+- **Apache 2.0 license** with `Copyright 2025 Adin Fauzan`
+
+### Changed
+- **License: MIT → Apache 2.0** — OSI-approved open source, mandatory attribution, patent protection
+- **All hyphenated filenames → camelCase** (49 files): every `kebab-case` file renamed to `camelCase`
+  - 2-word files: `login-form` → `loginForm`, `register-form` → `registerForm`, `auth-client` → `authClient`, etc.
+  - 3+ word files simplified to 2 words: `profile-activity-timeline` → `activityTimeline`, `profile-community-card` → `communityCard`, `profile-tech-stack` → `techStack`, `how-it-works` → `guideSection`, `how-it-works-carousel` → `guideCarousel`, `project-card-with-pin` → `pinnedCard`
+  - Component exports renamed to match: `ProfileActivityTimeline` → `ActivityTimeline`, `ProfileCommunityCard` → `CommunityCard`, `ProfileTechStack` → `TechStack`, `ProjectCardWithPin` → `PinnedCard`, `HowItWorks` → `GuideSection`, `HowItWorksCarousel` → `GuideCarousel`
+  - All imports updated across entire codebase
+- **Role names capitalized**: `"user"` → `"User"` (default), `"sudo"` → `"Sudo"`; full roles: `Sudo`, `Admin`, `Riset`, `User`, `Collab`
+- **CHECK constraint** added on `auth.user.role` — hanya menerima: `Sudo`, `Admin`, `Riset`, `User`, `Collab`
+- **Column type** `text` → `user_role` (PostgreSQL ENUM) — dropdown pilihan di Neon Console
+- **Profile layout** (`layout.tsx`): simplified header (cover + name + settings), Radix ScrollArea tabs for horizontal mobile scrolling
+- **Profile header**: avatar/bio/reputation removed (moved to sidebar); settings icon only next to name
+- **Profile overview** (`page.tsx`): three-column layout with all sections wired (sidebar, contribution graph, streak, pinned, README, activity, featured, statistics, communities)
+- **Settings form** (`_edit-profile.tsx`): bio textarea re-added + collapsed README with `ChevronDown`
+- **`_markdown-editor.tsx` & `profile-readme.tsx`**: removed `{...props}` spread from all component overrides; switched to `.github-readme` CSS class; added `details`/`summary`/`input[type=checkbox]` components
+- **`layout.tsx`**: `<Script>` moved from `<head>` to `<body>` (Next.js 16 requirement)
+- **rehype plugin order**: `[rehypeRaw, rehypeHighlight]` — raw HTML parsed first, then syntax highlighting; `{...props}` removed from component overrides
+
+### Fixed
+- Next.js 16 "Encountered a script tag" error — `<Script>` must be in `<body>`
+- Syntax highlighting broken by `rehype-raw` + `{...props}` spread — reorder to `[rehypeRaw, rehypeHighlight]`, remove spread
+- GitHub README rendering: all styling delegated to `.github-readme` CSS class instead of per-component overrides
+
+### Removed
+- `src/components/profile/` unused files (consolidated into sidebar-based architecture)
+
 ## [0.4.0] — 2026-06-26
 
 ### Breaking
@@ -61,6 +104,8 @@
 - **Settings page**: + email change form, + logout section
 - **`EditProfileForm`**: real-time username availability indicator (checkmark/cross + debounce)
 - **`_verification.tsx`**: expandable form untuk change email
+- **Register flow**: 2-step — Step 1 OAuth only (GitHub/Google), Step 2 profile (username, program, semester). Email/password removed. Auto-detect new OAuth user via auto-generated username pattern.
+- **Navbar**: removed "Sign in" button, only "Get started" remains
 
 ## [0.3.1] — 2026-06-26
 

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, authClient } from "@/lib/auth-client";
+import { useSession, authClient } from "@/lib/authClient";
 import { generateUsername } from "@/lib/reserved";
 
 export default function ProfileRedirect() {

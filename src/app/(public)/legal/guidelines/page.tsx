@@ -6,7 +6,7 @@ import { ChevronDown, Copy, Link2, Heart, Lightbulb, Rocket, ShieldCheck } from 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { getStorage, setStorage } from "@/lib/storage";
-import { LegalBackButton } from "@/components/legal/legal-card";
+import { LegalBackButton } from "@/components/legal/legalCard";
 
 const languages = ["English", "Bahasa Indonesia"];
 

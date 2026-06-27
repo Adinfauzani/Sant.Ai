@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { backfillArticleImages } from "@/lib/og-image";
+import { backfillArticleImages } from "@/lib/ogImage";
 
 export async function GET() {
   const result = await backfillArticleImages(20);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "@/components/shared/theme-provider";
+import { useTheme } from "@/components/shared/themeProvider";
 import { Sun, Moon, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 

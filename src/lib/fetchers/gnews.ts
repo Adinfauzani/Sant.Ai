@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { classifyArticle, detectSentiment } from "@/lib/classifier";
-import { scrapeOgImage } from "@/lib/og-image";
+import { scrapeOgImage } from "@/lib/ogImage";
 
 const GNEWS_HEADLINES = "https://gnews.io/api/v4/top-headlines";
 const GNEWS_SEARCH = "https://gnews.io/api/v4/search";

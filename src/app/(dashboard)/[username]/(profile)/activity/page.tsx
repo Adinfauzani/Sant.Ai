@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Activity, Users, Award, GitBranch } from "lucide-react";
-import ActivityItem from "@/components/profile/activity-item";
+import ActivityItem from "@/components/profile/activityItem";
 import { prisma } from "@/lib/db";
 import { isReservedUsername } from "@/lib/reserved";
 

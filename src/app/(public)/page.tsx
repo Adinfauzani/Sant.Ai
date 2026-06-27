@@ -3,8 +3,8 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
-import HowItWorksCarousel from "@/components/shared/how-it-works-carousel";
-import ProgramCarousel from "@/components/shared/program-carousel";
+import GuideCarousel from "@/components/shared/guideCarousel";
+import ProgramCarousel from "@/components/shared/programCarousel";
 
 export default function HomePage() {
   return (
@@ -67,7 +67,7 @@ export default function HomePage() {
                 A simple workflow that turns your project ideas into real impact.
               </p>
             </div>
-            <HowItWorksCarousel />
+            <GuideCarousel />
           </div>
         </section>
 

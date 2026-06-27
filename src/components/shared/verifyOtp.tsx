@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { authClient, useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/authClient";
 import { Loader2, Terminal } from "lucide-react";
 
 interface Props {

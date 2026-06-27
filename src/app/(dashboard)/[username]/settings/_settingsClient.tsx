@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { User, Link2, Shield, Palette, KeyRound, BadgeCheck, ChevronLeft, LogOut } from "lucide-react";
-import EditProfileForm from "./_edit-profile";
-import LinkedAccountsSection from "./_linked-accounts";
+import EditProfileForm from "./_editProfile";
+import LinkedAccountsSection from "./_linkedAccounts";
 import VerificationSection from "./_verification";
-import TwoFactorSection from "./_two-factor";
-import SetPasswordForm from "./_set-password";
+import TwoFactorSection from "./_twoFactor";
+import SetPasswordForm from "./_setPassword";
 import AppearanceSection from "./_appearance";
-import LogoutButton from "@/components/profile/logout-button";
+import LogoutButton from "@/components/profile/logoutButton";
 
 const tabs = [
   { id: "profile", label: "Profile", icon: User },
@@ -38,6 +38,7 @@ interface Props {
     location: string;
     studyProgram: string;
     semester: number;
+    readme: string;
   };
   twoFactorEnabled: boolean;
 }

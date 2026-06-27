@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { classifyArticle, detectSentiment } from "@/lib/classifier";
-import { scrapeOgImage } from "@/lib/og-image";
+import { scrapeOgImage } from "@/lib/ogImage";
 import { XMLParser } from "fast-xml-parser";
 
 const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_" });

@@ -9,7 +9,7 @@ const items = [
   { step: "03", title: "Ship and earn", desc: "Complete the project, build your portfolio, and earn reputation in the ecosystem.", icon: Sparkles, color: "from-purple-600 to-violet-500", cover: "from-purple-600/20 to-violet-400/10" },
 ];
 
-export default function HowItWorksCarousel() {
+export default function GuideCarousel() {
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);

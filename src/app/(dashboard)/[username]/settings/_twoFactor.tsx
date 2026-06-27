@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
 import { Shield, ShieldCheck, Loader2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";

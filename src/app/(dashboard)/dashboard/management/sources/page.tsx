@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
 import { fetchSources, type SourceItem } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 export default function MgmtSourcesPage() {
   const [items, setItems] = useState<SourceItem[]>([]);

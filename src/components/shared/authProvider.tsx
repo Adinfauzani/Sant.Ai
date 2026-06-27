@@ -24,7 +24,7 @@ function SessionTimeoutManager() {
       const lastActive = Number(getStorage("last-active") || Date.now());
       if (lastActive && Date.now() - lastActive >= SESSION_TIMEOUT) {
         setStorage("last-active", "");
-        import("@/lib/auth-client").then(({ signOut }) => {
+        import("@/lib/authClient").then(({ signOut }) => {
           signOut().then(() => {
             toast.error("Sesi telah habis. Silakan login kembali.");
             router.push("/login");

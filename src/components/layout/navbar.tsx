@@ -3,12 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/authClient";
 import { usePathname } from "next/navigation";
 import { Menu, X, Bell, Sun, Moon, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/components/shared/theme-provider";
+import { useTheme } from "@/components/shared/themeProvider";
+import MobileNav from "@/components/layout/mobileNav";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -124,9 +125,6 @@ export default function Navbar() {
 
           {!session?.user && (
             <div className="hidden items-center gap-1.5 sm:flex">
-              <Link href="/login">
-                <Button variant="ghost" size="sm" className="h-8 px-3 text-xs">Sign in</Button>
-              </Link>
               <Link href="/register">
                 <Button size="sm" className="h-8 px-3 text-xs">Get started</Button>
               </Link>
@@ -173,9 +171,6 @@ export default function Navbar() {
             </nav>
             {!session?.user && (
               <div className="mt-6 flex flex-col gap-2">
-                <Link href="/login" onClick={() => setMobileOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full text-xs">Sign in</Button>
-                </Link>
                 <Link href="/register" onClick={() => setMobileOpen(false)}>
                   <Button size="sm" className="w-full text-xs">Get started</Button>
                 </Link>
@@ -184,6 +179,8 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      <MobileNav />
     </header>
   );
 }

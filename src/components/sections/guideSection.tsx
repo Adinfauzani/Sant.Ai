@@ -57,7 +57,7 @@ function FeatureCard({ f, index }: { f: typeof features[number]; index: number }
   );
 }
 
-export default function HowItWorks() {
+export default function GuideSection() {
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
 

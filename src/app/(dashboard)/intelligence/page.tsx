@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { fetchDashboardStats, fetchArticles, defaultStats, type ArticleItem } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 function stripHtml(s: string): string {
   return s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();

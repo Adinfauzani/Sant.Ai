@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LegalHomeButton } from "@/components/legal/legal-card";
+import { LegalHomeButton } from "@/components/legal/legalCard";
 
 const legalNav = [
   { label: "Terms of Service", href: "/legal/terms" },

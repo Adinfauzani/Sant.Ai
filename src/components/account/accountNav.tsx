@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/authClient";
 import { User, Shield, Palette, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 

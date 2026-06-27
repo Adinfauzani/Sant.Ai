@@ -18,14 +18,14 @@ const resourceLinks = [
 ];
 
 const communityLinks = [
-  { label: "GitHub", href: "#" },
+  { label: "GitHub", href: "https://github.com/Adinfauzani/Sant.Ai" },
   { label: "Discord", href: "#" },
   { label: "Instagram", href: "#" },
   { label: "YouTube", href: "#" },
 ];
 
 const socialLinks = [
-  { label: "GitHub", href: "#", icon: Globe },
+  { label: "GitHub", href: "https://github.com/Adinfauzani/Sant.Ai", icon: Globe },
   { label: "Discord", href: "#", icon: Globe },
   { label: "Instagram", href: "#", icon: Instagram },
   { label: "YouTube", href: "#", icon: Youtube },

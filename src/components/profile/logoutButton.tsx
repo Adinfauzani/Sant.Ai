@@ -1,6 +1,6 @@
 "use client";
 
-import { signOut } from "@/lib/auth-client";
+import { signOut } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 

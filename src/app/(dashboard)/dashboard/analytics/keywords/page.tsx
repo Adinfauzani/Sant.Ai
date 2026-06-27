@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "../../_components";
 import { fetchKeywords, fetchArticles, KeywordItem } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 function CT({ active, payload, label }: any) {
   if (!active || !payload) return null;

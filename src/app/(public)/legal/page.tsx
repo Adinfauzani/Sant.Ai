@@ -1,5 +1,5 @@
-import { LegalLayout } from "@/components/legal/legal-layout";
-import { LegalCard } from "@/components/legal/legal-card";
+import { LegalLayout } from "@/components/legal/legalLayout";
+import { LegalCard } from "@/components/legal/legalCard";
 
 export default function LegalPage() {
   return (

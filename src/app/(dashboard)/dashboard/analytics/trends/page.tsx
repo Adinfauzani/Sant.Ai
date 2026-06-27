@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "../../_components";
 import { fetchArticles, fetchDashboardStats, defaultStats } from "@/lib/data";
-import { usePolling } from "@/lib/use-polling";
+import { usePolling } from "@/lib/usePolling";
 
 const COLORS = ["#2563eb", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
 

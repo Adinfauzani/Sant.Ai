@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { Toaster } from "sonner";
-import AuthProvider from "@/components/shared/auth-provider";
-import FirebaseProvider from "@/components/shared/firebase-provider";
-import ThemeProvider from "@/components/shared/theme-provider";
+import AuthProvider from "@/components/shared/authProvider";
+import FirebaseProvider from "@/components/shared/firebaseProvider";
+import ThemeProvider from "@/components/shared/themeProvider";
 import "./globals.css";
 
 const bodyFont = localFont({
@@ -38,12 +39,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning className={`${bodyFont.variable} ${headingFont.variable}`}>
-      <head>
-        <script dangerouslySetInnerHTML={{
-          __html: `(function(){try{var t=localStorage.getItem("sant-ai:theme");if(t==="dark"||(t!="light"&&matchMedia("(prefers-color-scheme:dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`,
-        }} />
-      </head>
       <body>
+        <Script src="/scripts/theme-init.js" strategy="beforeInteractive" async />
         <ThemeProvider>
           <AuthProvider>
             <FirebaseProvider>{children}</FirebaseProvider>

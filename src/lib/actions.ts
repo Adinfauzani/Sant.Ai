@@ -194,6 +194,7 @@ export async function updateProfile(formData: FormData) {
   const avatar = (formData.get("avatar") as string) || "";
   const website = formData.get("website") as string;
   const location = formData.get("location") as string;
+  const readme = formData.get("readme") as string;
 
   if (!isValidUsername(username)) {
     throw new Error("Username must be 2-30 characters, letters/numbers/hyphens/underscores only.");
@@ -208,8 +209,46 @@ export async function updateProfile(formData: FormData) {
     headers: await headers(),
   });
 
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: {
+      readme: readme ?? "",
+      readmeType: "markdown",
+    },
+  });
+
   const oldUsername = session.user.username;
   if (oldUsername) revalidatePath(`/${oldUsername}`);
   revalidatePath(`/${username}`);
   revalidatePath("/dashboard");
+}
+
+export async function togglePinProject(projectId: string) {
+  const session = requireEmailVerified(await getAuthSession(await headers()));
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { pinnedProjects: true },
+  });
+  if (!user) throw new Error("User not found");
+
+  let pinned: string[] = [];
+  try {
+    pinned = JSON.parse(user.pinnedProjects || "[]");
+  } catch { /* ignore */ }
+
+  const index = pinned.indexOf(projectId);
+  if (index === -1) {
+    pinned.push(projectId);
+  } else {
+    pinned.splice(index, 1);
+  }
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { pinnedProjects: JSON.stringify(pinned) },
+  });
+
+  revalidatePath(`/${session.user.username}`);
+  revalidatePath(`/${session.user.username}/projects`);
 }
