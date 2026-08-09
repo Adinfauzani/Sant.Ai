@@ -26,6 +26,7 @@
     }
   },
   "scripts": {
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
