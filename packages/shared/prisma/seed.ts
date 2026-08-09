@@ -4,7 +4,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-config({ path: resolve(process.cwd(), "../../apps/web/.env") });
+config({ path: resolve(process.cwd(), "../../apps/server/.env") });
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);

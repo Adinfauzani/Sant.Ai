@@ -19,8 +19,9 @@ cd Santet
 # 2. Install dependencies
 pnpm install
 
-# 3. Copy environment variables into apps/web/.env
-cp apps/web/.env.example apps/web/.env   # (create .env.example from SETUP.md if missing)
+# 3. Copy environment variables (one file per app)
+cp apps/web/.env.example apps/web/.env
+cp apps/server/.env.example apps/server/.env
 
 # 4. Fill in .env (see Environment Variables below)
 
@@ -38,44 +39,67 @@ The web app runs at `http://localhost:3000` and the API/auth server at `http://l
 
 ## Environment Variables
 
-Single `.env` file lives in `apps/web/.env`. The server, Prisma CLI, and seed scripts load it explicitly.
+Env files are split per app. Both files are gitignored; `.env.example` is committed.
+
+### `apps/web/.env` (frontend — auto-loaded by Next.js)
 
 ```env
-# Database
-DATABASE_URL="postgresql://..."
-DATABASE_URL_UNPOOLED="postgresql://..."
-
-# Better Auth
-BETTER_AUTH_SECRET="..."
-# URL where the auth API server is mounted (apps/server)
-BETTER_AUTH_URL="http://localhost:3001"
-# URL the web auth client targets (same server)
-NEXT_PUBLIC_AUTH_API_URL="http://localhost:3001"
-# Public web origin
+# Public URLs (exposed to client)
 NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+NEXT_PUBLIC_AUTH_API_URL="http://localhost:3001"
 
-# Resend (email)
-RESEND_API_KEY="re_..."
-
-# GitHub / Google OAuth (optional)
-AUTH_GITHUB_ID="..."
-AUTH_GITHUB_SECRET="..."
-AUTH_GOOGLE_ID="..."
-AUTH_GOOGLE_SECRET="..."
-
-# GNews (news feed) / YouTube (video feed) / Linear
-GNEWS_API_KEY="..."
-YOUTUBE_API_KEY="..."
-LINEAR_API_KEY="..."
-
-# Firebase (optional, for additional auth)
+# Firebase (client-only, optional)
 NEXT_PUBLIC_FIREBASE_API_KEY="..."
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="..."
 NEXT_PUBLIC_FIREBASE_PROJECT_ID="..."
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="..."
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="..."
 NEXT_PUBLIC_FIREBASE_APP_ID="..."
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="..."
+
+# Better Auth Sentinel (client, optional)
+NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL="..."
+
+# External data APIs (cron fetchers run inside this app)
+GNEWS_API_KEY="..."
+YOUTUBE_API_KEY="..."
+LINEAR_API_KEY="..."
+
+# --- Server-side secrets — MUST mirror apps/server/.env ---
+# The web hosts an in-process Better Auth instance (Server Actions, proxy,
+# /api/auth/[...all] fallback) and Prisma, so it needs the same credentials.
+DATABASE_URL="postgresql://..."
+DATABASE_URL_UNPOOLED="postgresql://..."
+BETTER_AUTH_SECRET="..."
+BETTER_AUTH_URL="http://localhost:3001"
+RESEND_API_KEY="re_..."
+AUTH_GITHUB_ID="..."
+AUTH_GITHUB_SECRET="..."
+AUTH_GOOGLE_ID="..."
+AUTH_GOOGLE_SECRET="..."
 ```
+
+### `apps/server/.env` (backend — loaded via `tsx --env-file=.env`)
+
+```env
+SERVER_PORT="3001"
+BETTER_AUTH_URL="http://localhost:3001"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+
+DATABASE_URL="postgresql://..."
+DATABASE_URL_UNPOOLED="postgresql://..."
+BETTER_AUTH_SECRET="..."
+RESEND_API_KEY="re_..."
+AUTH_GITHUB_ID="..."
+AUTH_GITHUB_SECRET="..."
+AUTH_GOOGLE_ID="..."
+AUTH_GOOGLE_SECRET="..."
+BETTER_AUTH_API_KEY="..."   # optional, Better Auth dashboard
+```
+
+> **Important:** `BETTER_AUTH_SECRET` must be identical in both files, otherwise
+> sessions signed by the server will be rejected by the web's in-process auth
+> (and vice versa). `DATABASE_URL`/OAuth/Resend are also duplicated for the same reason.
 
 ---
 

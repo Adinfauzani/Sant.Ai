@@ -2,7 +2,7 @@ import { config } from "dotenv";
 import { resolve } from "node:path";
 import { defineConfig } from "prisma/config";
 
-config({ path: resolve(process.cwd(), "../../apps/web/.env") });
+config({ path: resolve(process.cwd(), "../../apps/server/.env") });
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

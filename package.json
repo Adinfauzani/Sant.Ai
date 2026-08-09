@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --parallel --filter @santai/web --filter @santai/server run dev",
-    "build": "pnpm --filter @santai/shared run db:generate && pnpm --filter @santai/web run build",
+    "build": "pnpm --filter @santai/web run build",
     "start": "pnpm --filter @santai/web run start",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",

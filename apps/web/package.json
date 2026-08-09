@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build",
+    "build": "pnpm --filter @santai/shared run db:generate && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"

@@ -21,6 +21,13 @@ if (!process.env.BETTER_AUTH_SECRET) {
     throw new Error("BETTER_AUTH_SECRET is not set");
 }
 
+const rateLimitWindowMs = Number(
+    process.env.RATE_LIMIT_WINDOW_MS ?? 60_000,
+);
+const rateLimitMax = Number(
+    process.env.RATE_LIMIT_MAX_REQUESTS ?? 100,
+);
+
 const auth = createAuth({
     secret: process.env.BETTER_AUTH_SECRET,
     baseURL: serverURL,
@@ -39,13 +46,22 @@ app.use("*", securityHeaders);
  */
 app.use("*", trustedProxy);
 
+const allowedOrigins = [webOrigin];
+
+if (process.env.NODE_ENV !== "production") {
+    allowedOrigins.push(
+        "http://localhost:3000",
+        "http://localhost:3001",
+    );
+}
+
 /**
  * CORS
  */
 app.use(
     "/api/*",
     cors({
-        origin: webOrigin,
+        origin: allowedOrigins,
         credentials: true,
         allowMethods: [
             "GET",
@@ -68,8 +84,8 @@ app.use(
 app.use(
     "/api/*",
     rateLimit({
-        windowMs: 60_000,
-        limit: 100,
+        windowMs: rateLimitWindowMs,
+        limit: rateLimitMax,
     }),
 );
 

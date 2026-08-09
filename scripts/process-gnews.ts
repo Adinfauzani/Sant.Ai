@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import { resolve } from "node:path";
+config({ path: resolve(process.cwd(), "apps/server/.env") });
 config({ path: resolve(process.cwd(), "apps/web/.env") });
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
