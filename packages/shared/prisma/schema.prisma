@@ -16,6 +16,7 @@ model User {
   emailVerified    Boolean       @default(false)
   password         String?
   username         String        @unique
+  displayUsername  String?
   name             String
   image            String?
   role             String    @default("user")

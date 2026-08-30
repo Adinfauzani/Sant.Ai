@@ -17,6 +17,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [mode, setMode] = useState<"password" | "otp" | "verify">("password");
+  const [verifyType, setVerifyType] = useState<"email-verification" | "sign-in">("email-verification");
 
   useEffect(() => {
     const user = session?.user as { username?: string; emailVerified?: boolean } | undefined;
@@ -34,12 +35,13 @@ export default function LoginForm() {
     if (err) {
       const status = (err as any)?.status;
       if (status === 403) {
+        setVerifyType("email-verification");
         await authClient.emailOtp.sendVerificationOtp({ email, type: "email-verification" } as any);
         setMode("verify");
         setLoading(false);
         return;
       }
-      setError("Invalid email or password");
+      setError("Email atau kata sandi salah");
       setLoading(false);
       return;
     }
@@ -49,21 +51,39 @@ export default function LoginForm() {
   async function handleSendOTP() {
     setLoading(true);
     setError("");
+    setVerifyType("sign-in");
     const { error: err } = await authClient.emailOtp.sendVerificationOtp({ email, type: "sign-in" });
-    if (err) { setError(err.message || "Failed to send OTP"); setLoading(false); return; }
+    if (err) { setError(err.message || "Gagal mengirim kode OTP"); setLoading(false); return; }
     setLoading(false);
     setMode("verify");
   }
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await authClient.signIn.social({ provider: provider as "google" | "github" });
-    setOauthLoading(null);
+    setError("");
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const { error } = await authClient.signIn.social({
+      provider: provider as "google" | "github",
+      callbackURL: `${origin}/profile`,
+      errorCallbackURL: `${origin}/login`,
+    });
+    if (error) {
+      setError(error.message || "Gagal masuk dengan akun tersebut");
+      setOauthLoading(null);
+    }
   }
 
-  function handleVerified() {
-    const username = (session?.user as { username?: string } | undefined)?.username;
-    router.push(username ? `/${username}` : "/profile");
+  async function handleVerified() {
+    if (verifyType === "email-verification") {
+      // OTP email-verification hanya memverifikasi email — login ulang agar sesi dibuat.
+      const { error } = await authClient.signIn.email({ email, password, rememberMe: remember });
+      if (error) {
+        setMode("password");
+        setError(error.message || "Gagal masuk setelah verifikasi. Coba masuk kembali.");
+        return;
+      }
+    }
+    router.push("/profile");
   }
 
   return (
@@ -185,7 +205,7 @@ export default function LoginForm() {
 
             {/* Verify mode */}
             {mode === "verify" && (
-              <VerifyOTP email={email} onVerified={handleVerified} type={session ? "email-verification" : "sign-in"} />
+              <VerifyOTP email={email} onVerified={handleVerified} type={verifyType} />
             )}
 
             <p className="text-center text-xs text-muted">

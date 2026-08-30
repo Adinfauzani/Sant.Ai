@@ -104,6 +104,8 @@ export function createAuth({
     user: {
       additionalFields: {
         bio: { type: "string", required: false, defaultValue: "" },
+        studyProgram: { type: "string", required: false, defaultValue: "" },
+        semester: { type: "number", required: false },
       },
       modelName: "user",
       changeEmail: {

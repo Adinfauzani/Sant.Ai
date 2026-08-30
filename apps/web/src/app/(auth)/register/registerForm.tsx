@@ -54,7 +54,7 @@ export default function RegisterForm() {
   useEffect(() => {
     const u = (session?.user as { username?: string } | undefined)?.username;
     if (!u || step !== "oauth") return;
-    if (/-[a-z0-9]{6}$/.test(u)) {
+    if (/-[a-z0-9]{4}$/.test(u)) {
       setProfile((f) => ({ ...f, username: u }));
       setStep("profile");
     } else {
@@ -80,14 +80,23 @@ export default function RegisterForm() {
 
   async function handleOAuth(provider: string) {
     setOauthLoading(provider);
-    await authClient.signIn.social({ provider: provider as "google" | "github" });
-    setOauthLoading(null);
+    setError("");
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const { error } = await authClient.signIn.social({
+      provider: provider as "google" | "github",
+      callbackURL: `${origin}/profile`,
+      errorCallbackURL: `${origin}/register`,
+    });
+    if (error) {
+      setError(error.message || "Gagal mendaftar dengan akun tersebut");
+      setOauthLoading(null);
+    }
   }
 
   async function handleEmailSignUp(e: React.FormEvent) {
     e.preventDefault();
     if (!passwordOk || !agree) return;
-    if (password !== confirm) { setError("Passwords do not match"); return; }
+    if (password !== confirm) { setError("Kata sandi tidak sama"); return; }
     setSaving(true);
     setError("");
 
@@ -99,11 +108,18 @@ export default function RegisterForm() {
     } as any);
 
     setSaving(false);
-    if (err) { setError(err.message || "Registration failed"); return; }
+    if (err) { setError(err.message || "Pendaftaran gagal"); return; }
     setStep("otp");
   }
 
-  function handleVerified() {
+  async function handleVerified() {
+    // OTP email-verification hanya memverifikasi email — login agar sesi dibuat.
+    const { error } = await authClient.signIn.email({ email, password });
+    if (error) {
+      setError(error.message || "Gagal masuk setelah verifikasi. Silakan coba masuk.");
+      setStep("oauth");
+      return;
+    }
     setStep("profile");
   }
 
