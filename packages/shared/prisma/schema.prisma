@@ -68,6 +68,15 @@ model User {
   uploadedAttachments Attachment[]
   taskComments     TaskComment[]
   activityLogs     ActivityLog[]
+  leadCommunities  Community[]          @relation("communityLead")
+  communityMembers CommunityMember[]
+  communityPosts   CommunityPost[]
+  communityPostLikes CommunityPostLike[]
+  communityInvites CommunityInvite[]    @relation("communityInvitee")
+  communityInvitationsMade CommunityInvite[] @relation("communityInviter")
+  eventRegistrations EventRegistration[]
+  notifications    Notification[]       @relation("notificationRecipient")
+  notificationActing Notification[]     @relation("notificationActor")
 
   @@schema("auth")
   @@map("user")
@@ -781,4 +790,152 @@ model ActivityLog {
 
   @@schema("Santai")
   @@map("activity_log")
+}
+
+/// ── Community & Events ──────────────────────────────
+
+model Community {
+  id              String            @id @default(uuid())
+  name            String
+  slug            String            @unique
+  description     String            @default("")
+  fullDescription String            @default("")
+  category        String            @default("")
+  coverImage      String?
+  needs           String            @default("[]")
+  todos           String            @default("[]")
+  leadUserId      String?
+  rules           String            @default("[]")
+  topics          String            @default("[]")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  lead    User?              @relation("communityLead", fields: [leadUserId], references: [id])
+  members CommunityMember[]
+  posts   CommunityPost[]
+  invites CommunityInvite[]
+
+  @@schema("Santai")
+}
+
+model CommunityInvite {
+  id          String   @id @default(uuid())
+  communityId String
+  userId      String
+  invitedById String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  acceptedAt  DateTime?
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user      User      @relation("communityInvitee", fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy User      @relation("communityInviter", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, userId])
+  @@index([userId])
+  @@schema("Santai")
+}
+
+model CommunityMember {
+  id          String    @id @default(uuid())
+  communityId String
+  userId      String
+  role        String    @default("member")
+  joinedAt    DateTime  @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([communityId, userId])
+  @@index([communityId])
+  @@schema("Santai")
+}
+
+model CommunityPost {
+  id          String    @id @default(uuid())
+  communityId String
+  userId      String
+  content     String
+  createdAt   DateTime  @default(now())
+
+  community Community         @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user      User              @relation(fields: [userId], references: [id])
+  likes     CommunityPostLike[]
+
+  @@index([communityId, createdAt])
+  @@schema("Santai")
+}
+
+model CommunityPostLike {
+  id     String        @id @default(uuid())
+  postId String
+  userId String
+
+  post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User          @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+  @@schema("Santai")
+}
+
+model Event {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  title           String
+  tagline         String   @default("")
+  description     String   @default("")
+  location        String   @default("")
+  category        String   @default("")
+  status          String   @default("Open")
+  organizer       String   @default("")
+  startAt         DateTime
+  endAt           DateTime?
+  maxParticipants Int      @default(0)
+  agenda          String   @default("[]")
+  speakers        String   @default("[]")
+  requirements    String   @default("[]")
+  benefits        String   @default("[]")
+  contact         String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  registrations EventRegistration[]
+
+  @@index([startAt])
+  @@schema("Santai")
+}
+
+model EventRegistration {
+  id        String   @id @default(uuid())
+  eventId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@schema("Santai")
+}
+
+/// ── Notifications ────────────────────────────────────
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String    @default("system")
+  title     String
+  body      String    @default("")
+  href      String    @default("")
+  actorId   String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user  User? @relation("notificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  actor User? @relation("notificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+  @@schema("Santai")
 }

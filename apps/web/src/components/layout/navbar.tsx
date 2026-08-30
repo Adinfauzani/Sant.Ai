@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "@/lib/authClient";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, AlertCircle, Moon } from "lucide-react";
+import { AlertCircle, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -13,6 +12,7 @@ import { useTheme } from "@/components/shared/themeProvider";
 import { ScientificBackground } from "@/components/shared/scientificBackground";
 import MobileNav from "@/components/layout/mobileNav";
 import MoresNavDropdown from "@/components/layout/moresNavDropdown";
+import NotificationBell from "@/components/layout/notificationBell";
 
 const ALLOWED_DASHBOARD = new Set(["Sudo", "Admin", "Moderator"]);
 
@@ -21,16 +21,6 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { theme, toggle: toggleTheme } = useTheme();
-  const [notifOpen, setNotifOpen] = useState(false);
-  const notifRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -42,6 +32,12 @@ export default function Navbar() {
     { label: "About", href: "/about" },
     { label: "Showcase", href: "/showcase" },
     { label: "Community", href: "/community" },
+    ...(session?.user
+      ? [
+          { label: "People", href: "/people" },
+          { label: "Hub", href: "/hub" },
+        ]
+      : []),
     ...(session?.user && ALLOWED_DASHBOARD.has((session.user as any).role)
       ? [{ label: "Dashboard", href: "/dashboard" }]
       : []),
@@ -96,25 +92,7 @@ export default function Navbar() {
 
           {session?.user && (
             <>
-              <div className="relative" ref={notifRef}>
-                <button
-                  onClick={() => setNotifOpen(!notifOpen)}
-                  className="relative flex h-8 w-8 items-center justify-center rounded-md text-muted hover:bg-surface hover:text-text"
-                  aria-label="Notifications"
-                >
-                  <Bell className="h-4 w-4" />
-                  <span className="absolute right-2 top-1.5 h-1.5 w-1.5 rounded-full bg-primary ring-2 ring-background" />
-                </button>
-
-                {notifOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-border bg-background p-2 shadow-lg">
-                    <div className="border-b border-border px-3 py-2">
-                      <p className="text-sm font-semibold text-text">Notifications</p>
-                    </div>
-                    <div className="py-2 text-center text-xs text-muted">No notifications</div>
-                  </div>
-                )}
-              </div>
+              <NotificationBell />
 
               <div className="relative">
                 {(session?.user as any)?.emailVerified === false && (

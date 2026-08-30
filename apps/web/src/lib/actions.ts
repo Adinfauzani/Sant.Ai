@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { isReservedUsername, isValidUsername } from "./reserved";
+import { notifyUser } from "./notify";
 
 function requireEmailVerified(session: AuthSession | null): AuthSession {
   if (!session?.user?.id) throw new Error("Unauthorized");
@@ -92,6 +93,7 @@ export async function createProject(formData: FormData) {
 
   revalidatePath("/showcase");
   revalidatePath("/");
+  revalidatePath("/hub");
   redirect(`/projects/${project.id}`);
 }
 
@@ -131,8 +133,25 @@ export async function joinProject(projectId: string, role: string) {
     "Joined a project",
   );
 
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, title: true, creatorId: true },
+  });
+
+  if (project && project.creatorId !== session.user.id) {
+    await notifyUser({
+      userId: project.creatorId,
+      type: "project",
+      title: "Anggota baru di proyekmu",
+      body: `${user.name} bergabung ke proyek "${project.title}".`,
+      href: `/projects/${project.id}`,
+      actorId: session.user.id,
+    });
+  }
+
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/showcase");
+  revalidatePath("/hub");
   return member;
 }
 
@@ -166,6 +185,7 @@ export async function completeProject(projectId: string) {
 
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/showcase");
+  revalidatePath("/hub");
 }
 
 /* ── Ideas actions (removed — Ideas removed from navigation) ── */
