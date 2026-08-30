@@ -172,8 +172,14 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -191,29 +197,32 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
 }
 
 @utility container-main {
   max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: clamp(1rem, 4vw, 1.5rem);
+  padding-right: clamp(1rem, 4vw, 1.5rem);
 }
 
 @utility section-padding {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
+  padding-top: clamp(3.5rem, 8vw, 6rem);
+  padding-bottom: clamp(3.5rem, 8vw, 6rem);
 }
 
 @utility section-header {
-  margin-bottom: 3rem;
+  margin-bottom: clamp(1.75rem, 5vw, 3rem);
 }
 
 @utility section-label {
   margin-bottom: 0.75rem;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: clamp(0.6875rem, 2vw, 0.75rem);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -221,7 +230,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @utility section-title {
-  font-size: 2.25rem;
+  font-size: clamp(1.75rem, 4.5vw, 2.25rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.025em;
@@ -230,10 +239,11 @@ h1, h2, h3, h4, h5, h6 {
 
 @utility section-desc {
   margin-top: 1rem;
-  font-size: 1.125rem;
-  line-height: 1.6;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  line-height: 1.65;
   color: var(--color-muted);
   max-width: 36rem;
+  text-wrap: pretty;
 }
 
 @utility card-hover {
