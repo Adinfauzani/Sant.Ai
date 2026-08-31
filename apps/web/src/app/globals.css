@@ -90,6 +90,19 @@
 
 /* ─── Raw design tokens (never self-referencing) ─── */
 :root {
+  --blue-1: #fbfdff;
+  --blue-2: #f4faff;
+  --blue-3: #e6f4fe;
+  --blue-4: #d5efff;
+  --blue-5: #c2e5ff;
+  --blue-6: #acd8fc;
+  --blue-7: #8ec8f6;
+  --blue-8: #5eb1ef;
+  --blue-9: #0090ff;
+  --blue-10: #0588f0;
+  --blue-11: #0d74ce;
+  --blue-12: #113264;
+
   --bg-base: #ffffff;
   --surf-base: #f8fafc;
   --section-alt: #f8fafc;
@@ -97,14 +110,14 @@
   --text-secondary: #475569;
   --hover-base: #f1f5f9;
   --border-base: #e2e8f0;
-  --primary-base: #2563eb;
-  --primary-soft-base: #dbeafe;
-  --accent-base: #2563eb;
-  --ring-base: #93c5fd;
+  --primary-base: var(--blue-11);
+  --primary-soft-base: var(--blue-3);
+  --accent-base: var(--blue-9);
+  --ring-base: var(--blue-8);
 
-  --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-heading: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --font-body: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jb-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --sidebar: hsl(0 0% 98%);
   --sidebar-foreground: hsl(240 5.3% 26.1%);
   --sidebar-primary: hsl(240 5.9% 10%);
@@ -117,17 +130,30 @@
 
 /* ─── Dark mode ─── */
 .dark, .dark-theme {
-  --bg-base: #0a0a0b;
-  --surf-base: #111113;
-  --section-alt: #18191b;
-  --card-base: #212225;
-  --text-secondary: #a4a9b1;
-  --hover-base: #272a2d;
-  --border-base: #2d2f33;
-  --primary-base: #3b82f6;
-  --primary-soft-base: #1e3a5f;
-  --accent-base: #3b82f6;
-  --ring-base: #1d4ed8;
+  --blue-1: #0d1520;
+  --blue-2: #111927;
+  --blue-3: #0d2847;
+  --blue-4: #003362;
+  --blue-5: #004074;
+  --blue-6: #104d87;
+  --blue-7: #205d9e;
+  --blue-8: #2870bd;
+  --blue-9: #0090ff;
+  --blue-10: #3b9eff;
+  --blue-11: #70b8ff;
+  --blue-12: #c2e6ff;
+
+  --bg-base: #111418;
+  --surf-base: #181b20;
+  --section-alt: #1e2229;
+  --card-base: #23282f;
+  --text-secondary: #a6adb8;
+  --hover-base: #2a3038;
+  --border-base: #2e353f;
+  --primary-base: var(--blue-10);
+  --primary-soft-base: var(--blue-4);
+  --accent-base: var(--blue-9);
+  --ring-base: var(--blue-8);
 }
 
 /* Override Radix .radix-themes defaults to match our palette */
@@ -137,8 +163,8 @@
 }
 
 :is(.dark, .dark-theme) :where(.radix-themes:not(.light, .light-theme)) {
-  --color-background: #0a0a0b;
-  --color-surface: #111113;
+  --color-background: #111418;
+  --color-surface: #181b20;
 }
 
 /* @theme maps tokens to Tailwind ― no self-references */
@@ -180,11 +206,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.18s ease-out, color 0.18s ease-out;
 }
 
 *, *::before, *::after {
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.12s ease-out, border-color 0.12s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -606,4 +632,19 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes overlayIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Terminal cursor ─── */
+.terminal-cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--color-primary, #6366f1);
+  animation: terminalBlink 1s step-end infinite;
+}
+@keyframes terminalBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }

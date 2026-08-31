@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.5.3] — 2026-09-01
+
+### Added
+- **Radix UI Colors as the global palette** — added `@radix-ui/colors` dependency; `blue` scale (steps 1–12) embedded into the design tokens for both light and dark themes:
+  - Light: `--primary-base` = `blue-11` (#0d74ce), `--primary-soft-base` = `blue-3`, `--accent-base` = `blue-9`, `--ring-base` = `blue-8`
+  - Dark: `--primary-base` = `blue-10` (#3b9eff), `--primary-soft-base` = `blue-4`, `--accent-base` = `blue-9`, `--ring-base` = `blue-8`
+  - Every app element (buttons, links, rings, accents) now uses the Radix blue scale consistently across themes
+- **Plus Jakarta Sans** as the body + heading font (replacing the custom serif heading), keeping **JetBrains Mono** for mono
+- **Slider theme toggle in navbar** — sun/moon sliding switch (`role="switch"`) replacing the icon-only button
+- **Featured Projects section on home** — static grid of 4 real-style projects (AI MU, stunting ML model, amal usaha digitalization, research collaboration), each linking to `/showcase`
+- **`pg` + `@types/pg`** dependencies
+
+### Changed
+- **Theme switching is now instant/full** — removed the degrade-to-seam sweep overlay; `toggle`/`setTheme` apply the theme directly
+- **Global color transitions** tuned for smoothness: body `0.18s ease-out`, all elements `0.12s ease-out`
+- **Hero headline** → **"Grow, build & create"** (short, no "earn" so it isn't mistaken for freelancing)
+- **Hero stats block removed**; stats row deleted from the split hero
+- **Hero "Bergabung" button** now links to `/register` (sign-up) instead of `/community`
+- **`/about` section polish** — decorative canvas shapes across sections (Cara kerja, Nilai inti, Roadmap, Dampak) + card-level shapes; CTA now uses a solid Radix `blue-9` background; secondary/outline button contrast fixed so its label reads without hover
+
+### Changed (Auth / routing)
+- **Logged-in users are redirected from public pages to their profile** — `proxy.ts` now redirects `/`, `/about`, `/ai`, `/articles`, `/community`, `/contact`, `/events`, `/intelligence`, `/legal`, `/projects`, `/showcase`, `/status` to `/profile` when a session exists; returning to the home page requires logging out. `/dashboard/*` keeps its login guard.
+
+### Removed
+- Sweep/transition overlay (`.theme-sweep`) from the theme provider
+- Custom serif heading font source (`Couse/Cause-VariableFont_wght.ttf`) in favor of Plus Jakarta Sans
+
 ## [0.5.2] — 2026-07-05
 
 ### Added

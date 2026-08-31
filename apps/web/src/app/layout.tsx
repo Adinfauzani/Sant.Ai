@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import AuthProvider from "@/components/shared/authProvider";
@@ -9,16 +10,16 @@ import CookieConsent from "@/components/cookie-consent";
 import SearchProvider from "@/components/search-provider";
 import "./globals.css";
 
-const bodyFont = localFont({
-  src: "../../public/fonts/JetBrains/JetBrainsMono[wght].ttf",
-  variable: "--font-body",
-  weight: "100 900",
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const headingFont = localFont({
-  src: "../../public/fonts/Couse/Cause-VariableFont_wght.ttf",
-  variable: "--font-heading",
+const monoFont = localFont({
+  src: "../../public/fonts/JetBrains/JetBrainsMono[wght].ttf",
+  variable: "--font-jb-mono",
   weight: "100 900",
   display: "swap",
 });
@@ -44,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className={`${bodyFont.variable} ${headingFont.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`${jakarta.variable} ${monoFont.variable}`}>
       <head>
         <script
           async
