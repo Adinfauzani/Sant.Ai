@@ -20,6 +20,9 @@
 - **Hero "Bergabung" button** now links to `/register` (sign-up) instead of `/community`
 - **`/about` section polish** — decorative canvas shapes across sections (Cara kerja, Nilai inti, Roadmap, Dampak) + card-level shapes; CTA now uses a solid Radix `blue-9` background; secondary/outline button contrast fixed so its label reads without hover
 
+### Fixed (Auth / OAuth)
+- **Google social login failing in prod with `?error=state_not_found`** — `apps/web/src/lib/authClient.ts` read `env.NEXT_PUBLIC_AUTH_API_URL`, which t3-env always fills with its default `http://localhost:3001`, so the client never fell back to `window.location.origin`. In prod the browser hit `localhost:3001` instead of the web origin; the OAuth state was created by the wrong instance and the Google callback then landed on the prod domain → `state_not_found`. Now reads raw `process.env.NEXT_PUBLIC_AUTH_API_URL` (undefined when unset in prod) and falls back to `window.location.origin` (web same-origin). Dev is unchanged since `.env` still sets the value to the local server. Requires a rebuild/redeploy (`NEXT_PUBLIC_*` is inlined at build time).
+
 ### Changed (Auth / routing)
 - **Logged-in users are redirected from public pages to their profile** — `proxy.ts` now redirects `/`, `/about`, `/ai`, `/articles`, `/community`, `/contact`, `/events`, `/intelligence`, `/legal`, `/projects`, `/showcase`, `/status` to `/profile` when a session exists; returning to the home page requires logging out. `/dashboard/*` keeps its login guard.
 

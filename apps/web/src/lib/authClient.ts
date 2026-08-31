@@ -1,11 +1,11 @@
 import { createAuthClient } from "better-auth/react";
 import { twoFactorClient, emailOTPClient, multiSessionClient, usernameClient, adminClient } from "better-auth/client/plugins";
 import { ssoClient } from "@better-auth/sso/client";
-import { env } from "@/env";
 
+const apiUrl = process.env.NEXT_PUBLIC_AUTH_API_URL;
 const baseURL =
-  env.NEXT_PUBLIC_AUTH_API_URL ||
-  (typeof window !== "undefined" ? window.location.origin : env.BETTER_AUTH_URL);
+  apiUrl ||
+  (typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL || "");
 
 export const authClient = createAuthClient({
   baseURL,
