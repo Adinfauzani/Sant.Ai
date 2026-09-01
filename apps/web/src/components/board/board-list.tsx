@@ -10,8 +10,8 @@ import {
   Users,
   Clock,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@santai/ui/button";
+import { Input } from "@santai/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -19,15 +19,15 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from "@santai/ui/dialog";
+import { Label } from "@santai/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@santai/ui/select";
 import { createBoard } from "@/lib/board-actions";
 
 interface Board {

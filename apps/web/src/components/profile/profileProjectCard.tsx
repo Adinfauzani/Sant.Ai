@@ -20,7 +20,7 @@ interface Props {
   isOwner: boolean;
 }
 
-export default function PinnedCard({ project, isPinned, isOwner }: Props) {
+export default function ProfileProjectCard({ project, isPinned, isOwner }: Props) {
   const [pending, startTransition] = useTransition();
 
   function handlePin() {

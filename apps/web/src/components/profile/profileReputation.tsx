@@ -1,8 +1,8 @@
 "use client";
 
 import { Zap, TrendingUp, Flame, Award } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Progress } from "@santai/ui/progress";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@santai/ui/tooltip";
 
 interface Props {
   points: number;

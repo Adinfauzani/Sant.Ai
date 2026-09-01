@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import ProfileHeader from "@/components/profile/profileHeader";
-import ProfileTabs from "@/components/profile/profileTabs";
 import { prisma } from "@/lib/db";
 import { isReservedUsername } from "@/lib/reserved";
 import { ProfileHeaderClient } from "./_profileHeaderClient";
@@ -53,7 +52,6 @@ export default async function ProfileLayout({ params, children }: Props) {
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <ProfileHeader user={{ coverImage: user.coverImage }} />
-        <ProfileTabs username={username} />
         {children}
       </div>
     </div>

@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+@source "../../../../packages/ui/src";
+
 @import "highlight.js/styles/github-dark.css" layer(highlight);
 
 @custom-variant dark (&:where(.dark, .dark *));

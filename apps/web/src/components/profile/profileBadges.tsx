@@ -1,6 +1,6 @@
 "use client";
 
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hoverCard";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@santai/ui/hoverCard";
 
 interface Badge {
   earned: boolean;

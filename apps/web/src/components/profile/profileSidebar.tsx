@@ -1,8 +1,8 @@
 "use client";
 
 import { MapPin, Link2, Calendar, Users, UserPlus, Award, Zap } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@santai/ui/separator";
+import { Avatar, AvatarImage, AvatarFallback } from "@santai/ui/avatar";
 import OrgBadge from "./orgBadge";
 import ProfileReputation from "./profileReputation";
 import TechStack from "./techStack";

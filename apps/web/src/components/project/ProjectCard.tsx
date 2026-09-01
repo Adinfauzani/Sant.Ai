@@ -6,10 +6,10 @@ import {
   Users, Star, ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@santai/ui/progress";
 import {
   Tooltip, TooltipTrigger, TooltipContent, TooltipProvider,
-} from "@/components/ui/tooltip";
+} from "@santai/ui/tooltip";
 
 /* ─── Types ─────────────────────────────────────────── */
 

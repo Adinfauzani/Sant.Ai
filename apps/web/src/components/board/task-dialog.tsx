@@ -6,20 +6,20 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@santai/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+} from "@santai/ui/select";
+import { Button } from "@santai/ui/button";
+import { Input } from "@santai/ui/input";
+import { Checkbox } from "@santai/ui/checkbox";
+import { Badge } from "@santai/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@santai/ui/avatar";
+import { Separator } from "@santai/ui/separator";
 import {
   Calendar,
   MessageSquare,

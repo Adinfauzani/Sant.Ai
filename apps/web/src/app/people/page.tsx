@@ -2,7 +2,7 @@ import { Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import Footer from "@santai/ui/footer";
 import { prisma } from "@/lib/db";
 import { getAuthSession } from "@/lib/auth";
 import PeopleBrowser from "./_peopleBrowser";

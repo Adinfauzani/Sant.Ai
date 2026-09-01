@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Shield, TrendingUp, TrendingDown, ArrowUp, ArrowDown, Play } from "lucide-react";
-import { YouTubeEmbed } from "@/components/shared/youtubeEmbed";
+import { YouTubeEmbed } from "@santai/ui/youtubeEmbed";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
 import { fetchArticles, fetchYouTube, fetchDashboardStats, ArticleItem, YouTubeItem } from "@/lib/data";

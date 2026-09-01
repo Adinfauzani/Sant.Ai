@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, ChevronLeft, ChevronRight, Play, Film } from "lucide-react";
 import { Card } from "../../_components";
 import { fetchYouTube, type YouTubeItem } from "@/lib/data";
-import { YouTubeEmbed } from "@/components/shared/youtubeEmbed";
+import { YouTubeEmbed } from "@santai/ui/youtubeEmbed";
 import { usePolling } from "@/lib/usePolling";
 
 function fmtDate(d: string) {

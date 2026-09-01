@@ -1,57 +1,70 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ScrollArea, ScrollBar } from "@/components/ui/scrollArea";
+import { ScrollArea, ScrollBar } from "@santai/ui/scrollArea";
 
-const TABS = [
-  { label: "Overview", href: "" },
-  { label: "Projects", href: "/projects" },
-  { label: "Articles", href: "/articles" },
-  { label: "Activity", href: "/activity" },
-  { label: "Achievements", href: "/achievements" },
-];
+export const PROFILE_TABS = [
+  { key: "overview", label: "Overview" },
+  { key: "projects", label: "Projects" },
+  { key: "articles", label: "Articles" },
+  { key: "activity", label: "Activity" },
+  { key: "achievements", label: "Achievements" },
+] as const;
+
+export type ProfileTabKey = (typeof PROFILE_TABS)[number]["key"];
 
 interface Props {
   username: string;
+  defaultTab: ProfileTabKey;
+  children: React.ReactNode[];
 }
 
-export default function ProfileTabs({ username }: Props) {
-  const pathname = usePathname();
-  const basePath = `/${username}`;
+export default function ProfileTabs({ username, defaultTab, children }: Props) {
+  const router = useRouter();
+  const [active, setActive] = useState<ProfileTabKey>(defaultTab);
+
+  function selectTab(key: ProfileTabKey) {
+    setActive(key);
+    const base = `/${username}`;
+    router.replace(key === "overview" ? base : `${base}?tab=${key}`, { scroll: false });
+  }
 
   return (
-    <div className="mb-6">
+    <div>
       <ScrollArea className="w-full">
         <div className="flex gap-1 border-b border-border pb-px">
-          {TABS.map((tab) => {
-            const href = tab.href ? `${basePath}${tab.href}` : basePath;
-            const isActive = tab.href === ""
-              ? pathname === basePath
-              : pathname.startsWith(`${basePath}${tab.href}`);
-
+          {PROFILE_TABS.map((tab) => {
+            const isActive = tab.key === active;
             return (
-              <Link
-                key={tab.label}
-                href={href}
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => selectTab(tab.key)}
                 className={cn(
-                  "relative shrink-0 px-4 py-2.5 text-[11px] font-medium transition-colors",
-                  isActive
-                    ? "text-text"
-                    : "text-muted hover:text-text"
+                  "relative shrink-0 cursor-pointer px-4 py-2.5 text-[11px] font-medium transition-colors",
+                  isActive ? "text-text" : "text-muted hover:text-text",
                 )}
               >
                 {tab.label}
                 {isActive && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
                 )}
-              </Link>
+              </button>
             );
           })}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
+
+      <div className="mt-6">
+        {children.map((panel, i) => (
+          <div key={PROFILE_TABS[i].key} className={cn(PROFILE_TABS[i].key !== active && "hidden")}>
+            {panel}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowRight, BarChart3, Code, Database, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@santai/ui/button";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
-import { ScientificBackground } from "@/components/shared/scientificBackground";
-import GuideCarousel from "@/components/shared/guideCarousel";
-import ProgramCarousel from "@/components/shared/programCarousel";
+import Footer from "@santai/ui/footer";
+import { ScientificBackground } from "@santai/ui/scientificBackground";
+import GuideCarousel from "@santai/ui/guideCarousel";
+import ProgramCarousel from "@santai/ui/programCarousel";
 
 const heroProjects = [
   {

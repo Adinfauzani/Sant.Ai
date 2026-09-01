@@ -6,8 +6,8 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Bell, Plus, LogOut, Settings, User, LayoutDashboard } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@santai/ui/button"
+import { Avatar, AvatarImage, AvatarFallback } from "@santai/ui/avatar"
 import { SearchDropdown } from "@/components/search-dropdown"
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@santai/ui/dropdown-menu"
 import { useSession, authClient } from "@/lib/authClient"
 
 const ADMIN_ROLES = ["sudo", "admin", "moderator"]

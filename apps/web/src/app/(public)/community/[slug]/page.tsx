@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Users, MessageSquare, CheckCircle2, Tag, ShoppingBag } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import Footer from "@santai/ui/footer";
 import { getAuthSession } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getCommunityDetail, type CommunityPostData } from "@/lib/community";

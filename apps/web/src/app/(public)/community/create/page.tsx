@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import Footer from "@santai/ui/footer";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import CreateCommunityForm from "./_createCommunityForm";

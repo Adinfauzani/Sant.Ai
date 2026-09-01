@@ -39,7 +39,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@santai/ui/sidebar"
 import { DashboardNav, type NavItem } from "./dashboard-nav"
 import { DashboardUser } from "./dashboard-user"
 

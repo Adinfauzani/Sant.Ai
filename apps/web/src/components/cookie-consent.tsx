@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Cookie } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@santai/ui/button";
+import { Card } from "@santai/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
-} from "@/components/ui/sheet";
+} from "@santai/ui/sheet";
 import { useCookieConsent } from "@/components/cookie-provider";
 import CookiePreferencesDialog from "@/components/cookie-preferences-dialog";
 

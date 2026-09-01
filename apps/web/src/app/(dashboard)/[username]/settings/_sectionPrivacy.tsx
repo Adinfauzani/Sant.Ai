@@ -6,7 +6,7 @@ import { Loader2, Cookie } from "lucide-react";
 import { updateProfileSettings } from "@/lib/actions";
 import { useCookieConsent } from "@/components/cookie-provider";
 import CookiePreferencesDialog from "@/components/cookie-preferences-dialog";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@santai/ui/separator";
 
 interface Privacy {
   publicProfile: boolean;

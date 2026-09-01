@@ -17,9 +17,9 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { type SearchHit } from "@/lib/search"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group"
+import { Avatar, AvatarFallback, AvatarImage } from "@santai/ui/avatar"
+import { Badge } from "@santai/ui/badge"
+import { InputGroup, InputGroupInput, InputGroupAddon } from "@santai/ui/input-group"
 
 const RECENT_KEY = "sant-ai:recent-searches"
 const MAX_RECENT = 8

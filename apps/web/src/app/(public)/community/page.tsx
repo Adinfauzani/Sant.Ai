@@ -1,6 +1,6 @@
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
-import { ScientificBackground } from "@/components/shared/scientificBackground";
+import Footer from "@santai/ui/footer";
+import { ScientificBackground } from "@santai/ui/scientificBackground";
 import { getCommunityData } from "@/lib/community";
 import CommunityClient from "./_communityClient";
 

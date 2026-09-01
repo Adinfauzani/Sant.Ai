@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/authClient";
 import Link from "next/link";
 import { GraduationCap, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@santai/ui/button";
 import { createProject } from "@/lib/actions";
 
 export default function CreateProjectPage() {

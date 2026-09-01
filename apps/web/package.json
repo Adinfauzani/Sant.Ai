@@ -39,6 +39,7 @@
     "@radix-ui/react-visually-hidden": "^1.2.6",
     "@radix-ui/themes": "^3.3.0",
     "@santai/shared": "workspace:*",
+    "@santai/ui": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.11",
     "better-auth": "^1.6.23",
     "class-variance-authority": "^0.7.1",

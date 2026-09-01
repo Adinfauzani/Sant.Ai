@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2, KeyRound } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@santai/ui/button";
 
 export default function SetPasswordForm() {
   const [saving, setSaving] = useState(false);

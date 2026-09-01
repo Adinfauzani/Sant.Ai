@@ -9,7 +9,7 @@ import { getAuthSession } from "@/lib/auth";
 import { headers } from "next/headers";
 import { profileCompleteness } from "@/lib/profileCompleteness";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import Footer from "@santai/ui/footer";
 
 export const dynamic = "force-dynamic";
 

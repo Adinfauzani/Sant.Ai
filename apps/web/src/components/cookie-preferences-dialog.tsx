@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@santai/ui/dialog";
 import {
   Sheet,
   SheetContent,
@@ -17,12 +17,12 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scrollArea";
+} from "@santai/ui/sheet";
+import { Button } from "@santai/ui/button";
+import { Switch } from "@santai/ui/switch";
+import { Separator } from "@santai/ui/separator";
+import { Badge } from "@santai/ui/badge";
+import { ScrollArea } from "@santai/ui/scrollArea";
 import { useCookieConsent } from "@/components/cookie-provider";
 import type { CookieCategories, CookieCategory } from "@/lib/cookie";
 import { CATEGORY_LABELS, DEFAULT_CATEGORIES } from "@/lib/cookie";

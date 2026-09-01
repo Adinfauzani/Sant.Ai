@@ -5,8 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import * as Popover from "@radix-ui/react-popover";
 import { Search, SlidersHorizontal, X, Users, TrendingUp, Calendar, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hoverCard";
+import { Button } from "@santai/ui/button";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@santai/ui/hoverCard";
 import ProjectCard, { ProjectCardGrid, ProjectCardEmpty } from "@/components/project/ProjectCard";
 import type { ShowcaseProject } from "@/lib/showcase";
 

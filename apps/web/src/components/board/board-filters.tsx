@@ -2,16 +2,16 @@
 
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@santai/ui/input";
+import { Button } from "@santai/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+} from "@santai/ui/select";
+import { Badge } from "@santai/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Priority } from "@santai/shared";
 

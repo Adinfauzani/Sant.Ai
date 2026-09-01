@@ -1,5 +1,5 @@
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import Footer from "@santai/ui/footer";
 
 export default function IntelPublicLayout({ children }: { children: React.ReactNode }) {
   return (

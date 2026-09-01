@@ -13,9 +13,9 @@ import {
   Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@santai/ui/badge";
+import { Button } from "@santai/ui/button";
+import { Checkbox } from "@santai/ui/checkbox";
 import { TaskDialog } from "./task-dialog";
 
 interface TaskData {

@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { Bell, Plus } from "lucide-react"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
+import { SidebarTrigger } from "@santai/ui/sidebar"
+import { Button } from "@santai/ui/button"
 import { DashboardSearch } from "./dashboard-search"
 
 export function DashboardHeader({

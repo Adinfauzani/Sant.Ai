@@ -19,7 +19,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@santai/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -27,9 +27,9 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@santai/ui/dialog";
+import { Input } from "@santai/ui/input";
+import { Label } from "@santai/ui/label";
 import { KanbanColumn } from "./kanban-column";
 import { TaskDialog } from "./task-dialog";
 import { BoardFilters, type FilterState } from "./board-filters";

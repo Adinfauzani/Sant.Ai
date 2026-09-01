@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TrendingUp, TrendingDown, Play } from "lucide-react";
-import { YouTubeEmbed } from "@/components/shared/youtubeEmbed";
+import { YouTubeEmbed } from "@santai/ui/youtubeEmbed";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
 import { fetchArticles, fetchYouTube, fetchDashboardStats, ArticleItem, YouTubeItem, defaultStats } from "@/lib/data";
