@@ -1,6 +1,6 @@
 "use client";
 
-import { Zap, TrendingUp, Flame, Award } from "lucide-react";
+import { Zap, TrendingUp, Flame, Award, CalendarRange } from "lucide-react";
 import { Progress } from "@santai/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@santai/ui/tooltip";
 
@@ -11,6 +11,8 @@ interface Props {
   monthlyProgress?: number;
   streak?: number;
 }
+
+const LEVELS = ["Beginner", "Active", "Lead", "Expert"];
 
 const LEVEL_THRESHOLDS: Record<string, { min: number; max: number; color: string }> = {
   Beginner: { min: 0, max: 49, color: "from-primary/60 to-primary" },
@@ -27,12 +29,11 @@ function getLevelProgress(points: number, level: string) {
 }
 
 function getNextLevel(level: string): string {
-  const levels = ["Beginner", "Active", "Lead", "Expert"];
-  const idx = levels.indexOf(level);
-  return idx < levels.length - 1 ? levels[idx + 1] : "Max";
+  const idx = LEVELS.indexOf(level);
+  return idx < LEVELS.length - 1 ? LEVELS[idx + 1] : "Max";
 }
 
-export default function ProfileReputation({ points, level, weeklyProgress = 35, monthlyProgress = 60, streak = 0 }: Props) {
+export default function ProfileReputation({ points, level, weeklyProgress, monthlyProgress, streak }: Props) {
   const progress = getLevelProgress(points, level);
   const nextLevel = getNextLevel(level);
   const thresh = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS.Beginner;
@@ -47,8 +48,8 @@ export default function ProfileReputation({ points, level, weeklyProgress = 35, 
               <Zap className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted">Reputation</p>
-              <p className="text-lg font-bold font-heading text-text">{points.toLocaleString()} <span className="text-xs font-normal text-muted">pts</span></p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted">Reputasi</p>
+              <p className="text-lg font-bold font-heading text-text">{points.toLocaleString()} <span className="text-xs font-normal text-muted">poin</span></p>
             </div>
           </div>
           <Tooltip>
@@ -59,16 +60,16 @@ export default function ProfileReputation({ points, level, weeklyProgress = 35, 
               </div>
             </TooltipTrigger>
             <TooltipContent side="top">
-              <p>Level: {level} &middot; Next: {nextLevel}</p>
+              <p>Level: {level} &middot; Berikutnya: {nextLevel}</p>
             </TooltipContent>
           </Tooltip>
         </div>
 
-        {/* Progress to next level */}
+        {/* Progress ke level berikutnya */}
         <div className="mb-3">
           <div className="mb-1.5 flex items-center justify-between text-[10px] text-muted">
             <span>{points.toLocaleString()} / {thresh.max.toLocaleString()} XP</span>
-            <span>Next: {nextLevel}</span>
+            <span>Level berikutnya: {nextLevel}</span>
           </div>
           <Progress
             value={progress}
@@ -77,39 +78,47 @@ export default function ProfileReputation({ points, level, weeklyProgress = 35, 
           />
         </div>
 
-        {/* Streak + Weekly/Monthly */}
-        <div className="grid grid-cols-3 gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="rounded-lg border border-border bg-background p-2 text-center">
-                <Flame className="mx-auto mb-0.5 h-3.5 w-3.5 text-orange-500" />
-                <p className="text-xs font-bold text-text">{streak}</p>
-                <p className="text-[9px] text-muted">day streak</p>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Current contribution streak</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="rounded-lg border border-border bg-background p-2 text-center">
-                <TrendingUp className="mx-auto mb-0.5 h-3.5 w-3.5 text-emerald-500" />
-                <p className="text-xs font-bold text-text">{weeklyProgress}%</p>
-                <p className="text-[9px] text-muted">this week</p>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Weekly activity progress</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="rounded-lg border border-border bg-background p-2 text-center">
-                <TrendingUp className="mx-auto mb-0.5 h-3.5 w-3.5 text-primary" />
-                <p className="text-xs font-bold text-text">{monthlyProgress}%</p>
-                <p className="text-[9px] text-muted">this month</p>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Monthly activity progress</TooltipContent>
-          </Tooltip>
-        </div>
+        {/* Streak + Aktivitas mingguan/bulanan (hanya jika disediakan) */}
+        {(streak !== undefined || weeklyProgress !== undefined || monthlyProgress !== undefined) && (
+          <div className="grid grid-cols-3 gap-2">
+            {streak !== undefined && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="rounded-lg border border-border bg-background p-2 text-center">
+                    <Flame className="mx-auto mb-0.5 h-3.5 w-3.5 text-orange-500" />
+                    <p className="text-xs font-bold text-text">{streak}</p>
+                    <p className="text-[9px] text-muted">hari beruntun</p>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Streak kontribusi aktif</TooltipContent>
+              </Tooltip>
+            )}
+            {weeklyProgress !== undefined && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="rounded-lg border border-border bg-background p-2 text-center">
+                    <TrendingUp className="mx-auto mb-0.5 h-3.5 w-3.5 text-emerald-500" />
+                    <p className="text-xs font-bold text-text">{weeklyProgress}%</p>
+                    <p className="text-[9px] text-muted">minggu ini</p>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Aktivitas kemajuan mingguan</TooltipContent>
+              </Tooltip>
+            )}
+            {monthlyProgress !== undefined && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="rounded-lg border border-border bg-background p-2 text-center">
+                    <CalendarRange className="mx-auto mb-0.5 h-3.5 w-3.5 text-primary" />
+                    <p className="text-xs font-bold text-text">{monthlyProgress}%</p>
+                    <p className="text-[9px] text-muted">bulan ini</p>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Aktivitas kemajuan bulanan</TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+        )}
       </div>
     </TooltipProvider>
   );

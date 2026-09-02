@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Link2, Calendar, Users, UserPlus, Award, Zap } from "lucide-react";
+import { MapPin, Link2, Calendar, Users, UserPlus } from "lucide-react";
 import { Separator } from "@santai/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@santai/ui/avatar";
 import OrgBadge from "./orgBadge";
@@ -81,15 +81,13 @@ export default function ProfileSidebar({ user, stats, badges, techStack, isOwner
         </div>
       </div>
 
+      {/* Reputation */}
+      <ProfileReputation points={user.reputationPoints} level={user.level} />
+
       <Separator />
 
       {/* Org Badge */}
       <OrgBadge studyProgram={user.studyProgram} semester={user.semester} />
-
-      <Separator />
-
-      {/* Reputation */}
-      <ProfileReputation points={user.reputationPoints} level={user.level} />
 
       {/* Badges */}
       {badges.length > 0 && (

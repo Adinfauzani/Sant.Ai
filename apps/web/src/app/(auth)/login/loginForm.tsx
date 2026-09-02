@@ -7,7 +7,7 @@ import { authClient, useSession } from "@/lib/authClient";
 import { Github, Loader2, Mail } from "lucide-react";
 import VerifyOTP from "@/components/shared/verifyOtp";
 
-export default function LoginForm() {
+export default function LoginForm({ next = null }: { next?: string | null }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
@@ -23,9 +23,9 @@ export default function LoginForm() {
     const user = session?.user as { username?: string; emailVerified?: boolean } | undefined;
     if (!user) return;
     if (user.emailVerified && user.username) {
-      router.push(`/${user.username}`);
+      router.push(next ?? `/${user.username}`);
     }
-  }, [session, router]);
+  }, [session, router, next]);
 
   async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +64,7 @@ export default function LoginForm() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     const { error } = await authClient.signIn.social({
       provider: provider as "google" | "github",
-      callbackURL: `${origin}/profile`,
+      callbackURL: next ? `${origin}${next}` : `${origin}/profile`,
       errorCallbackURL: `${origin}/login`,
     });
     if (error) {
@@ -83,7 +83,7 @@ export default function LoginForm() {
         return;
       }
     }
-    router.push("/profile");
+    router.push(next ?? "/profile");
   }
 
   return (

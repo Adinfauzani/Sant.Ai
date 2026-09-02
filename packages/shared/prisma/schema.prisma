@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["Santai", "auth"]
+  schemas  = ["Santai", "auth", "model"]
 }
 
 /// ── auth schema — Better Auth managed tables ──────────
@@ -939,4 +939,32 @@ model Notification {
   @@index([userId, readAt])
   @@index([userId, createdAt])
   @@schema("Santai")
+}
+
+/// ── AI MU chat (schema `model`) ─────────────────────
+
+model AiMuChat {
+  id        String            @id @default(cuid())
+  userId    String?
+  title     String            @default("Percakapan baru")
+  messages  AiMuChatMessage[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@map("aimu_chat")
+  @@schema("model")
+}
+
+model AiMuChatMessage {
+  id          String     @id @default(cuid())
+  chatId      String
+  chat        AiMuChat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role        String
+  content     String     @default("") @db.Text
+  attachments String?    @db.Text
+  createdAt   DateTime   @default(now())
+
+  @@index([chatId, createdAt])
+  @@map("aimu_chat_message")
+  @@schema("model")
 }

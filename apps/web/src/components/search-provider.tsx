@@ -9,7 +9,7 @@ export default function SearchProvider({ children }: { children: ReactNode }) {
         e.preventDefault()
         const input = document.getElementById("global-search-input")
         if (input) {
-          input.focus()
+          input.focus();
         }
       }
     }

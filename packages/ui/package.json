@@ -1,0 +1,211 @@
+{
+  "name": "@santai/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./avatar": {
+      "types": "./src/avatar.tsx",
+      "default": "./src/avatar.tsx"
+    },
+    "./badge": {
+      "types": "./src/badge.tsx",
+      "default": "./src/badge.tsx"
+    },
+    "./breadcrumb": {
+      "types": "./src/breadcrumb.tsx",
+      "default": "./src/breadcrumb.tsx"
+    },
+    "./button": {
+      "types": "./src/button.tsx",
+      "default": "./src/button.tsx"
+    },
+    "./card": {
+      "types": "./src/card.tsx",
+      "default": "./src/card.tsx"
+    },
+    "./checkbox": {
+      "types": "./src/checkbox.tsx",
+      "default": "./src/checkbox.tsx"
+    },
+    "./collapsible": {
+      "types": "./src/collapsible.tsx",
+      "default": "./src/collapsible.tsx"
+    },
+    "./command": {
+      "types": "./src/command.tsx",
+      "default": "./src/command.tsx"
+    },
+    "./dialog": {
+      "types": "./src/dialog.tsx",
+      "default": "./src/dialog.tsx"
+    },
+    "./dropdown-menu": {
+      "types": "./src/dropdown-menu.tsx",
+      "default": "./src/dropdown-menu.tsx"
+    },
+    "./footer": {
+      "types": "./src/footer.tsx",
+      "default": "./src/footer.tsx"
+    },
+    "./guideCarousel": {
+      "types": "./src/guideCarousel.tsx",
+      "default": "./src/guideCarousel.tsx"
+    },
+    "./hoverCard": {
+      "types": "./src/hoverCard.tsx",
+      "default": "./src/hoverCard.tsx"
+    },
+    "./input": {
+      "types": "./src/input.tsx",
+      "default": "./src/input.tsx"
+    },
+    "./input-group": {
+      "types": "./src/input-group.tsx",
+      "default": "./src/input-group.tsx"
+    },
+    "./label": {
+      "types": "./src/label.tsx",
+      "default": "./src/label.tsx"
+    },
+    "./programCarousel": {
+      "types": "./src/programCarousel.tsx",
+      "default": "./src/programCarousel.tsx"
+    },
+    "./progress": {
+      "types": "./src/progress.tsx",
+      "default": "./src/progress.tsx"
+    },
+    "./scientificBackground": {
+      "types": "./src/scientificBackground.tsx",
+      "default": "./src/scientificBackground.tsx"
+    },
+    "./scrollArea": {
+      "types": "./src/scrollArea.tsx",
+      "default": "./src/scrollArea.tsx"
+    },
+    "./select": {
+      "types": "./src/select.tsx",
+      "default": "./src/select.tsx"
+    },
+    "./separator": {
+      "types": "./src/separator.tsx",
+      "default": "./src/separator.tsx"
+    },
+    "./sheet": {
+      "types": "./src/sheet.tsx",
+      "default": "./src/sheet.tsx"
+    },
+    "./sidebar": {
+      "types": "./src/sidebar.tsx",
+      "default": "./src/sidebar.tsx"
+    },
+    "./skeleton": {
+      "types": "./src/skeleton.tsx",
+      "default": "./src/skeleton.tsx"
+    },
+    "./switch": {
+      "types": "./src/switch.tsx",
+      "default": "./src/switch.tsx"
+    },
+    "./tooltip": {
+      "types": "./src/tooltip.tsx",
+      "default": "./src/tooltip.tsx"
+    },
+    "./use-mobile": {
+      "types": "./src/use-mobile.ts",
+      "default": "./src/use-mobile.ts"
+    },
+    "./usePolling": {
+      "types": "./src/usePolling.ts",
+      "default": "./src/usePolling.ts"
+    },
+    "./utils": {
+      "types": "./src/utils.ts",
+      "default": "./src/utils.ts"
+    },
+    "./custom/aboutCta": {
+      "types": "./src/custom/aboutCta.tsx",
+      "default": "./src/custom/aboutCta.tsx"
+    },
+    "./custom/aboutEcosystems": {
+      "types": "./src/custom/aboutEcosystems.tsx",
+      "default": "./src/custom/aboutEcosystems.tsx"
+    },
+    "./custom/aboutEngineering": {
+      "types": "./src/custom/aboutEngineering.tsx",
+      "default": "./src/custom/aboutEngineering.tsx"
+    },
+    "./custom/aboutHero": {
+      "types": "./src/custom/aboutHero.tsx",
+      "default": "./src/custom/aboutHero.tsx"
+    },
+    "./custom/aboutImpact": {
+      "types": "./src/custom/aboutImpact.tsx",
+      "default": "./src/custom/aboutImpact.tsx"
+    },
+    "./custom/aboutProblem": {
+      "types": "./src/custom/aboutProblem.tsx",
+      "default": "./src/custom/aboutProblem.tsx"
+    },
+    "./custom/aboutRoadmap": {
+      "types": "./src/custom/aboutRoadmap.tsx",
+      "default": "./src/custom/aboutRoadmap.tsx"
+    },
+    "./custom/aboutValues": {
+      "types": "./src/custom/aboutValues.tsx",
+      "default": "./src/custom/aboutValues.tsx"
+    },
+    "./custom/aboutWorkflow": {
+      "types": "./src/custom/aboutWorkflow.tsx",
+      "default": "./src/custom/aboutWorkflow.tsx"
+    },
+    "./custom/typeCommand": {
+      "types": "./src/custom/typeCommand.tsx",
+      "default": "./src/custom/typeCommand.tsx"
+    },
+    "./youtubeEmbed": {
+      "types": "./src/youtubeEmbed.tsx",
+      "default": "./src/youtubeEmbed.tsx"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@radix-ui/react-accordion": "^1.2.14",
+    "@radix-ui/react-avatar": "^1.2.0",
+    "@radix-ui/react-checkbox": "^1.3.7",
+    "@radix-ui/react-collapsible": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-hover-card": "^1.1.2",
+    "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-progress": "^1.1.0",
+    "@radix-ui/react-scroll-area": "^1.2.0",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.0",
+    "@radix-ui/react-tooltip": "^1.1.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^0.475.0",
+    "tailwind-merge": "^3.0.2",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.3"
+  }
+}

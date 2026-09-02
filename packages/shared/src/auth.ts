@@ -66,6 +66,12 @@ export function createAuth({
     basePath,
     trustedOrigins: [baseURL, siteURL, ...trustedOrigins],
 
+    advanced: {
+      ipAddress: {
+        ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"],
+      },
+    },
+
     emailAndPassword: {
       enabled: true,
       autoSignIn: false,

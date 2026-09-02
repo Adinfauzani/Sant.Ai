@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.52",
+    "@ai-sdk/react": "^4.0.88",
     "@better-auth/infra": "^0.3.2",
     "@better-auth/sso": "^1.6.23",
     "@dnd-kit/core": "^6.0.0",
@@ -41,6 +43,7 @@
     "@santai/shared": "workspace:*",
     "@santai/ui": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.11",
+    "ai": "^7.0.85",
     "better-auth": "^1.6.23",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

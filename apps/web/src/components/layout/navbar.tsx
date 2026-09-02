@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { useSession } from "@/lib/authClient";
 import { usePathname, useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
@@ -9,11 +10,13 @@ import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@santai/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@santai/ui/avatar";
+import { getAvatarUrl } from "@/lib/gravatar";
 import { useTheme } from "@/components/shared/themeProvider";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
 import MobileNav from "@/components/layout/mobileNav";
 import MoresNavDropdown from "@/components/layout/moresNavDropdown";
 import NotificationBell from "@/components/layout/notificationBell";
+import AiMuNavButton from "@/components/layout/aiMuNavButton";
 
 const ALLOWED_DASHBOARD = new Set(["Sudo", "Admin", "Moderator"]);
 
@@ -22,6 +25,18 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { theme, toggle: toggleTheme } = useTheme();
+  const [avatarSrc, setAvatarSrc] = useState<string>("");
+
+  useEffect(() => {
+    const u = session?.user as any;
+    if (u?.image) {
+      setAvatarSrc(u.image);
+      return;
+    }
+    if (u?.email) {
+      setAvatarSrc(getAvatarUrl(u.email, 160));
+    }
+  }, [session]);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -95,6 +110,7 @@ export default function Navbar() {
 
           {session?.user && (
             <>
+              <AiMuNavButton />
               <NotificationBell />
 
               <div className="relative">
@@ -111,7 +127,7 @@ export default function Navbar() {
                   className="flex h-8 w-8 items-center justify-center"
                 >
                   <Avatar className="h-7 w-7">
-                    <AvatarImage src={(session?.user as any)?.image || ""} alt={session?.user?.name || ""} />
+                    <AvatarImage src={avatarSrc || (session?.user as any)?.image || ""} alt={session?.user?.name || ""} />
                     <AvatarFallback className="text-xs">
                       {session?.user?.name?.charAt(0).toUpperCase() ?? "U"}
                     </AvatarFallback>

@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { Calendar, Mail, MessageSquare } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@santai/ui/footer";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
-import { Mail, MessageSquare, Calendar } from "lucide-react";
+
 
 const contacts = [
   {
