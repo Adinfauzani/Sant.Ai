@@ -99,7 +99,7 @@ export default function VideoPage() {
         {related.length > 0 && (
           <div className="mt-10">
             <h2 className="mb-4 font-heading text-lg font-bold text-text">
-              Related Articles — <span className="text-primary">{video.category}</span>
+              Related Articles, <span className="text-primary">{video.category}</span>
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {related.map((art) => (

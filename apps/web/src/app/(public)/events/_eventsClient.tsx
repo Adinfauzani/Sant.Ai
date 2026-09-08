@@ -172,7 +172,7 @@ export default function EventsClient({ data }: { data: EventsData }) {
       ) : (
         <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
           <p className="text-sm font-semibold text-text">Belum ada event mendatang</p>
-          <p className="mt-1 text-xs text-muted">Pantau terus — event berikutnya bakal diumumkan di sini.</p>
+          <p className="mt-1 text-xs text-muted">Pantau terus, event berikutnya bakal diumumkan di sini.</p>
         </div>
       )}
 

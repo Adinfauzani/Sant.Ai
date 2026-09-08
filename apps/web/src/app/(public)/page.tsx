@@ -6,6 +6,7 @@ import Footer from "@santai/ui/footer";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
 import GuideCarousel from "@santai/ui/guideCarousel";
 import ProgramCarousel from "@santai/ui/programCarousel";
+import HeroLabel from "@/components/heroLabel";
 
 const heroProjects = [
   {
@@ -39,7 +40,7 @@ const heroProjects = [
 
 const featuredProjects = [
   {
-    title: "AI MU — Asisten Virtual Lembaga",
+    title: "AI MU, Asisten Virtual Lembaga",
     status: "Active",
     statusDot: "bg-emerald-400",
     gradient: "from-blue-600 to-cyan-500",
@@ -82,15 +83,46 @@ export default function HomePage() {
           <ScientificBackground variant="neural" className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
           </ScientificBackground>
+
+          {/* Kartu proyek — mobile: sebagai backdrop blur; desktop: kolom kanan */}
+          <div className="pointer-events-none absolute inset-0 lg:pointer-events-auto lg:static">
+            <div className="absolute inset-0 lg:hidden">
+              <div className="relative h-full w-full opacity-70 blur-[2px]">
+                {heroProjects.map((p, i) => (
+                  <div
+                    key={p.tag}
+                    className={`absolute -right-1 flex w-44 items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-xl ${
+                      i === 0
+                        ? "top-[30%] -rotate-2"
+                        : i === 1
+                        ? "top-[42%] -mr-8 rotate-1"
+                        : "top-[54%] -mr-16 -rotate-1"
+                    }`}
+                  >
+                    <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${p.cover} text-white`}>
+                      <p.icon className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-semibold text-text">{p.title}</p>
+                      <p className="truncate text-[10px] text-muted">{p.meta}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="container-main relative">
             <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
               <div className="max-w-lg">
-                <p className="mb-4 editorial-label">Science, Technology & Artificial Intelligence</p>
+                <p className="mb-4">
+                  <HeroLabel />
+                </p>
                 <h1 className="editorial-xl text-text">
                   Grow, build &amp; create
                 </h1>
                 <p className="mt-6 editorial-body text-muted">
-                  Kolaborasi bagi mahasiswa, peneliti, dan developer — eksplorasi riset,
+                  Kolaborasi bagi mahasiswa, peneliti, dan developer. Eksplorasi riset,
                   tulis kode, dan kembangkan solusi AI yang berdampak.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -107,8 +139,8 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Kolom kanan — kartu proyek menumpuk */}
-              <div className="relative mx-auto w-full max-w-md lg:mt-1">
+              {/* Kolom kanan — kartu proyek menumpuk (desktop) */}
+              <div className="relative mx-auto hidden w-full max-w-md lg:mt-1 lg:block">
                 {heroProjects.map((p, i) => (
                   <Link
                     key={p.tag}

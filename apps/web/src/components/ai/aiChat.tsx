@@ -198,7 +198,7 @@ export function AiChat({
           parts: [
             {
               type: "text",
-              text: "Berikut perintah yang bisa kamu pakai:\n• /help — daftar perintah\n• /new — mulai percakapan baru\n• /clear — bersihkan percakapan saat ini",
+              text: "Berikut perintah yang bisa kamu pakai:\n• /help, daftar perintah\n• /new, mulai percakapan baru\n• /clear, bersihkan percakapan saat ini",
             },
           ],
         },

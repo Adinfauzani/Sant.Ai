@@ -52,7 +52,7 @@ export default function RegisterButton({
       : maxParticipants > 0 && registeredCount >= maxParticipants
         ? "Event Penuh"
         : registered
-          ? "Terdaftar — Batalkan"
+          ? "Terdaftar, Batalkan"
           : "Register Now";
 
   return (

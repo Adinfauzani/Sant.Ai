@@ -8,7 +8,6 @@ import {
   Globe,
   Calendar,
   User,
-  Sparkles,
   MessageSquare,
   BookOpen,
   Brain,
@@ -17,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/authClient";
+import AimuAnimatedFace from "@/components/ai/aimuAnimatedFace";
 
 interface NavItem {
   key: string;
@@ -68,19 +68,19 @@ export default function MobileNav() {
       active: pathname === "/about",
     },
     {
+      key: "ai",
+      center: true,
+      label: "AI MU",
+      href: "/ai",
+      icon: AimuAnimatedFace,
+      active: pathname.startsWith("/ai"),
+    },
+    {
       key: "community",
       label: "Community",
       href: "/community",
       icon: Globe,
       active: pathname.startsWith("/community"),
-    },
-    {
-      key: "ai",
-      center: true,
-      label: "AI MU",
-      href: "/ai",
-      icon: Sparkles,
-      active: pathname.startsWith("/ai"),
     },
     {
       key: "profile",
@@ -125,13 +125,13 @@ export default function MobileNav() {
           paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom, 0px))",
         }}
       >
-        <div className="flex items-end justify-around px-4 pb-1.5">
+        <div className="grid grid-cols-5 items-center px-1 pt-3 pb-1.5">
           {items.map((item) => {
             if (item.center) {
               return (
                 <div
                   key={item.key}
-                  className="relative flex flex-col items-center"
+                  className="relative flex flex-col items-center justify-center"
                   onTouchStart={handleLongPressStart}
                   onTouchEnd={handleLongPressEnd}
                   onMouseDown={handleLongPressStart}
@@ -140,14 +140,11 @@ export default function MobileNav() {
                 >
                   <Link
                     href={item.href}
-                    className="-mt-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-sm transition-all duration-150 active:scale-95"
-                    aria-label="AI MU - Artificial Intelligence"
+                    className="-mt-6 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-primary text-white shadow-md ring-2 ring-card transition-all duration-150 active:scale-95"
+                    aria-label={item.label}
                   >
-                    <Sparkles className="h-5 w-5" />
+                    <AimuAnimatedFace />
                   </Link>
-                  <span className="mt-0.5 text-[9px] font-semibold text-primary">
-                    {item.label}
-                  </span>
 
                   {longPress && (
                     <>
@@ -185,9 +182,9 @@ export default function MobileNav() {
                 key={item.key}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 transition-all duration-150 active:scale-95",
+                  "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-150 active:scale-95",
                   item.active
-                    ? "text-primary"
+                    ? "bg-primary/10 text-primary"
                     : "text-muted hover:text-text",
                 )}
                 aria-label={item.label}
@@ -200,14 +197,6 @@ export default function MobileNav() {
                   )}
                   strokeWidth={item.active ? 2.5 : 2}
                 />
-                <span
-                  className={cn(
-                    "text-[10px] leading-none",
-                    item.active ? "font-semibold" : "font-medium",
-                  )}
-                >
-                  {item.label}
-                </span>
               </Link>
             );
           })}
