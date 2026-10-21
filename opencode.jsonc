@@ -97,11 +97,45 @@
   // ─── MCP ──────────────────────────────────────────────────────────────────
   // context7 gives the agents current library docs (Next.js 16, AI SDK v7,
   // Better Auth). Each teammate signs in with their own account via /mcps.
+  //
+  // chrome-devtools inspects the running app in a real Chrome: computed styles
+  // (to verify Tailwind v4 classes are actually emitted), screenshots, and
+  // console messages with source-mapped stack traces.
+  //
+  // next-devtools proxies the Next.js 16 dev server's built-in /_next/mcp
+  // endpoint: runtime errors, dev logs, route metadata, Server Action lookup.
+  // It needs `pnpm --filter @santai/web dev` running on port 3000.
+  //
+  // Both are local and need no credentials. npx resolves the package on first
+  // run, so the startup timeout is raised to 20s.
   "mcp": {
     "servers": {
       "context7": {
         "type": "remote",
         "url": "https://mcp.context7.com/mcp"
+      },
+      "chrome-devtools": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "chrome-devtools-mcp@latest",
+          "--no-usage-statistics"
+        ],
+        "timeout": {
+          "startup": 20000
+        }
+      },
+      "next-devtools": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "next-devtools-mcp@latest"
+        ],
+        "timeout": {
+          "startup": 20000
+        }
       }
     }
   },
