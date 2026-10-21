@@ -1,0 +1,113 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // ─── Ambient instructions ──────────────────────────────────────────────────
+  // AGENTS.md is discovered automatically, but it is gitignored (local only).
+  // COLLABORATION.md is committed, so it is safe to load for every teammate.
+  "instructions": ["COLLABORATION.md"],
+
+  // ─── Verification ─────────────────────────────────────────────────────────
+  // No test framework and no lint rules exist in this repo. `pnpm typecheck`
+  // (tsc --noEmit across web/server/shared/ui) is the gate; `pnpm build`
+  // additionally covers the Next.js app.
+  "commands": {
+    "typecheck": {
+      "description": "Typecheck every workspace package",
+      "template": "Run `pnpm typecheck` at the repo root. Report every TypeScript error as `path:line: message`, grouped by workspace package (web, server, shared, ui). Do not edit any files."
+    },
+    "verify": {
+      "description": "Typecheck, then build the web app",
+      "template": "Run `pnpm typecheck` and then `pnpm build` at the repo root. Report failures with the first root-cause error for each. Do not edit any files."
+    },
+    "db": {
+      "description": "Regenerate the Prisma client after a schema edit",
+      "template": "Run `pnpm db:generate` at the repo root, then `pnpm typecheck`. Report any Prisma schema errors verbatim. Do not edit any files."
+    },
+    "review": {
+      "description": "Review the working-tree diff against repo conventions",
+      "template": "Review the current working-tree diff (`git diff` plus untracked files) against the conventions in AGENTS.md and COLLABORATION.md. Report findings grouped by file with a severity of blocker, warn, or nit. Do not edit any files."
+    }
+  },
+
+  // ─── Permissions ──────────────────────────────────────────────────────────
+  // Last matching rule wins. The V2 default policy already asks before
+  // reading `*.env` files; that is left as-is on purpose.
+  "permissions": [
+    // scripts/linear/*.mjs embed Linear API keys (see .gitignore).
+    { "action": "read", "resource": "scripts/linear/*", "effect": "deny" },
+
+    // Collaboration steps and destructive operations stay deliberate.
+    { "action": "shell", "resource": "git commit *", "effect": "ask" },
+    { "action": "shell", "resource": "git push *", "effect": "ask" },
+    { "action": "shell", "resource": "rm -rf *", "effect": "ask" },
+
+    // db:push alters the live Neon database.
+    { "action": "shell", "resource": "pnpm db:push*", "effect": "ask" }
+  ],
+
+  // ─── Agents ───────────────────────────────────────────────────────────────
+  // One specialist per workspace boundary. Each `system` prompt is a delta on
+  // top of AGENTS.md, not a replacement for it.
+  "agents": {
+    "web": {
+      "description": "Next.js 16 App Router specialist for apps/web (pages, Server Actions, route handlers, cron fetchers)",
+      "mode": "subagent",
+      "system": "You work inside apps/web only. Next.js 16 App Router, Tailwind v4 CSS-first config, React Server Components by default (add \"use client\" only when needed), file names camelCase, components ~300 lines max. Web dev runs `next dev --webpack`, never Turbopack. Never edit packages/shared/src/auth.ts — the Better Auth config lives there and both apps call createAuth() from it. Note: apps/web/src/lib/auth-client.ts is a dead stub; the client is @/lib/authClient.",
+      "permissions": [{ "action": "edit", "resource": "apps/server/*", "effect": "deny" }]
+    },
+    "shared": {
+      "description": "Prisma schema and Better Auth specialist for packages/shared",
+      "mode": "subagent",
+      "system": "You work inside packages/shared only. Prisma 7 on Neon/Postgres with three schemas: Santai (business), auth (Better Auth tables), model (AI models + AI MU chat). The migrations dir is gitignored — schema changes go through `pnpm db:push`, and db:push does not reliably alter auth.* tables, so use raw SQL there. The generated Prisma client is gitignored: run `pnpm db:generate` after any schema edit before typechecking. packages/shared/src/auth.ts is the single source of truth for auth — never fork it into an app.",
+      "permissions": [
+        { "action": "edit", "resource": "apps/*", "effect": "deny" },
+        { "action": "edit", "resource": "packages/ui/*", "effect": "deny" }
+      ]
+    },
+    "ui": {
+      "description": "packages/ui primitives specialist (Radix + shadcn-style wrappers)",
+      "mode": "subagent",
+      "system": "You work inside packages/ui only. The package ships raw TS source and is consumed through subpath exports, so every new export needs its own file listed in packages/ui/package.json `exports`, with camelCase names. apps/web transpiles the package via transpilePackages. Tailwind scans it through `@source \"../../../../packages/ui/src\"` in apps/web/src/app/globals.css — that path is 4 levels up to the repo root, do not shorten it. Theme tokens live as literal hex in the Radix blue scale in globals.css.",
+      "permissions": [
+        { "action": "edit", "resource": "apps/*", "effect": "deny" },
+        { "action": "edit", "resource": "packages/shared/*", "effect": "deny" }
+      ]
+    },
+    "reviewer": {
+      "description": "Read-only reviewer for diffs and pull requests",
+      "mode": "subagent",
+      "system": "Review changes without editing files. Report findings in severity order (blocker, warn, nit) with file and line references. Check: camelCase file names, PascalCase components, Server Components by default, ~300-line component limit, no `any`, strict TypeScript, conventional commits, Tailwind v4 @theme tokens, and that any new @santai/ui export is registered in packages/ui/package.json.",
+      "permissions": [{ "action": "edit", "resource": "*", "effect": "deny" }]
+    }
+  },
+
+  // ─── Filesystem watcher ───────────────────────────────────────────────────
+  // Keep generated and vendored trees out of the change feed.
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/.next/**",
+      "packages/shared/src/generated/**",
+      "apps/web/public/Model/**",
+      "**/*.db",
+      "**/*.tsbuildinfo"
+    ]
+  },
+
+  // ─── MCP ──────────────────────────────────────────────────────────────────
+  // context7 gives the agents current library docs (Next.js 16, AI SDK v7,
+  // Better Auth). Each teammate signs in with their own account via /mcps.
+  "mcp": {
+    "servers": {
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      }
+    }
+  },
+
+  // ─── Experimental ─────────────────────────────────────────────────────────
+  "experimental": {
+    "todo": true
+  }
+}
