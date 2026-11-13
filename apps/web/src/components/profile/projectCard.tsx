@@ -37,7 +37,7 @@ export default function ProjectCard({ id, title, description, status, techStack,
           )}
           {githubUrl && (
             <span className="flex items-center gap-1 text-[10px] text-muted hover:text-primary">
-              <GitBranch className="h-3 w-3" /> Source
+              <GitBranch className="h-3 w-3" /> Sumber
             </span>
           )}
         </div>

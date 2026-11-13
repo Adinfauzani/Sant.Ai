@@ -24,6 +24,10 @@
       "types": "./src/button.tsx",
       "default": "./src/button.tsx"
     },
+    "./bubble": {
+      "types": "./src/bubble.tsx",
+      "default": "./src/bubble.tsx"
+    },
     "./card": {
       "types": "./src/card.tsx",
       "default": "./src/card.tsx"
@@ -72,6 +76,10 @@
       "types": "./src/label.tsx",
       "default": "./src/label.tsx"
     },
+    "./message": {
+      "types": "./src/message.tsx",
+      "default": "./src/message.tsx"
+    },
     "./programCarousel": {
       "types": "./src/programCarousel.tsx",
       "default": "./src/programCarousel.tsx"
@@ -115,6 +123,14 @@
     "./tooltip": {
       "types": "./src/tooltip.tsx",
       "default": "./src/tooltip.tsx"
+    },
+    "./textarea": {
+      "types": "./src/textarea.tsx",
+      "default": "./src/textarea.tsx"
+    },
+    "./twinOrbit": {
+      "types": "./src/twinOrbit.tsx",
+      "default": "./src/twinOrbit.tsx"
     },
     "./use-mobile": {
       "types": "./src/use-mobile.ts",
@@ -171,6 +187,10 @@
     "./youtubeEmbed": {
       "types": "./src/youtubeEmbed.tsx",
       "default": "./src/youtubeEmbed.tsx"
+    },
+    "./trace": {
+      "types": "./src/trace.tsx",
+      "default": "./src/trace.tsx"
     }
   },
   "scripts": {

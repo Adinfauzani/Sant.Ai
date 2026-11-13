@@ -6,7 +6,7 @@ export default function StreakCounter({ contributions }: Props) {
   if (contributions.length === 0) {
     return (
       <div className="flex items-center gap-4 text-xs text-muted">
-        <span>No contributions yet</span>
+        <span>Belum ada kontribusi</span>
       </div>
     );
   }
@@ -57,17 +57,17 @@ export default function StreakCounter({ contributions }: Props) {
     <div className="flex items-center gap-4 text-xs">
       <div className="text-center">
         <p className="font-semibold text-text">{currentStreak}</p>
-        <p className="text-muted">Current streak</p>
+        <p className="text-muted">Streak sekarang</p>
       </div>
       <div className="h-8 w-px bg-border" />
       <div className="text-center">
         <p className="font-semibold text-text">{longestStreak}</p>
-        <p className="text-muted">Longest streak</p>
+        <p className="text-muted">Streak terpanjang</p>
       </div>
       <div className="h-8 w-px bg-border" />
       <div className="text-center">
         <p className="font-semibold text-text">{totalContributions}</p>
-        <p className="text-muted">Total contributions</p>
+        <p className="text-muted">Total kontribusi</p>
       </div>
     </div>
   );

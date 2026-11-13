@@ -45,23 +45,23 @@ export default function ProfileReadme({ readme, readmeType, isOwner, onSave }: P
             onClick={() => setMode("text")}
             className={cn(
               "rounded px-2 py-1 text-[11px] font-medium transition-colors",
-              mode === "text" ? "bg-primary text-white" : "text-muted hover:text-text",
+              mode === "text" ? "bg-primary text-primary-foreground" : "text-muted hover:text-text",
             )}
           >
-            Plain Text
+            Teks Biasa
           </button>
           <button
             type="button"
             onClick={() => setMode("markdown")}
             className={cn(
               "rounded px-2 py-1 text-[11px] font-medium transition-colors",
-              mode === "markdown" ? "bg-primary text-white" : "text-muted hover:text-text",
+              mode === "markdown" ? "bg-primary text-primary-foreground" : "text-muted hover:text-text",
             )}
           >
             Markdown
           </button>
           <span className="ml-auto text-[10px] text-muted">
-            {mode === "markdown" ? "Supports **bold**, *italic*, `code`, links, and lists" : "Plain text only"}
+            {mode === "markdown" ? "Mendukung **bold**, *italic*, `code`, tautan, dan daftar" : "Teks biasa saja"}
           </span>
         </div>
 
@@ -70,11 +70,11 @@ export default function ProfileReadme({ readme, readmeType, isOwner, onSave }: P
           onChange={(e) => setContent(e.target.value)}
           placeholder={
             mode === "markdown"
-              ? "Write your profile README using markdown..."
-              : "Write a short bio about yourself..."
+              ? "Tulis README profilmu pakai markdown..."
+              : "Tulis bio singkat tentang dirimu..."
           }
           rows={6}
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-text outline-none placeholder:text-muted/50 focus:border-primary"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background placeholder:text-muted focus:border-primary"
         />
 
         <div className="mt-3 flex items-center justify-end gap-2">
@@ -83,15 +83,15 @@ export default function ProfileReadme({ readme, readmeType, isOwner, onSave }: P
             onClick={handleCancel}
             className="rounded px-3 py-1.5 text-[11px] text-muted hover:text-text transition-colors"
           >
-            Cancel
+            Batal
           </button>
           <button
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="rounded bg-primary px-3 py-1.5 text-[11px] font-medium text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="rounded bg-primary px-3 py-1.5 text-[11px] font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function ProfileReadme({ readme, readmeType, isOwner, onSave }: P
           }}
           className="absolute right-2 top-2 rounded px-2 py-1 text-[10px] text-muted opacity-0 hover:bg-surface hover:text-text transition-all group-hover:opacity-100"
         >
-          Edit
+          Ubah
         </button>
       )}
       {readmeType === "markdown" ? (

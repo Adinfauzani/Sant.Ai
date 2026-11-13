@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchYouTube } from "@/lib/fetchers/youtube";
+import { fetchYouTube } from "@/lib/content/fetchers/youtube";
 
 export async function GET() {
   const result = await fetchYouTube();

@@ -20,14 +20,14 @@ export default function PinnedProjects({ projects }: Props) {
     <div>
       <div className="mb-3 flex items-center gap-1.5">
         <Pin className="h-3.5 w-3.5 text-muted" />
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">Pinned</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">Disematkan</h2>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         {projects.map((p) => (
           <Link
             key={p.id}
             href={`/projects/${p.id}`}
-            className="block rounded-lg border border-border bg-surface/5 p-4 transition-all hover:border-primary/30 hover:shadow-sm"
+            className="block rounded-lg border border-border bg-surface/5 p-4 transition-all hover:border-border-strong hover:shadow-sm"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">

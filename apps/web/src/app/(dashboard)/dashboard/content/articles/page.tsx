@@ -48,7 +48,7 @@ export default function ArticlesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Articles</h1>
+        <h1 className="font-heading text-2xl font-bold text-text">Artikel</h1>
         <p className="mt-0.5 text-xs text-muted">Manage and explore all articles ({allArticles.length} total)</p>
       </div>
 
@@ -58,12 +58,12 @@ export default function ArticlesPage() {
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder="Search articles..."
-            className="flex-1 bg-transparent text-xs text-text outline-none placeholder:text-muted"
+            placeholder="Cari artikel..."
+            className="flex-1 bg-transparent text-xs text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background placeholder:text-muted"
           />
         </div>
-        <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} className="rounded-lg border border-border bg-surface/30 px-2.5 py-1.5 text-[10px] text-muted outline-none">
-          <option value="all">All Categories</option>
+        <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} className="rounded-lg border border-border bg-surface/30 px-2.5 py-1.5 text-[10px] text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+          <option value="all">Semua Kategori</option>
           <option value="Pendidikan">Pendidikan</option>
           <option value="Teknologi">Teknologi</option>
           <option value="Kesehatan">Kesehatan</option>
@@ -71,9 +71,9 @@ export default function ArticlesPage() {
           <option value="Sosial">Sosial</option>
           <option value="Politik">Politik</option>
         </select>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-lg border border-border bg-surface/30 px-2.5 py-1.5 text-[10px] text-muted outline-none">
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
+        <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-lg border border-border bg-surface/30 px-2.5 py-1.5 text-[10px] text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+          <option value="newest">Terbaru</option>
+          <option value="oldest">Terlama</option>
         </select>
       </div>
 
@@ -82,11 +82,11 @@ export default function ArticlesPage() {
           <table className="w-full text-left text-[10px]">
             <thead>
               <tr className="border-b border-border text-muted">
-                <th className="pb-2 font-medium">Title</th>
-                <th className="pb-2 font-medium">Source</th>
-                <th className="pb-2 font-medium">Category</th>
-                <th className="pb-2 font-medium">Date</th>
-                <th className="pb-2 font-medium">Read</th>
+                <th className="pb-2 font-medium">Judul</th>
+                <th className="pb-2 font-medium">Sumber</th>
+                <th className="pb-2 font-medium">Kategori</th>
+                <th className="pb-2 font-medium">Tanggal</th>
+                <th className="pb-2 font-medium">Baca</th>
               </tr>
             </thead>
             <tbody>

@@ -96,7 +96,7 @@ export function KanbanColumn({
                 if (e.key === "Enter") handleRename();
                 if (e.key === "Escape") setIsEditing(false);
               }}
-              className="h-6 w-32 rounded-md border border-border bg-background px-2 text-sm font-medium outline-none focus:ring-1 focus:ring-primary/50"
+              className="h-6 w-32 rounded-md border border-input bg-background px-2 text-sm font-medium focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
             />
           ) : (
             <h3
@@ -138,17 +138,13 @@ export function KanbanColumn({
                   setIsEditing(true);
                 }}
               >
-                <Pencil className="mr-2 h-3.5 w-3.5" />
-                Rename
-              </DropdownMenuItem>
+                <Pencil className="mr-2 h-3.5 w-3.5" />Ganti nama</DropdownMenuItem>
               {!readOnly && (
                 <DropdownMenuItem
                   onClick={() => onDeleteColumn(column.id)}
-                  className="text-red-500"
+                  className="text-destructive"
                 >
-                  <Trash className="mr-2 h-3.5 w-3.5" />
-                  Delete
-                </DropdownMenuItem>
+                  <Trash className="mr-2 h-3.5 w-3.5" />Hapus</DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -175,9 +171,7 @@ export function KanbanColumn({
         </SortableContext>
 
         {tasks.length === 0 && isOver && (
-          <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-primary/30 py-6 text-xs text-muted">
-            Drop here
-          </div>
+          <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-primary/30 py-6 text-xs text-muted">Lepas di sini</div>
         )}
       </div>
 
@@ -186,11 +180,9 @@ export function KanbanColumn({
         <div className="px-2 pb-2">
           <button
             onClick={() => onAddTask(column.id)}
-            className="flex w-full items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs text-muted transition-colors hover:bg-accent/50 hover:text-foreground"
+            className="flex w-full items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs text-muted transition-colors hover:bg-accent/50 hover:text-text"
           >
-            <Plus className="h-3.5 w-3.5" />
-            Add task
-          </button>
+            <Plus className="h-3.5 w-3.5" />Tambah tugas</button>
         </div>
       )}
     </div>

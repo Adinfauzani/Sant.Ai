@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Card } from "../../_components";
-import { fetchArticles, ArticleItem } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchArticles, ArticleItem } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
-const COLORS = ["#10b981", "#f59e0b", "#ef4444"];
+const COLORS = ["var(--color-success)", "var(--color-warning)", "var(--color-destructive)"];
 
 function CT({ active, payload, label }: any) {
   if (!active || !payload) return null;
@@ -58,19 +58,19 @@ export default function SentimentPage() {
 
   const sentimentTrend = [{ month: "All", ...Object.fromEntries(Object.entries(dist).map(([k, v]) => [k, Math.round((v / totalSentiment) * 100)])) }];
 
-  const COLORS = ["#10b981", "#f59e0b", "#ef4444"];
+  const COLORS = ["var(--color-success)", "var(--color-warning)", "var(--color-destructive)"];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Sentiment</h1>
-        <p className="mt-0.5 text-xs text-muted">Sentiment analysis across all content</p>
+        <h1 className="font-heading text-2xl font-bold text-text">Sentimen</h1>
+        <p className="mt-0.5 text-xs text-muted">Analisis sentimen di semua konten</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Sentiment Distribution">
+        <Card title="Sebaran Sentimen">
           {sentimentDist.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No sentiment data yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada data sentimen.</p>
           ) : (
             <>
               <div className="flex items-center justify-center h-56">
@@ -97,20 +97,20 @@ export default function SentimentPage() {
           )}
         </Card>
 
-        <Card title="Sentiment Trend">
+        <Card title="Tren Sentimen">
           {sentimentTrend.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No trend data yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada data tren.</p>
           ) : (
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sentimentTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                  <XAxis dataKey="month" tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="month" tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} domain={[0, 100]} />
                   <Tooltip content={<CT />} />
-                  <Bar dataKey="positive" name="Positive" fill="#10b981" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="neutral" name="Neutral" fill="#f59e0b" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="negative" name="Negative" fill="#ef4444" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="positive" name="Positif" fill="var(--color-success)" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="neutral" name="Netral" fill="var(--color-warning)" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="negative" name="Negatif" fill="var(--color-destructive)" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -118,9 +118,9 @@ export default function SentimentPage() {
         </Card>
       </div>
 
-      <Card title="Sentiment by Category">
+      <Card title="Sentimen per Kategori">
         {byCategory.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No category sentiment data yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada data sentimen kategori.</p>
         ) : (
           <div className="space-y-2">
             {byCategory.map((c) => (
@@ -130,9 +130,9 @@ export default function SentimentPage() {
                   <span className="text-[9px] text-muted">Pos: {c.positive}% · Neu: {c.neutral}% · Neg: {c.negative}%</span>
                 </div>
                 <div className="flex h-2 overflow-hidden rounded-full bg-surface">
-                  <div className="bg-emerald-500 transition-all" style={{ width: `${c.positive}%` }} />
-                  <div className="bg-amber-500 transition-all" style={{ width: `${c.neutral}%` }} />
-                  <div className="bg-red-500 transition-all" style={{ width: `${c.negative}%` }} />
+                  <div className="bg-success transition-all" style={{ width: `${c.positive}%` }} />
+                  <div className="bg-warning transition-all" style={{ width: `${c.neutral}%` }} />
+                  <div className="bg-destructive transition-all" style={{ width: `${c.negative}%` }} />
                 </div>
               </div>
             ))}

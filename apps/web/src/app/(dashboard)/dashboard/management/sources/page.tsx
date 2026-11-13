@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
-import { fetchSources, type SourceItem } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchSources, type SourceItem } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
 export default function MgmtSourcesPage() {
   const [items, setItems] = useState<SourceItem[]>([]);
@@ -22,8 +22,8 @@ export default function MgmtSourcesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Manage Sources</h1>
-        <p className="mt-0.5 text-xs text-muted">Monitor and manage external data sources</p>
+        <h1 className="font-heading text-2xl font-bold text-text">Kelola Sumber</h1>
+        <p className="mt-0.5 text-xs text-muted">Pantau dan kelola sumber data eksternal</p>
       </div>
 
       <Card
@@ -35,19 +35,19 @@ export default function MgmtSourcesPage() {
         }
       >
         {loading ? (
-          <p className="py-4 text-center text-[10px] text-muted">Loading...</p>
+          <p className="py-4 text-center text-[10px] text-muted">Memuat…</p>
         ) : items.length === 0 ? (
-          <p className="py-4 text-center text-[10px] text-muted">No sources yet</p>
+          <p className="py-4 text-center text-[10px] text-muted">Belum ada sumber</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[10px]">
               <thead>
                 <tr className="border-b border-border text-muted">
-                  <th className="pb-2 font-medium">Name</th>
-                  <th className="pb-2 font-medium">Type</th>
+                  <th className="pb-2 font-medium">Nama</th>
+                  <th className="pb-2 font-medium">Jenis</th>
                   <th className="pb-2 font-medium">Status</th>
-                  <th className="pb-2 font-medium">RSS URL</th>
-                  <th className="pb-2 font-medium">Actions</th>
+                  <th className="pb-2 font-medium">URL RSS</th>
+                  <th className="pb-2 font-medium">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -60,9 +60,9 @@ export default function MgmtSourcesPage() {
                     <td className="py-2.5 pr-3">
                       <span className={cn(
                         "rounded-full px-1.5 py-0.5 text-[8px] font-medium",
-                        s.status === "active" ? "bg-emerald-500/10 text-emerald-500" :
-                        s.status === "error" ? "bg-red-500/10 text-red-500" :
-                        "bg-amber-500/10 text-amber-500",
+                        s.status === "active" ? "bg-success/10 text-success" :
+                        s.status === "error" ? "bg-destructive/10 text-destructive" :
+                        "bg-warning/10 text-warning",
                       )}>
                         {s.status}
                       </span>

@@ -23,7 +23,7 @@ export const articles: Article[] = [
     excerpt: "Langkah-langkah strategis memulai karir di bidang data science dari nol.",
     date: "Jun 10, 2026",
     category: "Data Science",
-    cover: "from-blue-600/30 to-cyan-400/10",
+    cover: "from-primary/25 to-primary/5",
     readTime: "5 min read",
     author: { name: "Aulia Rahman", role: "Data Science Enthusiast" },
     content: wrap(`
@@ -50,7 +50,7 @@ export const articles: Article[] = [
     excerpt: "Memahami peran, skill yang dibutuhkan, dan prospek karir fullstack developer.",
     date: "Jun 5, 2026",
     category: "Career",
-    cover: "from-emerald-600/30 to-teal-400/10",
+    cover: "from-primary/25 to-primary/5",
     readTime: "7 min read",
     author: { name: "Dimas Ardiansyah", role: "Fullstack Developer" },
     content: wrap(`
@@ -77,7 +77,7 @@ export const articles: Article[] = [
     excerpt: "Ide proyek IoT yang bisa kamu kerjakan untuk portofolio dan tugas akhir.",
     date: "May 28, 2026",
     category: "IoT",
-    cover: "from-purple-600/30 to-violet-400/10",
+    cover: "from-primary/25 to-primary/5",
     readTime: "6 min read",
     author: { name: "Bunga Citra", role: "IoT Researcher" },
     content: wrap(`
@@ -104,7 +104,7 @@ export const articles: Article[] = [
     excerpt: "Strategi dan sumber belajar untuk lulus ujian AWS Cloud Practitioner.",
     date: "May 20, 2026",
     category: "Cloud",
-    cover: "from-amber-600/30 to-orange-400/10",
+    cover: "from-primary/25 to-primary/5",
     readTime: "4 min read",
     author: { name: "Aulia Rahman", role: "Cloud Enthusiast" },
     content: wrap(`
@@ -131,7 +131,7 @@ export const articles: Article[] = [
     excerpt: "Panduan praktis membangun REST API yang scalable menggunakan Node.js dan Express.",
     date: "May 15, 2026",
     category: "Backend",
-    cover: "from-sky-600/30 to-blue-400/10",
+    cover: "from-primary/25 to-primary/5",
     readTime: "8 min read",
     author: { name: "Dimas Ardiansyah", role: "Backend Developer" },
     content: wrap(`
@@ -160,7 +160,7 @@ export const articles: Article[] = [
     excerpt: "Tools dan workflow yang perlu diketahui oleh UI/UX designer pemula di 2026.",
     date: "May 8, 2026",
     category: "Design",
-    cover: "from-pink-600/30 to-rose-400/10",
+    cover: "from-primary/25 to-primary/5",
     readTime: "6 min read",
     author: { name: "Bunga Citra", role: "UI/UX Designer" },
     content: wrap(`

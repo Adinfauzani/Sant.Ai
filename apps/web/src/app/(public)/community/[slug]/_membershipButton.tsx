@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { joinCommunity, leaveCommunity } from "@/lib/communityActions";
+import { joinCommunity, leaveCommunity } from "@/lib/community/communityActions";
 
 export default function MembershipButton({
   communitySlug,
@@ -45,12 +45,12 @@ export default function MembershipButton({
         className={`shrink-0 gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors disabled:opacity-60 ${
           isMember
             ? "border border-border bg-card text-text hover:bg-surface"
-            : "bg-primary text-white hover:bg-primary/90"
+            : "bg-primary text-primary-foreground hover:bg-primary/90"
         }`}
       >
         {pending ? "..." : isMember ? "Leave Community" : "Join Community"}
       </button>
-      {error && <p className="mt-2 text-[11px] text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-[11px] text-destructive">{error}</p>}
     </div>
   );
 }

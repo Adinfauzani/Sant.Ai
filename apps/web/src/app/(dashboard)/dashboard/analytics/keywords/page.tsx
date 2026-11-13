@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "../../_components";
-import { fetchKeywords, fetchArticles, KeywordItem } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchKeywords, fetchArticles, KeywordItem } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
 function CT({ active, payload, label }: any) {
   if (!active || !payload) return null;
@@ -46,31 +46,31 @@ export default function KeywordsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Keywords</h1>
-        <p className="mt-0.5 text-xs text-muted">Top keywords, frequency, and related topics</p>
+        <h1 className="font-heading text-2xl font-bold text-text">Kata Kunci</h1>
+        <p className="mt-0.5 text-xs text-muted">Kata kunci teratas, frekuensi, dan topik terkait</p>
       </div>
 
-      <Card title="Keyword Frequency">
+      <Card title="Frekuensi Kata Kunci">
         {freqData.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No keywords yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada kata kunci.</p>
         ) : (
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={freqData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                <XAxis type="number" tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis dataKey="keyword" type="category" tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} width={80} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis type="number" tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                <YAxis dataKey="keyword" type="category" tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} width={80} />
                 <Tooltip content={<CT />} />
-                <Bar dataKey="frequency" name="Frequency" fill="#2563eb" radius={[0, 3, 3, 0]} />
+                <Bar dataKey="frequency" name="Frekuensi" fill="var(--color-primary)" radius={[0, 3, 3, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
       </Card>
 
-      <Card title="Top Keywords & Related Topics">
+      <Card title="Kata Kunci Teratas & Topik Terkait">
         {topKeywords.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No keywords yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada kata kunci.</p>
         ) : (
           <div className="space-y-2">
             {topKeywords.map((k, i) => (
@@ -84,7 +84,7 @@ export default function KeywordsPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] text-muted">{k.volume.toLocaleString()} vol</span>
-                    <span className="text-[9px] font-medium text-emerald-500">{k.frequency}% freq</span>
+                    <span className="text-[9px] font-medium text-success">{k.frequency}% freq</span>
                   </div>
                 </div>
                 {k.related.length > 0 && (

@@ -6,7 +6,7 @@ import Footer from "@santai/ui/footer";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
 import GuideCarousel from "@santai/ui/guideCarousel";
 import ProgramCarousel from "@santai/ui/programCarousel";
-import HeroLabel from "@/components/heroLabel";
+import HeroLabel from "@/components/shared/heroLabel";
 
 const heroProjects = [
   {
@@ -15,7 +15,6 @@ const heroProjects = [
     icon: BarChart3,
     desc: "Model prediksi stunting berbasis ML",
     meta: "12 kontributor · 78% selesai",
-    cover: "from-blue-600 to-cyan-500",
     bar: "w-[78%]",
   },
   {
@@ -24,7 +23,6 @@ const heroProjects = [
     icon: Code,
     desc: "Platform kolaborasi riset kampus",
     meta: "24 kontributor · 64% selesai",
-    cover: "from-emerald-600 to-teal-500",
     bar: "w-[64%]",
   },
   {
@@ -33,7 +31,6 @@ const heroProjects = [
     icon: Database,
     desc: "Sistem ERP untuk UMKM lokal",
     meta: "9 kontributor · 41% selesai",
-    cover: "from-purple-600 to-violet-500",
     bar: "w-[41%]",
   },
 ];
@@ -42,32 +39,28 @@ const featuredProjects = [
   {
     title: "AI MU, Asisten Virtual Lembaga",
     status: "Active",
-    statusDot: "bg-emerald-400",
-    gradient: "from-blue-600 to-cyan-500",
+    statusDot: "bg-success",
     desc: "Asisten AI yang dipakai lembaga Muhammadiyah untuk layanan otomatis dan informasi ke masyarakat.",
     tags: ["AI", "Chatbot", "Otomasi"],
   },
   {
     title: "Model Prediksi Stunting",
     status: "Research",
-    statusDot: "bg-cyan-400",
-    gradient: "from-cyan-500 to-teal-500",
+    statusDot: "bg-primary",
     desc: "Riset machine learning untuk mendeteksi risiko stunting lebih dini dari data kesehatan dasar.",
     tags: ["Python", "ML", "Data"],
   },
   {
     title: "Digitalisasi Amal Usaha",
     status: "In Progress",
-    statusDot: "bg-amber-400",
-    gradient: "from-amber-500 to-orange-500",
+    statusDot: "bg-warning",
     desc: "Transformasi digital untuk amal usaha Muhammadiyah lewat otomasi layanan dan pengelolaan data.",
     tags: ["Web", "Otomasi", "Umkm"],
   },
   {
     title: "Platform Kolaborasi Riset",
     status: "Featured",
-    statusDot: "bg-indigo-400",
-    gradient: "from-indigo-500 to-violet-500",
+    statusDot: "bg-primary",
     desc: "Ruang bersama mahasiswa lintas proyek: riset, kode, dan dokumentasi yang berdampak nyata.",
     tags: ["Software", "Kolaborasi"],
   },
@@ -81,7 +74,7 @@ export default function HomePage() {
         {/* Hero — split: narasi kiri, proyek kanan */}
         <section className="relative overflow-hidden section-padding">
           <ScientificBackground variant="neural" className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background" />
           </ScientificBackground>
 
           {/* Kartu proyek — mobile: sebagai backdrop blur; desktop: kolom kanan */}
@@ -91,7 +84,7 @@ export default function HomePage() {
                 {heroProjects.map((p, i) => (
                   <div
                     key={p.tag}
-                    className={`absolute -right-1 flex w-44 items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-xl ${
+                    className={`absolute -right-1 flex w-44 items-center gap-2.5 rounded-lg border border-border bg-card p-3 ${
                       i === 0
                         ? "top-[30%] -rotate-2"
                         : i === 1
@@ -99,7 +92,7 @@ export default function HomePage() {
                         : "top-[54%] -mr-16 -rotate-1"
                     }`}
                   >
-                    <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${p.cover} text-white`}>
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary">
                       <p.icon className="h-4 w-4" />
                     </span>
                     <div className="min-w-0">
@@ -118,9 +111,7 @@ export default function HomePage() {
                 <p className="mb-4">
                   <HeroLabel />
                 </p>
-                <h1 className="editorial-xl text-text">
-                  Grow, build &amp; create
-                </h1>
+                <h1 className="editorial-xl text-text">Tumbuh, bangun, berkarya</h1>
                 <p className="mt-6 editorial-body text-muted">
                   Kolaborasi bagi mahasiswa, peneliti, dan developer. Eksplorasi riset,
                   tulis kode, dan kembangkan solusi AI yang berdampak.
@@ -145,26 +136,28 @@ export default function HomePage() {
                   <Link
                     key={p.tag}
                     href="/showcase"
-                    className={`group block rounded-xl border border-border bg-card p-4 shadow-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-lg ${
+                    className={`group block rounded-lg border border-border bg-card p-4 transition-colors duration-150 hover:border-border-strong hover:bg-surface ${
                       i === 0
-                        ? "relative z-30 -rotate-1"
+                        ? "relative z-30"
                         : i === 1
-                        ? "relative z-20 -mt-3 rotate-1 lg:-ml-4"
-                        : "relative z-10 -mt-3 rotate-2 lg:-ml-8 lg:rotate-[2.5deg]"
+                        ? "relative z-20 -mt-3 lg:-ml-4"
+                        : "relative z-10 -mt-3 lg:-ml-8"
                     }`}
                   >
                     <span className="sr-only">Lihat karya {p.title} di showcase</span>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${p.cover} text-white`}>
+                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-primary/10 text-primary">
                           <p.icon className="h-5 w-5" />
                         </span>
                         <div>
-                          <p className="font-semibold text-text group-hover:text-primary">{p.title}</p>
+                          <p className="font-semibold text-text group-hover:text-primary">
+                            {p.title}
+                          </p>
                           <p className="text-xs text-muted">{p.desc}</p>
                         </div>
                       </div>
-                      <span className={`rounded-md bg-gradient-to-r ${p.cover} px-1.5 py-0.5 text-[10px] font-bold text-white`}>
+                      <span className="rounded-md border border-border bg-surface px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted">
                         {p.tag}
                       </span>
                     </div>
@@ -172,8 +165,8 @@ export default function HomePage() {
                       <Users className="h-3 w-3" />
                       <span>{p.meta}</span>
                     </div>
-                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border/60">
-                      <div className={`h-full rounded-full bg-gradient-to-r ${p.cover} ${p.bar}`} />
+                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface">
+                      <div className={`h-full rounded-full bg-primary ${p.bar}`} />
                     </div>
                   </Link>
                 ))}
@@ -195,27 +188,27 @@ export default function HomePage() {
               </div>
               <Link
                 href="/showcase"
-                className="mb-1 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                className="mb-1 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
               >
                 Lihat semua karya <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {featuredProjects.map((p) => (
                 <Link
                   key={p.title}
                   href="/showcase"
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+                  className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors duration-150 hover:border-border-strong"
                 >
-                  <div className={`relative h-20 bg-gradient-to-br ${p.gradient}`}>
-                    <span className={`absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/25 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm`}>
+                  <div className="relative h-16 border-b border-border bg-surface">
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium text-muted">
                       <span className={`h-1.5 w-1.5 rounded-full ${p.statusDot}`} />
                       {p.status}
                     </span>
                   </div>
                   <div className="flex flex-1 flex-col p-5">
-                    <h3 className="font-heading text-base font-bold text-text group-hover:text-primary">
+                    <h3 className="font-heading text-base font-semibold tracking-tight text-text transition-colors group-hover:text-primary">
                       {p.title}
                     </h3>
                     <p className="mt-1.5 flex-1 text-sm leading-relaxed text-muted">{p.desc}</p>
@@ -223,7 +216,7 @@ export default function HomePage() {
                       {p.tags.map((t) => (
                         <span
                           key={t}
-                          className="rounded-md bg-primary/5 px-2 py-0.5 font-mono text-[10px] text-primary"
+                          className="rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-muted"
                         >
                           {t}
                         </span>
@@ -257,7 +250,7 @@ export default function HomePage() {
         <section className="border-t border-border section-padding">
           <div className="container-main">
             <div className="section-header">
-              <p className="section-label">How it works</p>
+              <p className="section-label">Cara kerja</p>
               <h2 className="editorial-md text-text">Dari ide menjadi dampak</h2>
               <p className="section-desc">
                 Alur kerja sederhana yang mengubah ide proyek menjadi dampak nyata.

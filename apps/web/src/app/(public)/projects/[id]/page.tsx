@@ -3,26 +3,32 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Users, Calendar, Link2, ArrowRight } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@santai/ui/footer";
-import { Button } from "@santai/ui/button";
+import { Badge } from "@santai/ui/badge";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { JoinProjectButton, CompleteProjectButton, ProjectCommentForm, ProjectComments } from "./client";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
-const statusColors: Record<string, string> = {
-  Open: "text-emerald-500 border-emerald-500/30",
-  "In Progress": "text-amber-500 border-amber-500/30",
-  Completed: "text-blue-500 border-blue-500/30",
+const statusVariant: Record<string, "success" | "warning" | "default"> = {
+  Open: "success",
+  "In Progress": "warning",
+  Completed: "default",
 };
 
-const programColors: Record<string, string> = {
-  SD: "bg-blue-500/10 text-blue-500",
-  TI: "bg-emerald-500/10 text-emerald-500",
-  SI: "bg-purple-500/10 text-purple-500",
+const statusLabel: Record<string, string> = {
+  Open: "Terbuka",
+  "In Progress": "Berjalan",
+  Completed: "Selesai",
+};
+
+const programVariant: Record<string, "default" | "secondary"> = {
+  SD: "default",
+  TI: "secondary",
+  SI: "default",
 };
 
 export default async function ProjectDetailPage({ params }: Props) {
@@ -69,22 +75,20 @@ export default async function ProjectDetailPage({ params }: Props) {
         <div className="container-main py-8">
           <Link
             href="/showcase"
-            className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-text"
+            className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Projects
+            <ArrowLeft className="size-4" />
+            Kembali ke Showcase
           </Link>
 
           <div className="mt-6 grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <div className="mb-4 flex items-center gap-3">
-                <span
-                  className={`rounded-full border px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${statusColors[project.status]}`}
-                >
-                  {project.status}
-                </span>
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <Badge variant={statusVariant[project.status] ?? "default"}>
+                  {statusLabel[project.status] ?? project.status}
+                </Badge>
                 <span className="flex items-center gap-1 text-xs text-muted">
-                  <Calendar className="h-3.5 w-3.5" />
+                  <Calendar className="size-3.5" />
                   {project.createdAt.toLocaleDateString("id-ID", {
                     year: "numeric",
                     month: "long",
@@ -93,41 +97,29 @@ export default async function ProjectDetailPage({ params }: Props) {
                 </span>
               </div>
 
-              <h1 className="font-heading text-3xl font-bold text-text">
-                {project.title}
-              </h1>
+              <h1 className="font-heading text-3xl font-bold tracking-tight text-text">{project.title}</h1>
 
-              <div className="mt-6 space-y-4">
+              <div className="mt-6 space-y-5">
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">
-                    Description
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-text">
-                    {project.description}
-                  </p>
+                  <p className="editorial-label">Deskripsi</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-text">{project.description}</p>
                 </div>
 
                 {project.problemStatement && (
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">
-                      Problem Statement
-                    </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-text">
-                      {project.problemStatement}
-                    </p>
+                    <p className="editorial-label">Masalah yang diselesaikan</p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-text">{project.problemStatement}</p>
                   </div>
                 )}
 
                 {project.techStack && (
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">
-                      Tech Stack
-                    </h3>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
+                    <p className="editorial-label">Tech Stack</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
                       {project.techStack.split(",").map((t) => (
                         <span
                           key={t.trim()}
-                          className="rounded-md bg-primary/5 px-2.5 py-1 text-xs text-primary"
+                          className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-text"
                         >
                           {t.trim()}
                         </span>
@@ -138,23 +130,15 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                 {project.resultSummary && (
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">
-                      Result
-                    </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-text">
-                      {project.resultSummary}
-                    </p>
+                    <p className="editorial-label">Hasil</p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-text">{project.resultSummary}</p>
                   </div>
                 )}
 
                 {project.impactSummary && (
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">
-                      Impact
-                    </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-text">
-                      {project.impactSummary}
-                    </p>
+                    <p className="editorial-label">Dampak</p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-text">{project.impactSummary}</p>
                   </div>
                 )}
 
@@ -163,18 +147,17 @@ export default async function ProjectDetailPage({ params }: Props) {
                     href={project.demoLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <Link2 className="h-4 w-4" />
-                    View Demo / Repository
+                    <Link2 className="size-4" />
+                    Lihat Demo / Repository
+                    <ArrowRight className="size-3.5" />
                   </a>
                 )}
               </div>
 
               <div className="mt-8">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">
-                  Comments ({project.comments.length})
-                </h3>
+                <p className="editorial-label">Komentar ({project.comments.length})</p>
                 <div className="mt-3 space-y-3">
                   <ProjectComments comments={project.comments} />
                 </div>
@@ -187,54 +170,57 @@ export default async function ProjectDetailPage({ params }: Props) {
             </div>
 
             <div className="space-y-6">
-              <div className="rounded-xl border border-border bg-surface p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary">
                     {project.creator.name.charAt(0)}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-text">{project.creator.name}</p>
-                    <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] ${programColors[project.creator.studyProgram || ""] || ""}`}>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-text">{project.creator.name}</p>
+                    <Badge variant={programVariant[project.creator.studyProgram || ""] ?? "secondary"} className="mt-1">
                       {project.creator.studyProgram}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <h4 className="text-xs font-semibold text-text">Team Members</h4>
+                <div className="mt-5">
+                  <p className="text-xs font-semibold text-text">Anggota Tim</p>
                   <div className="mt-2 space-y-2">
                     {project.teamMembers.map((member) => (
-                      <div key={member.id} className="flex items-center gap-2.5">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
+                      <div key={member.id} className="flex items-start gap-2.5">
+                        <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[10px] font-semibold text-primary">
                           {member.user.name.charAt(0)}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <Link
                             href={`/${member.user.username || member.user.id}`}
-                            className="text-xs text-text hover:text-primary"
+                            className="text-xs text-text transition-colors hover:text-primary"
                           >
                             {member.user.name}
                           </Link>
-                          <span className={`ml-2 rounded px-1 py-0.5 text-[9px] ${programColors[member.user.studyProgram || ""] || ""}`}>
+                          <Badge
+                            variant={programVariant[member.user.studyProgram || ""] ?? "secondary"}
+                            className="ml-2"
+                          >
                             {member.user.studyProgram}
-                          </span>
-                          <p className="text-[10px] text-muted">{member.role}</p>
+                          </Badge>
+                          <p className="mt-0.5 text-[10px] text-muted">{member.role}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <h4 className="text-xs font-semibold text-text">Required Roles</h4>
+                <div className="mt-5">
+                  <p className="text-xs font-semibold text-text">Peran yang Dibutuhkan</p>
                   <div className="mt-2 space-y-1.5">
                     {project.projectRoles.map((role) => (
                       <div
                         key={role.id}
-                        className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
+                        className="flex items-center justify-between rounded-lg border border-border bg-surface/40 px-3 py-2"
                       >
                         <span className="text-xs font-medium text-text">{role.studyProgram}</span>
-                        <span className="text-[10px] text-muted">
+                        <span className="font-mono text-[10px] text-muted">
                           {role.filled}/{role.required}
                         </span>
                       </div>
@@ -243,9 +229,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              {canJoin && (
-                <JoinProjectButton projectId={project.id} />
-              )}
+              {canJoin && <JoinProjectButton projectId={project.id} />}
 
               {isCreator && project.status !== "Completed" && (
                 <CompleteProjectButton projectId={project.id} />

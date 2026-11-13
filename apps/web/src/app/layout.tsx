@@ -5,9 +5,9 @@ import { Toaster } from "sonner";
 import AuthProvider from "@/components/shared/authProvider";
 import FirebaseProvider from "@/components/shared/firebaseProvider";
 import ThemeProvider from "@/components/shared/themeProvider";
-import { CookieProvider } from "@/components/cookie-provider";
-import CookieConsent from "@/components/cookie-consent";
-import SearchProvider from "@/components/search-provider";
+import { CookieProvider } from "@/components/cookie/cookie-provider";
+import CookieConsent from "@/components/cookie/cookie-consent";
+import SearchProvider from "@/components/search/search-provider";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({

@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { Search, ChevronLeft, ChevronRight, Play, Film } from "lucide-react";
 import { Card } from "../../_components";
-import { fetchYouTube, type YouTubeItem } from "@/lib/data";
+import { fetchYouTube, type YouTubeItem } from "@/lib/data/data";
 import { YouTubeEmbed } from "@santai/ui/youtubeEmbed";
-import { usePolling } from "@/lib/usePolling";
+import { usePolling } from "@/hooks/usePolling";
 
 function fmtDate(d: string) {
   return d ? new Date(d).toLocaleDateString("id-ID") : "";
@@ -48,8 +48,8 @@ export default function YoutubePage() {
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder="Search videos..."
-            className="flex-1 bg-transparent text-xs text-text outline-none placeholder:text-muted"
+            placeholder="Cari video..."
+            className="flex-1 bg-transparent text-xs text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background placeholder:text-muted"
           />
         </div>
       </div>
@@ -59,24 +59,24 @@ export default function YoutubePage() {
           <table className="w-full text-left text-[10px]">
             <thead>
               <tr className="border-b border-border text-muted">
-                <th className="pb-2 font-medium">Title</th>
-                <th className="pb-2 font-medium">Channel</th>
-                <th className="pb-2 font-medium">Category</th>
-                <th className="pb-2 font-medium">Views</th>
-                <th className="pb-2 font-medium">Published</th>
+                <th className="pb-2 font-medium">Judul</th>
+                <th className="pb-2 font-medium">Kanal</th>
+                <th className="pb-2 font-medium">Kategori</th>
+                <th className="pb-2 font-medium">Dilihat</th>
+                <th className="pb-2 font-medium">Terbit</th>
               </tr>
             </thead>
             <tbody>
               {paged.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-muted">No videos found.</td>
+                  <td colSpan={5} className="py-8 text-center text-muted">Video tidak ditemukan.</td>
                 </tr>
               ) : paged.map((v) => (
                 <tr key={v.id} className="border-b border-border/50 transition-colors hover:bg-surface/20">
                   <td className="py-2.5 pr-3">
                     <button onClick={() => setPlayingVideo({ videoId: v.videoId, title: v.title })}
                       className="flex items-center gap-2 text-left transition-colors hover:text-primary">
-                      <Play className="h-3 w-3 flex-shrink-0 text-red-500" />
+                      <Play className="h-3 w-3 flex-shrink-0 text-destructive" />
                       <span className="line-clamp-1 text-xs font-medium text-text">{v.title}</span>
                     </button>
                   </td>

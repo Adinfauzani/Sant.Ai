@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/authClient";
+import { useSession } from "@/lib/auth/authClient";
 import Link from "next/link";
 import { Button } from "@santai/ui/button";
-import { joinProject, completeProject, addComment } from "@/lib/actions";
+import { Input } from "@santai/ui/input";
+import { TwinOrbit } from "@santai/ui/twinOrbit";
+import { joinProject, completeProject, addComment } from "@/lib/projects/actions";
 
 export function JoinProjectButton({ projectId }: { projectId: string }) {
   const [role, setRole] = useState("");
@@ -19,20 +21,20 @@ export function JoinProjectButton({ projectId }: { projectId: string }) {
       await joinProject(projectId, role);
       router.refresh();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed to join");
+      alert(e instanceof Error ? e.message : "Gagal gabung");
     }
     setLoading(false);
   }
 
   return (
     <div className="rounded-xl border border-border bg-surface p-4">
-      <h4 className="text-xs font-semibold text-text">Join This Project</h4>
-      <input
+      <h4 className="text-xs font-semibold text-text">Gabung Proyek Ini</h4>
+      <Input
+        className="mt-2 text-xs"
         type="text"
-        placeholder="Your role (e.g. Frontend Dev)"
+        placeholder="Peranmu (mis. Frontend Dev)"
         value={role}
         onChange={(e) => setRole(e.target.value)}
-        className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-text outline-none focus:border-primary"
       />
       <Button
         size="sm"
@@ -40,7 +42,7 @@ export function JoinProjectButton({ projectId }: { projectId: string }) {
         onClick={handleJoin}
         disabled={loading || !role}
       >
-        {loading ? "Joining..." : "Join Project"}
+        {loading && <TwinOrbit className="size-4 text-current" />}{loading ? "Lagi gabung…" : "Gabung Proyek"}
       </Button>
     </div>
   );
@@ -51,13 +53,13 @@ export function CompleteProjectButton({ projectId }: { projectId: string }) {
   const router = useRouter();
 
   async function handleComplete() {
-    if (!confirm("Mark this project as completed?")) return;
+    if (!confirm("Tandai proyek ini udah selesai?")) return;
     setLoading(true);
     try {
       await completeProject(projectId);
       router.refresh();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Failed");
+      alert(e instanceof Error ? e.message : "Gagal");
     }
     setLoading(false);
   }
@@ -70,7 +72,7 @@ export function CompleteProjectButton({ projectId }: { projectId: string }) {
       onClick={handleComplete}
       disabled={loading}
     >
-      {loading ? "Processing..." : "Mark as Completed"}
+      {loading && <TwinOrbit className="size-4 text-current" />}{loading ? "Lagi diproses…" : "Tandai Selesai"}
     </Button>
   );
 }
@@ -99,16 +101,14 @@ export function ProjectCommentForm({ projectId }: { projectId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      <input
+      <Input
+        className="flex-1 text-xs"
         type="text"
-        placeholder="Write a comment..."
+        placeholder="Tulis komentar…"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-xs text-text outline-none focus:border-primary"
       />
-      <Button type="submit" size="sm" disabled={loading || !content.trim()}>
-        Send
-      </Button>
+      <Button type="submit" size="sm" disabled={loading || !content.trim()}>Kirim</Button>
     </form>
   );
 }

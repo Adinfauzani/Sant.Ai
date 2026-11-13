@@ -2,35 +2,9 @@ import Link from "next/link";
 import { Calendar, Clock, ArrowRight, User } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@santai/ui/footer";
+import { Badge } from "@santai/ui/badge";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
 import { articles } from "@/data/articles";
-
-const categoryMeta: Record<string, { accent: string; gradient: string }> = {
-  "Data Science": {
-    accent: "from-blue-500/30 to-cyan-400/10",
-    gradient: "from-blue-600 to-cyan-500",
-  },
-  Career: {
-    accent: "from-emerald-500/30 to-teal-400/10",
-    gradient: "from-emerald-600 to-teal-500",
-  },
-  IoT: {
-    accent: "from-purple-500/30 to-violet-400/10",
-    gradient: "from-purple-600 to-violet-500",
-  },
-  Cloud: {
-    accent: "from-amber-500/30 to-orange-400/10",
-    gradient: "from-amber-600 to-orange-500",
-  },
-  Backend: {
-    accent: "from-sky-500/30 to-blue-400/10",
-    gradient: "from-sky-600 to-blue-500",
-  },
-  Design: {
-    accent: "from-pink-500/30 to-rose-400/10",
-    gradient: "from-pink-600 to-rose-500",
-  },
-};
 
 export default function ArticlesPage() {
   return (
@@ -46,74 +20,54 @@ export default function ArticlesPage() {
               <p className="mb-1 editorial-label">Articles</p>
               <h1 className="editorial-xl text-text">Artikel &amp; Panduan</h1>
               <p className="mt-3 editorial-body mx-auto text-muted">
-                Artikel dan panduan seputar teknologi, programming, dan karir digital untuk mahasiswa.
+                Artikel dan panduan seputar teknologi, programming, dan karier digital untuk
+                mahasiswa.
               </p>
             </div>
           </div>
         </section>
 
         <div className="container-main pb-16">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article) => {
-              const cat = categoryMeta[article.category];
-              return (
-                <Link
-                  key={article.slug}
-                  href={`/articles/${article.slug}`}
-                  className="group relative"
-                >
-                  {/* gradient glow */}
-                  <div className="pointer-events-none absolute -inset-px rounded-[24px] bg-gradient-to-br from-primary/30 via-primary/10 to-accent/30 opacity-0 blur-sm transition-all duration-500 group-hover:opacity-100 group-hover:blur-md" />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article) => (
+              <Link
+                key={article.slug}
+                href={`/articles/${article.slug}`}
+                className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors duration-150 hover:border-border-strong"
+              >
+                <div className="flex items-center justify-between gap-2 border-b border-border bg-surface/60 px-4 py-2.5">
+                  <Badge variant="default" className="font-mono text-[10px] uppercase tracking-wider">
+                    {article.category}
+                  </Badge>
+                  <span className="font-mono text-[10px] text-muted">{article.readTime}</span>
+                </div>
 
-                  <div className="relative overflow-hidden rounded-[24px] border border-border bg-card shadow-lg shadow-black/20 transition-all duration-300 group-hover:scale-[1.02] group-hover:border-transparent group-hover:shadow-primary/5">
-                    {/* inner gradient overlay */}
-                    <div className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-primary/8 via-transparent to-accent/8 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="flex flex-1 flex-col p-5">
+                  <h2 className="font-heading text-base font-bold leading-snug text-text transition-colors duration-150 group-hover:text-primary">
+                    {article.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted">
+                    {article.excerpt}
+                  </p>
 
-                    {/* cover */}
-                    <div className={`relative flex h-40 items-end bg-gradient-to-br ${cat?.accent ?? "from-primary/20 to-accent/10"} overflow-hidden md:h-44`}>
-                      <div className={`absolute inset-0 bg-gradient-to-br ${cat?.gradient ?? "from-primary to-accent"} opacity-10`} />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                      <div className="relative z-10 p-4">
-                        <span className="inline-block rounded-full bg-black/30 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
-                          {article.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* body */}
-                    <div className="p-5">
-                      <h2 className="font-heading text-base font-bold leading-snug text-text transition-colors duration-300 group-hover:text-primary">
-                        {article.title}
-                      </h2>
-                      <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted">
-                        {article.excerpt}
-                      </p>
-
-                      {/* meta row */}
-                      <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-[10px] text-muted">
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {article.author.name}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {article.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {article.readTime}
-                        </span>
-                      </div>
-
-                      <div className="mt-3 flex items-center gap-1 text-[10px] font-medium text-primary transition-all group-hover:gap-1.5">
-                        Read Article
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                      </div>
-                    </div>
+                  <div className="mt-auto flex items-center gap-3 border-t border-border pt-3 text-[10px] text-muted">
+                    <span className="flex min-w-0 items-center gap-1">
+                      <User className="size-3 shrink-0" />
+                      <span className="truncate">{article.author.name}</span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-1">
+                      <Calendar className="size-3" />
+                      {article.date}
+                    </span>
                   </div>
-                </Link>
-              );
-            })}
+
+                  <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-medium text-primary">
+                    Baca Artikel
+                    <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </main>

@@ -11,13 +11,13 @@ export function Unauthorized() {
           403 Forbidden
         </h1>
         <p className="mb-6 text-sm text-text">
-          You do not have permission to access this area.
+          Kamu nggak punya akses ke area ini.
         </p>
         <Link
           href="/"
           className="inline-block w-full border-2 border-text bg-text px-4 py-2 text-sm font-bold text-background hover:opacity-90"
         >
-          Back to Home
+          Kembali ke Beranda
         </Link>
       </div>
     </div>

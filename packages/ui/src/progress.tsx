@@ -17,7 +17,7 @@ export function Progress({ value, className, indicatorClassName }: ProgressProps
     >
       <div
         className={cn(
-          "h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-500",
+          "h-full rounded-full bg-primary transition-all duration-500",
           indicatorClassName,
         )}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}

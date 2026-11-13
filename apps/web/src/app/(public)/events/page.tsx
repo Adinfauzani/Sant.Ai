@@ -1,7 +1,7 @@
 import Navbar from "@/components/layout/navbar";
 import Footer from "@santai/ui/footer";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
-import { getEventsData } from "@/lib/events";
+import { getEventsData } from "@/lib/community/events";
 import EventsClient from "./_eventsClient";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export default async function EventsPage() {
           <div className="container-main relative">
             <div className="mx-auto max-w-2xl text-center">
               <p className="mb-1 editorial-label">Events</p>
-              <h1 className="editorial-xl text-text">Events &amp; Activities</h1>
+              <h1 className="editorial-xl text-text">Kegiatan &amp; Acara</h1>
               <p className="mt-3 editorial-body mx-auto text-muted">
                 Workshop, kompetisi, hackathon, dan kegiatan teknologi dalam ekosistem Science, Technology &amp; Artificial Intelligence.
               </p>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { authClient, useSession } from "@/lib/authClient";
-import { Loader2, Terminal } from "lucide-react";
+import { authClient, useSession } from "@/lib/auth/authClient";
+import { Terminal } from "lucide-react";
+import { TwinOrbit } from "@santai/ui/twinOrbit";
 
 interface Props {
   email: string;
@@ -89,8 +90,8 @@ export default function VerifyOTP({ email, onVerified, onChangeEmail, type = "em
         )}
       </p>
 
-      <div className="mb-4 rounded border-2 border-amber-500/30 bg-amber-500/5 px-3 py-2">
-        <p className="flex items-center gap-1.5 text-[11px] text-amber-600">
+      <div className="mb-4 rounded border-2 border-warning/30 bg-warning/5 px-3 py-2">
+        <p className="flex items-center gap-1.5 text-[11px] text-warning">
           <Terminal className="h-3 w-3" />
           OTP not delivered? Check the server terminal for the code.
         </p>
@@ -104,11 +105,11 @@ export default function VerifyOTP({ email, onVerified, onChangeEmail, type = "em
           inputMode="numeric"
           autoFocus
           placeholder="000000"
-          className="w-full border-2 border-text bg-background px-3 py-2 text-center text-lg tracking-[8px] text-text placeholder:text-text/30 focus:outline-none"
+          className="w-full border-2 border-text bg-background px-3 py-2 text-center text-lg tracking-[8px] text-text placeholder:text-text/30 focus:focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         />
 
         {error && (
-          <p className="border-2 border-red-600 bg-red-600/10 px-3 py-2 text-xs text-red-600">{error}</p>
+          <p className="border-2 border-border bg-destructive/10 px-3 py-2 text-xs text-destructive">{error}</p>
         )}
 
         <button
@@ -116,7 +117,7 @@ export default function VerifyOTP({ email, onVerified, onChangeEmail, type = "em
           disabled={loading || otp.length < 6}
           className="w-full border-2 border-text bg-text px-4 py-2 text-sm font-bold text-background hover:opacity-90 disabled:opacity-50"
         >
-          {loading ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : "Verify"}
+          {loading ? <TwinOrbit className="size-4 mx-auto" /> : "Verify"}
         </button>
 
         <button

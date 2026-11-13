@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { resolve } from "node:path";
 import { prisma } from "@/lib/db";
-import { classifyArticle } from "@/lib/classifier";
+import { classifyArticle } from "@/lib/content/classifier";
 
 config({ path: resolve(process.cwd(), "apps/server/.env") });
 config({ path: resolve(process.cwd(), "apps/web/.env") });

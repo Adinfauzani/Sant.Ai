@@ -19,9 +19,9 @@ const InputGroup = React.forwardRef<
         onFocusCapture={() => setFocusWithin(true)}
         onBlurCapture={() => setFocusWithin(false)}
         className={cn(
-          "group/input-group relative flex min-w-0 items-center rounded-lg border border-border transition-colors",
-          "focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20",
-          "has-[[data-slot=input-group-control][aria-invalid]]:border-red-500",
+          "group/input-group relative flex min-w-0 items-center rounded-md border border-border transition-colors",
+          "focus-within:border-primary focus-within:ring-2 focus-within:ring-ring",
+          "has-[[data-slot=input-group-control][aria-invalid]]:border-destructive",
           className
         )}
         {...props}
@@ -39,7 +39,7 @@ const InputGroupInput = React.forwardRef<
     ref={ref}
     data-slot="input-group-control"
     className={cn(
-      "h-9 w-full bg-transparent px-3 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground/60",
+      "h-9 w-full bg-transparent px-3 py-1 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background placeholder:text-muted",
       "disabled:cursor-not-allowed disabled:opacity-50",
       "file:border-0 file:bg-transparent file:text-sm file:font-medium",
       className
@@ -83,9 +83,9 @@ const InputGroupButton = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors",
-      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       "disabled:pointer-events-none disabled:opacity-50",
-      variant === "ghost" && "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+      variant === "ghost" && "text-muted hover:bg-accent hover:text-accent-foreground",
       variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
       variant === "outline" && "border border-border bg-background hover:bg-accent hover:text-accent-foreground",
       variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/80",
@@ -108,7 +108,7 @@ const InputGroupText = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <span
     ref={ref}
-    className={cn("text-xs text-muted-foreground", className)}
+    className={cn("text-xs text-muted", className)}
     {...props}
   />
 ))

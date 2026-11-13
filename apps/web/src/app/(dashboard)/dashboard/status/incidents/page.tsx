@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -8,19 +8,19 @@ import { Plus, AlertTriangle, CheckCircle, Search, Clock } from "lucide-react";
 const ALLOWED_ROLES = new Set(["sudo"]);
 
 const statusColors: Record<string, string> = {
-  Investigating: "text-amber-500",
-  Identified: "text-orange-500",
-  Monitoring: "text-blue-500",
-  Resolved: "text-emerald-500",
+  Investigating: "text-warning",
+  Identified: "text-warning",
+  Monitoring: "text-primary",
+  Resolved: "text-success",
 };
 
 const severityColors: Record<string, string> = {
-  minor: "bg-amber-500/10 text-amber-600 border-amber-200 dark:border-amber-800",
-  major: "bg-orange-500/10 text-orange-600 border-orange-200 dark:border-orange-800",
-  critical: "bg-red-500/10 text-red-600 border-red-200 dark:border-red-800",
+  minor: "bg-warning/10 text-warning border-border dark:border-border",
+  major: "bg-warning/10 text-warning border-border dark:border-border",
+  critical: "bg-destructive/10 text-destructive border-border dark:border-border",
 };
 
-export default async function IncidentsPage() {
+export default async function InsidenPage() {
   const session = await getAuthSession(await headers());
   if (!session?.user?.id) redirect("/login");
   if (!ALLOWED_ROLES.has(session.user.role?.toLowerCase() ?? "")) redirect("/unauthorized");
@@ -34,12 +34,12 @@ export default async function IncidentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-text">Incidents</h1>
-          <p className="text-xs text-muted">Track and manage service incidents.</p>
+          <h1 className="text-xl font-bold text-text">Insiden</h1>
+          <p className="text-xs text-muted">Lacak dan kelola insiden layanan.</p>
         </div>
         <Link
           href="/dashboard/status/incidents/new"
-          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[11px] font-medium text-white hover:bg-primary/90"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[11px] font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-3.5 w-3.5" /> New Incident
         </Link>
@@ -55,7 +55,7 @@ export default async function IncidentsPage() {
                   {inc.status === "Resolved" ? (
                     <CheckCircle className={`mt-0.5 h-4 w-4 shrink-0 ${statusColors[inc.status]}`} />
                   ) : (
-                    <AlertTriangle className={`mt-0.5 h-4 w-4 shrink-0 ${statusColors[inc.status] || "text-amber-500"}`} />
+                    <AlertTriangle className={`mt-0.5 h-4 w-4 shrink-0 ${statusColors[inc.status] || "text-warning"}`} />
                   )}
                   <div>
                     <div className="flex items-center gap-2">
@@ -87,9 +87,9 @@ export default async function IncidentsPage() {
         })}
         {incidents.length === 0 && (
           <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-12">
-            <CheckCircle className="h-8 w-8 text-emerald-500" />
-            <p className="mt-3 text-sm font-medium text-text">All Clear</p>
-            <p className="mt-1 text-xs text-muted">No incidents reported. Services are fully operational.</p>
+            <CheckCircle className="h-8 w-8 text-success" />
+            <p className="mt-3 text-sm font-medium text-text">Semua Aman</p>
+            <p className="mt-1 text-xs text-muted">Belum ada insiden terlapor. Layanan beroperasi penuh.</p>
           </div>
         )}
       </div>

@@ -6,8 +6,8 @@ export function LegalHomeButton() {
   return (
     <Button asChild variant="secondary" size="sm" className="gap-1.5 px-2.5 text-[11px]">
       <Link href="/">
-        <Home className="h-3.5 w-3.5" />
-        Home
+        <Home className="size-3.5" />
+        Beranda
       </Link>
     </Button>
   );
@@ -17,8 +17,8 @@ export function LegalBackButton() {
   return (
     <Button asChild variant="ghost" size="sm" className="gap-2 text-xs">
       <Link href="/legal">
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Back to Legal Center
+        <ArrowLeft className="size-3.5" />
+        Kembali ke Pusat Legal
       </Link>
     </Button>
   );
@@ -26,24 +26,18 @@ export function LegalBackButton() {
 
 export function LegalCard({ title, description, href }: { title: string; description: string; href: string }) {
   return (
-    <Link href={href} className="group rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-primary/[0.04] hover:shadow-lg hover:shadow-primary/5">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-105">
+    <Link
+      href={href}
+      className="group rounded-xl border border-border bg-card p-5 transition-colors duration-150 hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+    >
+      <div className="flex size-9 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
         <span className="text-sm font-bold">→</span>
       </div>
-      <h3 className="mt-5 font-heading text-lg font-bold text-text">{title}</h3>
+      <h3 className="mt-4 font-heading text-lg font-bold text-text">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
-      <p className="mt-5 text-xs font-semibold text-primary transition-all group-hover:translate-x-1">Read policy</p>
+      <p className="mt-4 text-xs font-semibold text-primary transition-transform duration-150 group-hover:translate-x-1">
+        Baca kebijakan
+      </p>
     </Link>
-  );
-}
-
-export function LegalSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-2xl border border-border bg-card p-5 md:p-7">
-      <h2 className="font-heading text-2xl font-bold text-text">{title}</h2>
-      <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted">
-        {children}
-      </div>
-    </section>
   );
 }

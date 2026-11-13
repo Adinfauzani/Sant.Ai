@@ -42,17 +42,17 @@ interface TaskCardProps {
 }
 
 const priorityColors: Record<string, string> = {
-  Urgent: "bg-red-500",
-  High: "bg-orange-500",
-  Medium: "bg-blue-500",
-  Low: "bg-gray-400",
+  Urgent: "bg-destructive",
+  High: "bg-warning",
+  Medium: "bg-primary",
+  Low: "bg-border-strong",
 };
 
 const priorityLabelColors: Record<string, string> = {
-  Urgent: "border-red-500/30 bg-red-500/10 text-red-500",
-  High: "border-orange-500/30 bg-orange-500/10 text-orange-500",
-  Medium: "border-blue-500/30 bg-blue-500/10 text-blue-500",
-  Low: "border-gray-500/30 bg-gray-500/10 text-gray-500",
+  Urgent: "border-destructive/30 bg-destructive/10 text-destructive",
+  High: "border-warning/30 bg-warning/10 text-warning",
+  Medium: "border-primary/30 bg-primary/10 text-primary",
+  Low: "border-border bg-surface text-muted",
 };
 
 export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
@@ -83,8 +83,8 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative rounded-xl border border-border bg-card p-3 transition-all",
-        "hover:border-primary/30 hover:shadow-sm",
+        "group relative rounded-xl border border-border bg-card p-3 transition-colors duration-150",
+        "hover:border-border-strong",
         isDragging && "shadow-lg ring-2 ring-primary/20 scale-[1.02] z-50"
       )}
     >
@@ -104,7 +104,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab touch-none rounded p-0.5 text-muted opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
+          className="cursor-grab touch-none rounded-sm p-0.5 text-muted opacity-60 transition-opacity hover:text-text focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100"
         >
           <GripVertical className="h-3.5 w-3.5" />
         </button>
@@ -113,26 +113,26 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 opacity-0 group-hover:opacity-100"
+              className="size-6 rounded-sm opacity-60 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
             >
               <MoreHorizontal className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36">
             <DropdownMenuItem onClick={() => onEdit(task)}>
-              <Pencil className="mr-2 h-3.5 w-3.5" />
-              Edit
+              <Pencil className="mr-2 size-3.5" />
+              Ubah
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(task.id)} className="text-red-500">
-              <Trash className="mr-2 h-3.5 w-3.5" />
-              Delete
+            <DropdownMenuItem onClick={() => onDelete(task.id)} className="text-destructive">
+              <Trash className="mr-2 size-3.5" />
+              Hapus
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       {/* Priority indicator line */}
-      <div className={cn("mb-2 h-0.5 w-8 rounded-full", priorityColors[task.priority] ?? "bg-blue-500")} />
+      <div className={cn("mb-2 h-0.5 w-8 rounded-full", priorityColors[task.priority] ?? "bg-primary")} />
 
       {/* Labels */}
       {task.labels.length > 0 && (
@@ -154,8 +154,16 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
 
       {/* Title */}
       <h3
-        className="mb-2 cursor-pointer text-sm leading-snug font-medium"
+        role="button"
+        tabIndex={0}
+        className="mb-2 cursor-pointer rounded-sm text-sm leading-snug font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onClick={() => onEdit(task)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onEdit(task);
+          }
+        }}
       >
         {task.title}
       </h3>
@@ -166,7 +174,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           {task.dueDate && (
             <span className="flex items-center gap-0.5">
               <Calendar className="h-3 w-3" />
-              {new Date(task.dueDate).toLocaleDateString("en-US", {
+              {new Date(task.dueDate).toLocaleDateString("id-ID", {
                 month: "short",
                 day: "numeric",
               })}

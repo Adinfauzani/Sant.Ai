@@ -52,7 +52,7 @@
     "web": {
       "description": "Next.js 16 App Router specialist for apps/web (pages, Server Actions, route handlers, cron fetchers)",
       "mode": "subagent",
-      "system": "You work inside apps/web only. Next.js 16 App Router, Tailwind v4 CSS-first config, React Server Components by default (add \"use client\" only when needed), file names camelCase, components ~300 lines max. Web dev runs `next dev --webpack`, never Turbopack. Never edit packages/shared/src/auth.ts — the Better Auth config lives there and both apps call createAuth() from it. Note: apps/web/src/lib/auth-client.ts is a dead stub; the client is @/lib/authClient.",
+      "system": "You work inside apps/web only. Next.js 16 App Router, Tailwind v4 CSS-first config, React Server Components by default (add \"use client\" only when needed), file names camelCase, components ~300 lines max. Web dev runs `next dev --webpack`, never Turbopack. Never edit packages/shared/src/auth.ts — the Better Auth config lives there and both apps call createAuth() from it. Note: apps/web/src/lib/auth/auth-client.ts is a dead stub; the client is @/lib/auth/authClient.",
       "permissions": [{ "action": "edit", "resource": "apps/server/*", "effect": "deny" }]
     },
     "shared": {

@@ -1,17 +1,11 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { convertToModelMessages, streamText } from "ai";
+import { APICallError, streamText, convertToModelMessages } from "ai";
 import { prisma } from "@/lib/db";
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { headers } from "next/headers";
+import { chatModel } from "@/lib/ai/openrouter";
 
 export const runtime = "nodejs";
 
-const openai = createOpenAI({
-  baseURL: process.env.AI_BASE_URL ?? "http://127.0.0.1:11434/v1",
-  apiKey: process.env.AI_API_KEY ?? "ollama",
-});
-
-const chatModel = openai.chat(process.env.AI_MODEL ?? "qwen2.5:7b");
 
 const SYSTEM_PROMPT = `Kamu adalah AI MU, asisten kecerdasan buatan milik Sant.Ai yang ramah dan santai.
 Gaya bicara: bahasa Indonesia yang sederhana, langsung ke poin, dan tidak bertele-tele.
@@ -54,11 +48,15 @@ interface UiMessage {
 export async function POST(request: Request) {
   let chatId: string | undefined;
   let messages: UiMessage[] = [];
+  let trigger = "submit-message";
+  let messageId: string | undefined;
 
   try {
     const body = await request.json();
     chatId = body?.chatId;
     messages = Array.isArray(body?.messages) ? (body.messages as UiMessage[]) : [];
+    if (typeof body?.trigger === "string") trigger = body.trigger;
+    if (typeof body?.messageId === "string") messageId = body.messageId;
   } catch {
     return Response.json({ error: "Format request tidak valid." }, { status: 400 });
   }
@@ -81,7 +79,44 @@ export async function POST(request: Request) {
         return Response.json({ error: "Percakapan tidak ditemukan." }, { status: 404 });
       }
 
-      if (userText || userFiles.length > 0) {
+      if (trigger === "regenerate-message") {
+        // Regenerasi memakai ulang pesan pengguna yang sama, jadi tidak perlu
+        // menyimpan ulang baris user. Balasan lama digantikan oleh yang baru.
+        const target = messageId
+          ? await prisma.aiMuChatMessage.findFirst({
+              where: { id: messageId, chatId },
+              select: { id: true, createdAt: true },
+            })
+          : null;
+        if (target) {
+          // Balasan yang digenerasi ulang dan semua pesan setelahnya dibuang.
+          await prisma.aiMuChatMessage.deleteMany({
+            where: {
+              chatId,
+              OR: [
+                { createdAt: { gt: target.createdAt } },
+                // Beberapa baris bisa berbagi timestamp, id jadi pemutus.
+                { createdAt: target.createdAt, id: { gte: target.id } },
+              ],
+            },
+          });
+        } else {
+          const lastUserRow = await prisma.aiMuChatMessage.findFirst({
+            where: { chatId, role: "user" },
+            orderBy: { createdAt: "desc" },
+            select: { createdAt: true },
+          });
+          if (lastUserRow) {
+            await prisma.aiMuChatMessage.deleteMany({
+              where: {
+                chatId,
+                role: "assistant",
+                createdAt: { gt: lastUserRow.createdAt },
+              },
+            });
+          }
+        }
+      } else if (userText || userFiles.length > 0) {
         if (chat.title === "Percakapan baru") {
           const titleText = userText.slice(0, 48).trim() || "Percakapan baru";
           await prisma.aiMuChat.update({
@@ -113,9 +148,10 @@ export async function POST(request: Request) {
     });
 
     const result = streamText({
-      model: chatModel,
+      model: chatModel as never,
       system: SYSTEM_PROMPT,
       messages: await convertToModelMessages(modelMessages as never),
+      maxOutputTokens: 1024,
     });
 
     if (chatId) {
@@ -133,12 +169,132 @@ export async function POST(request: Request) {
         );
     }
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({
+      onError: (error) => toSafeStreamError(error),
+    });
   } catch (error) {
-    console.error("AI MU chat error:", error);
-    return Response.json(
-      { error: "AI MU sedang tidak dapat menjawab saat ini. Silakan tunggu sebentar atau tanya ulang." },
-      { status: 500 },
-    );
+    return toSafeResponseError(error);
   }
+}
+
+function isAbortError(error: unknown) {
+  return (
+    (error instanceof Error && error.name === "AbortError") ||
+    (typeof error === "object" &&
+      error !== null &&
+      "name" in error &&
+      (error as { name?: string }).name === "AbortError")
+  );
+}
+
+function classifyProviderError(error: unknown) {
+  if (isAbortError(error)) {
+    return {
+      status: 499,
+      log: "AI MU chat request aborted",
+      message: "Permintaan dibatalkan sebelum AI MU selesai merespons.",
+    };
+  }
+
+  if (APICallError.isInstance(error)) {
+    const code = error.statusCode;
+    if (code === 401 || code === 403) {
+      return {
+        status: 503,
+        log: `AI MU provider auth/config error (${code})`,
+        message:
+          "AI MU sedang tidak dapat terhubung ke layanan AI karena konfigurasi akses bermasalah. Silakan coba lagi nanti.",
+      };
+    }
+    if (code === 402) {
+      return {
+        status: 503,
+        log: "AI MU provider error: payment/credit required",
+        message:
+          "AI MU sedang tidak dapat menghasilkan respons karena layanan AI mengalami kendala kredit atau pembayaran. Silakan coba lagi nanti.",
+      };
+    }
+    if (code === 429) {
+      return {
+        status: 429,
+        log: "AI MU provider rate limited",
+        message:
+          "AI MU sedang menerima terlalu banyak permintaan. Silakan tunggu sebentar lalu coba lagi.",
+      };
+    }
+    if (code === 404) {
+      return {
+        status: 503,
+        log: "AI MU provider model unavailable",
+        message:
+          "Model AI MU sedang tidak tersedia. Silakan coba lagi nanti.",
+      };
+    }
+    if (code === 408) {
+      return {
+        status: 504,
+        log: "AI MU provider timeout",
+        message:
+          "Respons AI MU membutuhkan waktu terlalu lama. Silakan coba lagi.",
+      };
+    }
+    if (typeof code === "number" && code >= 500) {
+      return {
+        status: 503,
+        log: `AI MU provider unavailable (${code})`,
+        message:
+          "Layanan AI MU sedang tidak tersedia untuk sementara. Silakan coba beberapa saat lagi.",
+      };
+    }
+  }
+
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  if (message.includes("timeout") || message.includes("timed out")) {
+    return {
+      status: 504,
+      log: "AI MU provider timeout",
+      message: "Respons AI MU membutuhkan waktu terlalu lama. Silakan coba lagi.",
+    };
+  }
+  if (
+    message.includes("network") ||
+    message.includes("fetch failed") ||
+    message.includes("econn") ||
+    message.includes("socket")
+  ) {
+    return {
+      status: 503,
+      log: "AI MU provider network error",
+      message:
+        "AI MU tidak dapat terhubung ke layanan AI saat ini. Silakan coba lagi.",
+    };
+  }
+
+  return {
+    status: 500,
+    log: "AI MU chat error",
+    message:
+      "AI MU sedang tidak dapat menghasilkan respons karena layanan AI mengalami kendala. Silakan coba kembali beberapa saat lagi.",
+  };
+}
+
+function toSafeStreamError(error: unknown) {
+  const classified = classifyProviderError(error);
+  console.error(classified.log, {
+    name: error instanceof Error ? error.name : undefined,
+    status: APICallError.isInstance(error) ? error.statusCode : undefined,
+  });
+  return classified.message;
+}
+
+function toSafeResponseError(error: unknown) {
+  const classified = classifyProviderError(error);
+  console.error(classified.log, {
+    name: error instanceof Error ? error.name : undefined,
+    status: APICallError.isInstance(error) ? error.statusCode : undefined,
+  });
+  if (classified.status === 499) {
+    return new Response(null, { status: 499 });
+  }
+  return Response.json({ error: classified.message }, { status: classified.status });
 }

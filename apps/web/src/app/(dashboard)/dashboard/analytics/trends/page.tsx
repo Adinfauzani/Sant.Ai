@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "../../_components";
-import { fetchArticles, fetchDashboardStats, defaultStats } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchArticles, fetchDashboardStats, defaultStats } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
-const COLORS = ["#2563eb", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
+const COLORS = ["var(--color-chart-1)", "var(--color-chart-2)", "var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-5)"];
 
 function CT({ active, payload, label }: any) {
   if (!active || !payload) return null;
@@ -52,25 +52,25 @@ export default function TrendsPage() {
     { year: "All Time", articles: stats.totalArticles, videos: stats.totalVideos },
   ];
 
-  const COLORS = ["#2563eb", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
+  const COLORS = ["var(--color-chart-1)", "var(--color-chart-2)", "var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-5)"];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Trends</h1>
-        <p className="mt-0.5 text-xs text-muted">Topic trends, growth trends, and historical analysis</p>
+        <h1 className="font-heading text-2xl font-bold text-text">Tren</h1>
+        <p className="mt-0.5 text-xs text-muted">Tren topik, tren pertumbuhan, dan analisis historis</p>
       </div>
 
-      <Card title="Topic Trends">
+      <Card title="Tren Topik">
         {topicKeys.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No topic data yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada data topik.</p>
         ) : (
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topicData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CT />} />
                 {topicKeys.map((key, i) => (
                   <Bar key={key} dataKey={key} name={key.charAt(0).toUpperCase() + key.slice(1)} fill={COLORS[i % COLORS.length]} radius={[3, 3, 0, 0]} />
@@ -82,15 +82,15 @@ export default function TrendsPage() {
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Growth Trends">
+        <Card title="Tren Pertumbuhan">
           {growthData.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No growth data yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada data pertumbuhan.</p>
           ) : (
             <div className="space-y-2">
               {growthData.map((g) => (
                 <div key={g.topic} className="flex items-center justify-between rounded-xl bg-surface/20 px-3 py-2.5">
                   <span className="text-xs font-medium text-text">{g.topic}</span>
-                  <span className={g.growth >= 0 ? "text-[10px] font-medium text-emerald-500" : "text-[10px] font-medium text-red-500"}>
+                  <span className={g.growth >= 0 ? "text-[10px] font-medium text-success" : "text-[10px] font-medium text-destructive"}>
                     {g.growth >= 0 ? "+" : ""}{g.growth}%
                   </span>
                 </div>
@@ -99,19 +99,19 @@ export default function TrendsPage() {
           )}
         </Card>
 
-        <Card title="Historical Trends">
+        <Card title="Tren Historis">
           {stats.totalArticles === 0 && stats.totalVideos === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No historical data yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada data historis.</p>
           ) : (
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={historicalData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                  <XAxis dataKey="year" tick={{ fontSize: 10, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="year" tick={{ fontSize: 10, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
                   <Tooltip content={<CT />} />
-                  <Bar dataKey="articles" name="Articles" fill="#2563eb" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="videos" name="Videos" fill="#8b5cf6" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="articles" name="Artikel" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="videos" name="Video" fill="var(--color-chart-3)" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

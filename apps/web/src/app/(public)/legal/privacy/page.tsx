@@ -13,6 +13,8 @@ const languages = ["English", "Bahasa Indonesia"];
 
 const translations = {
   English: {
+    pageTitle: "Privacy Policy",
+    kicker: "Legal Center",
     subtitle: "How Sant.Ai collects, uses, and protects your information.",
     lastUpdated: "Last Updated",
     readingTime: "Reading Time",
@@ -43,6 +45,8 @@ const translations = {
     ],
   },
   "Bahasa Indonesia": {
+    pageTitle: "Kebijakan Privasi",
+    kicker: "Pusat Legal",
     subtitle: "Bagaimana Sant.Ai mengumpulkan, menggunakan, dan melindungi informasi Anda.",
     lastUpdated: "Terakhir Diperbarui",
     readingTime: "Waktu Baca",
@@ -73,6 +77,8 @@ const translations = {
     ],
   },
   Arabic: {
+    pageTitle: "سياسة الخصوصية",
+    kicker: "الممركز القانوني",
     subtitle: "كيف تجمع Sant.Ai معلوماتك وتستخدمها وتحميها.",
     lastUpdated: "آخر تحديث",
     readingTime: "وقت القراءة",
@@ -103,6 +109,8 @@ const translations = {
     ],
   },
   Japanese: {
+    pageTitle: "プライバシーポリシー",
+    kicker: "リーガルセンター",
     subtitle: "Sant.Ai が情報を収集、利用、保護する方法。",
     lastUpdated: "最終更新",
     readingTime: "読了時間",
@@ -133,6 +141,8 @@ const translations = {
     ],
   },
   Korean: {
+    pageTitle: "개인정보 보호정책",
+    kicker: "법률 센터",
     subtitle: "Sant.Ai 이 정보를 수집, 사용, 보호하는 방법입니다.",
     lastUpdated: "최종 업데이트",
     readingTime: "읽는 시간",
@@ -163,6 +173,8 @@ const translations = {
     ],
   },
   "Chinese (Simplified)": {
+    pageTitle: "隐私政策",
+    kicker: "法律中心",
     subtitle: "Sant.Ai 如何收集、使用和保护您的信息。",
     lastUpdated: "最后更新",
     readingTime: "阅读时间",
@@ -197,7 +209,7 @@ const translations = {
 type LanguageKey = keyof typeof translations;
 
 export default function PrivacyPage() {
-  const [language, setLanguage] = useState<LanguageKey>("English");
+  const [language, setLanguage] = useState<LanguageKey>("Bahasa Indonesia");
   const [activeSection, setActiveSection] = useState("introduction");
   const [progress, setProgress] = useState(0);
   const content = translations[language];
@@ -250,11 +262,11 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-40 h-1 bg-border">
-        <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${progress}%` }} />
+        <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.24),transparent_30%),radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_32%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,144,255,0.15),transparent_34%),radial-gradient(circle_at_top_right,rgba(94,177,239,0.11),transparent_32%)]" />
         <div className="container-main relative py-12 md:py-20">
           <div className="absolute right-4 top-6 z-10">
             <LanguageSelect
@@ -267,12 +279,12 @@ export default function PrivacyPage() {
 
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.3em] text-primary">Privacy Policy</p>
-              <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-text md:text-6xl">Privacy Policy</h1>
+              <p className="font-mono text-xs font-semibold uppercase tracking-[0.3em] text-primary">{content.kicker}</p>
+              <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-text md:text-6xl">{content.pageTitle}</h1>
               <p className="mt-4 text-sm leading-relaxed text-muted md:text-base">{content.subtitle}</p>
               <div className="mt-6 flex flex-wrap gap-2 text-[11px] text-muted">
-                <span className="rounded-full border border-border bg-surface/50 px-3 py-1.5">Last Updated: June 2026</span>
-                <span className="rounded-full border border-border bg-surface/50 px-3 py-1.5">Reading Time: 5 min</span>
+                <span className="rounded-full border border-border bg-surface/50 px-3 py-1.5">{content.lastUpdated}: Juni 2026</span>
+                <span className="rounded-full border border-border bg-surface/50 px-3 py-1.5">{content.readingTime}: 5 menit</span>
                 <span className="rounded-full border border-border bg-surface/50 px-3 py-1.5">Version 0.1.0</span>
               </div>
             </div>
@@ -285,7 +297,7 @@ export default function PrivacyPage() {
           {content.trust.map((card) => {
             const Icon = card.icon;
             return (
-              <div key={card.title} className="rounded-2xl border border-border bg-card p-5">
+              <div key={card.title} className="rounded-xl border border-border bg-card p-5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -298,7 +310,7 @@ export default function PrivacyPage() {
 
         <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-2xl border border-border bg-card p-3">
+            <div className="sticky top-24 rounded-xl border border-border bg-card p-3">
               <p className="px-3 pb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{content.toc}</p>
               <nav className="space-y-0.5">
                 {content.sections.map((section) => (
@@ -323,16 +335,16 @@ export default function PrivacyPage() {
 
           <article id="privacy-content" className="min-w-0 space-y-6">
             {content.sections.map((section) => (
-              <section id={section.id} key={section.id} className="group scroll-mt-28 rounded-2xl border border-border bg-card p-6 md:p-8">
+              <section id={section.id} key={section.id} className="group scroll-mt-28 rounded-xl border border-border bg-card p-6 md:p-8">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.25em] text-primary">{content.lastUpdated}: June 2026</p>
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.25em] text-primary">{content.lastUpdated}: Juni 2026</p>
                     <h2 className="mt-3 font-heading text-2xl font-bold text-text md:text-3xl">{section.title}</h2>
                   </div>
                   <button
                     type="button"
                     onClick={() => copySection(section.id)}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-muted opacity-0 transition-all group-hover:opacity-100 hover:border-primary/30 hover:text-primary"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-muted opacity-70 transition-all group-hover:opacity-100 hover:border-border-strong hover:text-primary"
                     aria-label={content.copy}
                   >
                     <Copy className="h-4 w-4" />
@@ -345,7 +357,7 @@ export default function PrivacyPage() {
                   ))}
                 </div>
 
-                <Link href={`#${section.id}`} className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary opacity-0 transition-all group-hover:opacity-100">
+                <Link href={`#${section.id}`} className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary opacity-70 transition-all group-hover:opacity-100">
                   <Link2 className="h-3.5 w-3.5" />
                   {content.copy}
                 </Link>

@@ -63,6 +63,7 @@ docs/*
 
 # Agent instructions (local only)
 AGENTS.md
+opencode.jsonc
 
 # Bun
 .bun/
@@ -88,3 +89,6 @@ bun.lockb
 .serverless/
 .aws-sam/
 .terraform/
+
+# AI MU model assets (generated / local-only)
+apps/web/public/Model/

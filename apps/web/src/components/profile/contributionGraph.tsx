@@ -13,8 +13,8 @@ interface DayData {
   level: 0 | 1 | 2 | 3 | 4;
 }
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const DAYS = ["", "Mon", "", "Wed", "", "Fri", ""];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+const DAYS = ["", "Sen", "", "Rab", "", "Jum", ""];
 
 function getLevel(count: number, max: number): 0 | 1 | 2 | 3 | 4 {
   if (count === 0) return 0;
@@ -76,7 +76,7 @@ export default function ContributionGraph({ contributions }: Props) {
   if (contributions.length === 0) {
     return (
       <div className="rounded-lg border border-border bg-surface/5 p-6 text-center">
-        <p className="text-xs text-muted">No contributions in the past year.</p>
+        <p className="text-xs text-muted">Belum ada kontribusi setahun terakhir.</p>
       </div>
     );
   }
@@ -85,10 +85,10 @@ export default function ContributionGraph({ contributions }: Props) {
     <div className="rounded-lg border border-border bg-surface/5 p-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-xs font-semibold text-text">
-          {total} day{total !== 1 ? "s" : ""} with contributions
+          {total} hari dengan kontribusi
         </h3>
         <div className="flex items-center gap-1 text-[10px] text-muted">
-          <span>Less</span>
+          <span>Lebih sedikit</span>
           {[0, 1, 2, 3, 4].map((level) => (
             <span
               key={level}
@@ -102,7 +102,7 @@ export default function ContributionGraph({ contributions }: Props) {
               )}
             />
           ))}
-          <span>More</span>
+          <span>Lebih banyak</span>
         </div>
       </div>
 
@@ -148,8 +148,8 @@ export default function ContributionGraph({ contributions }: Props) {
           className="fixed z-50 rounded border border-border bg-background px-2 py-1 text-[10px] shadow-sm pointer-events-none"
           style={{ left: tooltip.x, top: tooltip.y, transform: "translate(-50%, -100%)" }}
         >
-          <span className="font-medium text-text">{tooltip.count} contribution{tooltip.count !== 1 ? "s" : ""}</span>
-          <span className="text-muted"> on {tooltip.date}</span>
+          <span className="font-medium text-text">{tooltip.count} kontribusi</span>
+          <span className="text-muted"> pada {tooltip.date}</span>
         </div>
       )}
     </div>

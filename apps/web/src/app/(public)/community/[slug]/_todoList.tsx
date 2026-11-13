@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { CheckCircle2, Circle, ListTodo } from "lucide-react";
-import { toggleCommunityTodo } from "@/lib/communityActions";
-import type { CommunityTodoItem } from "@/lib/community";
+import { toggleCommunityTodo } from "@/lib/community/communityActions";
+import type { CommunityTodoItem } from "@/lib/community/community";
 
 export default function TodoList({
   communityId,
@@ -49,14 +49,14 @@ export default function TodoList({
                 aria-label="Toggle todo"
               >
                 {t.done ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                 ) : (
                   <Circle className="h-4 w-4" />
                 )}
               </button>
             ) : (
               <CheckCircle2
-                className={`mt-0.5 h-4 w-4 shrink-0 ${t.done ? "text-emerald-400" : "text-muted/40"}`}
+                className={`mt-0.5 h-4 w-4 shrink-0 ${t.done ? "text-success" : "text-muted/40"}`}
               />
             )}
             <span className={`text-[11px] ${t.done ? "text-muted line-through decoration-border" : "text-text"}`}>

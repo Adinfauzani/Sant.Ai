@@ -23,19 +23,6 @@
   from { height: var(--radix-accordion-content-height); }
   to { height: 0; }
 }
-@keyframes typing-dot {
-  0%, 60%, 100% {
-    transform: translateY(0);
-    opacity: 0.4;
-  }
-  30% {
-    transform: translateY(-4px);
-    opacity: 1;
-  }
-}
-.typing-dot {
-  animation: typing-dot 1.2s ease-in-out infinite;
-}
 @keyframes border-flow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -50,9 +37,10 @@
   to { opacity: 0; transform: translateY(-6px); }
 }
 .animated-border {
+  /* Single-accent rule: brand blues only — no cyan/violet competing accents. */
   background:
-    linear-gradient(var(--background), var(--background)) padding-box,
-    linear-gradient(90deg, #2563eb, #06b6d4, #7c3aed, #2563eb) border-box;
+    linear-gradient(var(--color-background), var(--color-background)) padding-box,
+    linear-gradient(90deg, var(--blue-11), var(--blue-7), var(--blue-9), var(--blue-11)) border-box;
   background-size: 100% 100%, 300% 100%;
   animation: border-flow 4s linear infinite;
   border: 1px solid transparent;
@@ -130,8 +118,38 @@
   animation-duration: 500ms;
 }
 
-/* ─── Raw design tokens (never self-referencing) ─── */
+/* ══════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — Sant.Ai
+   Layer 1  raw scales        --neutral-* / --blue-*        per theme
+   Layer 2  semantic base     --*-base                      per theme
+   Layer 3  @theme mapping    → Tailwind utilities          global
+
+   Rules
+   • One accent (blue). Everything else is neutral.
+   • Surfaces are flat: hairline borders carry structure, shadows barely whisper.
+   • Every shadcn-style utility name is defined, so none silently resolves
+     to nothing (bg-accent / text-muted-foreground / text-foreground …).
+   ══════════════════════════════════════════════════════════════════════ */
+
 :root {
+  /* ── Neutral scale ───────────────────────────────────────────────── */
+  --neutral-0:   #ffffff;
+  --neutral-25:  #fcfcfd;
+  --neutral-50:  #fafbfc;
+  --neutral-100: #f3f4f6;
+  --neutral-150: #eceef1;
+  --neutral-200: #e4e6eb;
+  --neutral-300: #d3d6dd;
+  --neutral-400: #98a0ae;
+  --neutral-500: #6b7381;
+  --neutral-600: #4d5563;
+  --neutral-700: #363d49;
+  --neutral-800: #22272f;
+  --neutral-850: #1a1e24;
+  --neutral-900: #14171c;
+  --neutral-950: #0b0d10;
+
+  /* ── Brand scale (the single accent) ─────────────────────────────── */
   --blue-1: #fbfdff;
   --blue-2: #f4faff;
   --blue-3: #e6f4fe;
@@ -142,36 +160,93 @@
   --blue-8: #5eb1ef;
   --blue-9: #0090ff;
   --blue-10: #0588f0;
-  --blue-11: #0d74ce;
+  --blue-11: #0b68bb;
   --blue-12: #113264;
 
-  --bg-base: #ffffff;
-  --surf-base: #f8fafc;
-  --section-alt: #f8fafc;
-  --card-base: #ffffff;
-  --text-secondary: #475569;
-  --hover-base: #f1f5f9;
-  --border-base: #e2e8f0;
-  --primary-base: var(--blue-11);
-  --primary-soft-base: var(--blue-3);
-  --accent-base: var(--blue-9);
-  --ring-base: var(--blue-8);
+  /* ── Semantic base tokens ────────────────────────────────────────── */
+  --bg-base:              var(--neutral-50);
+  --surf-base:            var(--neutral-100);
+  --raised-base:          var(--neutral-0);
+  --section-alt:          var(--neutral-100);
+  --card-base:            var(--neutral-0);
+  --hover-base:           var(--neutral-150);
+  --border-base:          var(--neutral-200);
+  --border-strong-base:   #c9cdd5;
+
+  --text-base:            var(--neutral-800);
+  --text-secondary:       var(--neutral-600);
+  --text-muted:           #666e7c;
+
+  /* Control borders (form fields, outline buttons). Separated from
+     --border-base on purpose: structure may stay a whisper, but the boundary
+     that identifies a control must clear WCAG 2.2 1.4.11 (3:1). */
+  --control-border-base:    #808898;
+  --control-border-hover-base: #666e7c;
+
+  --primary-base:         var(--blue-11);
+  --primary-foreground:   #ffffff;
+  --primary-soft-base:    #e8f2fd;
+  --brand-base:           var(--blue-9);
+  --ring-base:            var(--blue-10);
+
+  --success-base:         #12805c;
+  --warning-base:         #b54708;
+  --danger-base:          #cc2418;
+
+  /* Foreground sitting on the solid semantic colour above. */
+  --success-foreground:   #ffffff;
+  --warning-foreground:   #ffffff;
+  --danger-foreground:    #ffffff;
+
+  /* Soft fill + hairline for tinted chips/banners (fixed contrast, not /10
+     opacity, so the pair holds on any surface). */
+  --success-soft:         #eefaf4;
+  --success-border:       #6bc9a5;
+  --warning-soft:         #fdf3e3;
+  --warning-border:       #e0a94f;
+  --danger-soft:          #fef5f4;
+  --danger-border:        #ef9089;
+
+  /* Chart series: categorical blue ramp. Steps alternate lightness so
+     neighbouring series stay separable, and every step clears 3:1 against
+     both light surfaces (1.4.11 for meaningful graphical objects). */
+  --chart-1: var(--blue-11); /* #0b68bb — 5.7:1 */
+  --chart-2: var(--blue-12); /* #113264 — 12.6:1 */
+  --chart-3: #0086e0;        /* 3.8:1 */
+  --chart-4: #0b4a91;        /* 8.7:1 */
+  --chart-5: var(--blue-10); /* #0588f0 — 3.6:1 */
 
   --font-body: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-heading: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-jb-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: var(--bg-base);
+  --sidebar-foreground: var(--text-base);
+  --sidebar-primary: var(--primary-base);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--surf-base);
+  --sidebar-accent-foreground: var(--text-base);
+  --sidebar-border: var(--border-base);
+  --sidebar-ring: var(--ring-base);
 }
 
 /* ─── Dark mode ─── */
 .dark, .dark-theme {
+  --neutral-0:   #0b0d10;
+  --neutral-25:  #101317;
+  --neutral-50:  #14171c;
+  --neutral-100: #191d23;
+  --neutral-150: #1f242b;
+  --neutral-200: #262b33;
+  --neutral-300: #343a44;
+  --neutral-400: #6b7480;
+  --neutral-500: #8b94a1;
+  --neutral-600: #a8b0bb;
+  --neutral-700: #c6ccd4;
+  --neutral-800: #e8eaed;
+  --neutral-850: #f2f3f5;
+  --neutral-900: #f8f9fa;
+  --neutral-950: #ffffff;
+
   --blue-1: #0d1520;
   --blue-2: #111927;
   --blue-3: #0d2847;
@@ -185,28 +260,62 @@
   --blue-11: #70b8ff;
   --blue-12: #c2e6ff;
 
-  --bg-base: #111418;
-  --surf-base: #181b20;
-  --section-alt: #1e2229;
-  --card-base: #23282f;
-  --text-secondary: #a6adb8;
-  --hover-base: #2a3038;
-  --border-base: #2e353f;
-  --primary-base: var(--blue-10);
-  --primary-soft-base: var(--blue-4);
-  --accent-base: var(--blue-9);
-  --ring-base: var(--blue-8);
+  --bg-base:              var(--neutral-50);
+  --surf-base:            var(--neutral-100);
+  --raised-base:          var(--neutral-25);
+  --section-alt:          var(--neutral-100);
+  --card-base:            var(--neutral-25);
+  --hover-base:           var(--neutral-150);
+  --border-base:          var(--neutral-200);
+  --border-strong-base:   #3f4651;
+
+  --text-base:            var(--neutral-800);
+  --text-secondary:       var(--neutral-600);
+  --text-muted:           var(--neutral-500);
+
+  --control-border-base:    #656c7a;
+  --control-border-hover-base: #7c8493;
+
+  --primary-base:         var(--blue-10);
+  --primary-foreground:   #06121f;
+  --primary-soft-base:    #10233a;
+  --brand-base:           var(--blue-9);
+  --ring-base:            var(--blue-9);
+
+  --success-base:         #3ecf8e;
+  --warning-base:         #fdb022;
+  --danger-base:          #f97066;
+
+  /* Near-black ink on the bright semantic colours — white would land at
+     1.8–2.8:1 on #3ecf8e / #fdb022 / #f97066. */
+  --success-foreground:   #0b0d10;
+  --warning-foreground:   #0b0d10;
+  --danger-foreground:    #0b0d10;
+
+  --success-soft:         #112a20;
+  --success-border:       #2f7d5c;
+  --warning-soft:         #2a2113;
+  --warning-border:       #8a6417;
+  --danger-soft:          #2b1614;
+  --danger-border:        #ad453c;
+
+  /* Chart series (dark) — every step stays above 3:1 on #14171c/#101317 */
+  --chart-1: var(--blue-10); /* #3b9eff — 6.4:1 */
+  --chart-2: #1272c9;        /* 3.8:1 */
+  --chart-3: #70b8ff;        /* 8.5:1 */
+  --chart-4: #0588f0;        /* 5.0:1 */
+  --chart-5: #8ec8f6;        /* 10.0:1 */
 }
 
 /* Override Radix .radix-themes defaults to match our palette */
 :where(.radix-themes) {
-  --color-background: #ffffff;
-  --color-surface: rgba(248, 250, 252, 0.85);
+  --color-background: #fafbfc;
+  --color-surface: rgba(243, 244, 246, 0.85);
 }
 
 :is(.dark, .dark-theme) :where(.radix-themes:not(.light, .light-theme)) {
-  --color-background: #111418;
-  --color-surface: #181b20;
+  --color-background: #14171c;
+  --color-surface: #191d23;
 }
 
 /* @theme maps tokens to Tailwind ― no self-references */
@@ -215,59 +324,158 @@
   --font-heading: var(--font-heading);
   --font-mono: var(--font-mono);
 
+  /* ── Surfaces ────────────────────────────────────────────────────── */
   --color-background: var(--bg-base);
+  --color-foreground: var(--text-base);
   --color-surface: var(--surf-base);
+  --color-surface-raised: var(--raised-base);
   --color-section-alt: var(--section-alt);
   --color-card: var(--card-base);
-  --color-border: var(--border-base);
-  --color-primary: var(--primary-base);
-  --color-primary-soft: var(--primary-soft-base);
-  --color-text: var(--gray-12);
+  --color-card-foreground: var(--text-base);
+  --color-popover: var(--raised-base);
+  --color-popover-foreground: var(--text-base);
+
+  /* ── Ink ─────────────────────────────────────────────────────────── */
+  --color-text: var(--text-base);
   --color-text-secondary: var(--text-secondary);
-  --color-muted: var(--gray-11);
-  --color-accent: var(--accent-base);
-  --color-hover: var(--hover-base);
+  --color-muted: var(--text-muted);
+  --color-muted-foreground: var(--text-secondary);
+
+  /* ── Brand ───────────────────────────────────────────────────────── */
+  --color-primary: var(--primary-base);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft-base);
+  --color-brand: var(--brand-base);
   --color-ring: var(--ring-base);
-  --color-popover: var(--card-base);
-  --color-popover-foreground: var(--gray-12);
+  --color-ring-offset: var(--bg-base);
+
+  /* ── Neutral accent: hover surfaces, chips, skeletons ────────────── */
+  --color-accent: var(--surf-base);
+  --color-accent-foreground: var(--text-base);
+  --color-secondary: var(--surf-base);
+  --color-secondary-foreground: var(--text-base);
+  --color-hover: var(--hover-base);
+
+  /* ── Lines ───────────────────────────────────────────────────────── */
+  --color-border: var(--border-base);
+  --color-border-strong: var(--border-strong-base);
+  --color-input: var(--control-border-base);
+  --color-input-hover: var(--control-border-hover-base);
+
+  /* ── Status ────────────────────────────────────────────────────────
+     Informational messaging deliberately has no separate token: under the
+     single-accent rule it uses --color-primary (the brand blue). */
+  --color-destructive: var(--danger-base);
+  --color-destructive-foreground: var(--danger-foreground);
+  --color-destructive-soft: var(--danger-soft);
+  --color-destructive-border: var(--danger-border);
+  --color-success: var(--success-base);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning-base);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-border: var(--warning-border);
+
+  /* ── Chart series (monochrome ramp) ──────────────────────────────── */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ── Radii: small and consistent, never pill-shaped by default ──── */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 7px;
+  --radius-xl: 9px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+
+  /* ── Shadows: hairline-first; structure comes from borders ──────── */
+  --shadow-xs: 0 1px 2px 0 rgb(16 24 40 / 0.04);
+  --shadow-sm: 0 1px 2px 0 rgb(16 24 40 / 0.05);
+  --shadow-md: 0 2px 4px -1px rgb(16 24 40 / 0.06), 0 1px 2px 0 rgb(16 24 40 / 0.04);
+  --shadow-lg: 0 8px 16px -4px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04);
+  --shadow-xl: 0 16px 24px -6px rgb(16 24 40 / 0.10), 0 4px 8px -4px rgb(16 24 40 / 0.04);
+
+  /* ── AI MU sidebar ────────────────────────────────────────────────
+     The chat workspace keeps one deliberately dark sidebar regardless of
+     the app theme, so these are fixed colors rather than theme aliases.
+     Charcoal with a green undertone + one restrained green accent. */
+  --color-aimu-bg: #0e1411;
+  --color-aimu-surface: #141c18;
+  --color-aimu-hover: #1a241f;
+  --color-aimu-active: #1c2a23;
+  --color-aimu-border: #243129;
+  --color-aimu-text: #e8f1eb;
+  --color-aimu-muted: #93a49a;
+  --color-aimu-accent: #63c795;
+  --color-aimu-accent-soft: #63c7951f;
+  --color-aimu-accent-ink: #08130d;
+
+  /* ── Motion ──────────────────────────────────────────────────────── */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-* {
-  border-color: var(--border-base);
+/* These belong in @layer base so Tailwind utilities (tracking-*, leading-*,
+   transition-transform, focus-visible:*) can override them. Left unlayered
+   they outrank every utility in the cascade — which silently killed
+   transform/opacity transitions and snapped focused cards to a 3px radius. */
+@layer base {
+  * {
+    border-color: var(--border-base);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.18s ease-out, color 0.18s ease-out;
+  }
+
+  *, *::before, *::after {
+    transition: background-color 0.12s ease-out, border-color 0.12s ease-out;
+  }
+
+  /* Default focus indicator. Components that manage their own focus opt out
+     with focus-visible:outline-none AND supply a ring or border change. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
 }
 
-body {
-  background-color: var(--color-background);
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 22%, transparent);
   color: var(--color-text);
-  font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.6;
-  font-optical-sizing: auto;
-  text-rendering: optimizeLegibility;
-  overflow-wrap: break-word;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.18s ease-out, color 0.18s ease-out;
-}
-
-*, *::before, *::after {
-  transition: background-color 0.12s ease-out, border-color 0.12s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-  overflow-wrap: break-word;
 }
 
 @utility container-main {
@@ -315,18 +523,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @utility card-hover {
-  transition: all 0.2s ease;
+  transition: border-color 0.15s var(--ease-out-soft), background-color 0.15s var(--ease-out-soft);
 }
 
 .card-hover:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-ring);
+  border-color: var(--border-strong-base);
+  background-color: var(--hover-base);
 }
 
 .article-content p {
   color: var(--color-muted);
-  font-size: 0.8125rem;
-  line-height: 1.8;
+  font-size: 0.9375rem;
+  line-height: 1.75;
 }
 
 .article-content p + p {
@@ -556,21 +764,25 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-@media (max-width: 767px) {
-  main {
-    padding-bottom: 5rem;
+@layer base {
+  /* Ruang untuk bottom nav di halaman biasa; halaman fullscreen seperti chat
+     menimpanya dengan utilitas `pb-0`. */
+  @media (max-width: 767px) {
+    main {
+      padding-bottom: 5rem;
+    }
   }
 }
 
 .dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: var(--bg-base);
+  --sidebar-foreground: var(--text-base);
+  --sidebar-primary: var(--primary-base);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--surf-base);
+  --sidebar-accent-foreground: var(--text-base);
+  --sidebar-border: var(--border-base);
+  --sidebar-ring: var(--ring-base);
 }
 
 @theme inline {
@@ -676,6 +888,45 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── AI MU Studio ───
+   Orbe "holo" digambar penuh dengan CSS (tanpa aset eksternal) supaya
+   greeting AI MU tetap hidup di fresh clone dan di Vercel. */
+.aimu-holo-sphere {
+  position: relative;
+  display: inline-block;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.45) 16%, rgba(255, 255, 255, 0) 46%),
+    radial-gradient(circle at 70% 78%, color-mix(in oklab, var(--primary-base) 82%, #ffffff) 0%, transparent 55%),
+    conic-gradient(from 210deg, var(--brand-base), var(--primary-base), var(--blue-12), var(--brand-base));
+  box-shadow:
+    0 18px 40px -18px color-mix(in oklab, var(--primary-base) 65%, transparent),
+    inset 0 0 26px rgba(255, 255, 255, 0.4);
+}
+.aimu-holo-sphere::after {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  opacity: 0.65;
+}
+
+@keyframes aimuFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.02); }
+}
+@keyframes aimuDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -18px, 0) scale(1.04); }
+}
+@utility animate-aimu-float {
+  animation: aimuFloat 7s ease-in-out infinite;
+}
+@utility animate-aimu-drift {
+  animation: aimuDrift 18s ease-in-out infinite;
+}
+
 /* ─── Terminal cursor ─── */
 .terminal-cursor {
   display: inline-block;
@@ -689,4 +940,83 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes terminalBlink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* ─── AI MU code blocks ───
+   github-dark.css diimpor secara global, jadi blok kode di chat memakai
+   palet sendiri yang mengikuti tema terang/gelap aplikasi. */
+.aimu-code {
+  --code-ink: #1f2328;
+  --code-keyword: #cf222e;
+  --code-string: #0a3069;
+  --code-number: #0550ae;
+  --code-comment: #6e7781;
+  --code-function: #8250df;
+  --code-type: #953800;
+  --code-attr: #0550ae;
+}
+.dark .aimu-code,
+.dark-theme .aimu-code {
+  --code-ink: #e6edf3;
+  --code-keyword: #ff7b72;
+  --code-string: #a5d6ff;
+  --code-number: #79c0ff;
+  --code-comment: #8b949e;
+  --code-function: #d2a8ff;
+  --code-type: #ffa657;
+  --code-attr: #79c0ff;
+}
+@layer components {
+  .aimu-code .hljs {
+    color: var(--code-ink);
+    background: transparent;
+  }
+  .aimu-code .hljs-comment,
+  .aimu-code .hljs-quote,
+  .aimu-code .hljs-meta {
+    color: var(--code-comment);
+  }
+  .aimu-code .hljs-keyword,
+  .aimu-code .hljs-selector-tag,
+  .aimu-code .hljs-literal,
+  .aimu-code .hljs-doctag,
+  .aimu-code .hljs-name {
+    color: var(--code-keyword);
+  }
+  .aimu-code .hljs-string,
+  .aimu-code .hljs-regexp,
+  .aimu-code .hljs-addition,
+  .aimu-code .hljs-attribute {
+    color: var(--code-string);
+  }
+  .aimu-code .hljs-number,
+  .aimu-code .hljs-symbol,
+  .aimu-code .hljs-variable,
+  .aimu-code .hljs-template-variable {
+    color: var(--code-number);
+  }
+  .aimu-code .hljs-title,
+  .aimu-code .hljs-title.function_,
+  .aimu-code .hljs-section,
+  .aimu-code .hljs-function .hljs-title {
+    color: var(--code-function);
+  }
+  .aimu-code .hljs-type,
+  .aimu-code .hljs-class .hljs-title,
+  .aimu-code .hljs-built_in {
+    color: var(--code-type);
+  }
+  .aimu-code .hljs-attr,
+  .aimu-code .hljs-property,
+  .aimu-code .hljs-params,
+  .aimu-code .hljs-selector-class,
+  .aimu-code .hljs-selector-id {
+    color: var(--code-attr);
+  }
+  .aimu-code .hljs-emphasis {
+    font-style: italic;
+  }
+  .aimu-code .hljs-strong {
+    font-weight: 600;
+  }
 }

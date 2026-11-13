@@ -17,7 +17,7 @@ const SelectItem = React.forwardRef<
   return (
     <Select.Item
       className={cn(
-        "relative flex h-[30px] cursor-pointer select-none items-center rounded-lg pl-[26px] pr-[30px] text-[13px] leading-none text-text data-[disabled]:pointer-events-none data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary data-[highlighted]:outline-none",
+        "relative flex h-[30px] cursor-pointer select-none items-center rounded-lg pl-[26px] pr-[30px] text-[13px] leading-none text-text data-[disabled]:pointer-events-none data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary data-[highlighted]:[outline-offset:-2px]",
         className,
       )}
       {...props}
@@ -35,7 +35,7 @@ export default function LanguageSelect({ languages, value, onChange, label }: La
   return (
     <Select.Root value={value} onValueChange={onChange}>
       <Select.Trigger
-        className="inline-flex h-[35px] items-center justify-center gap-[5px] rounded-xl border border-border bg-card px-3.5 text-[13px] leading-none text-text shadow-sm outline-none hover:border-primary/30 focus:shadow-[0_0_0_2px] focus:shadow-primary/30"
+        className="inline-flex h-[35px] items-center justify-center gap-[5px] rounded-xl border border-border bg-card px-3.5 text-[13px] leading-none text-text shadow-xs outline-none transition-colors hover:border-border-strong focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
         aria-label={label}
       >
         <Select.Value />
@@ -44,7 +44,7 @@ export default function LanguageSelect({ languages, value, onChange, label }: La
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content className="overflow-hidden rounded-2xl border border-border bg-card p-1 shadow-lg">
+        <Select.Content className="overflow-hidden rounded-xl border border-border bg-card p-1 shadow-lg">
           <Select.ScrollUpButton className="flex h-[25px] cursor-default items-center justify-center text-muted">
             <ChevronUpIcon />
           </Select.ScrollUpButton>

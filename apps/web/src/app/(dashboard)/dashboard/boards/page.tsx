@@ -1,7 +1,7 @@
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getBoards } from "@/lib/board-actions";
+import { getBoards } from "@/lib/board/board-actions";
 import { BoardList } from "@/components/board/board-list";
 
 export default async function BoardsPage() {

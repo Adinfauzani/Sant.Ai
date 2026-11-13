@@ -18,7 +18,7 @@ export function DashboardHeader({
     <header className="flex h-14 items-center gap-4 border-b border-border bg-background/80 px-8">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
-        <h2 className="text-sm font-semibold text-foreground">Dashboard</h2>
+        <h2 className="text-sm font-semibold text-text">Dasbor</h2>
       </div>
 
       <div className="mx-auto hidden w-full max-w-[420px] md:block">
@@ -26,18 +26,18 @@ export function DashboardHeader({
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-xl text-muted hover:text-text">
           <Bell className="h-[18px] w-[18px]" />
           <span className="absolute right-1.5 top-1.5 flex h-2 w-2 rounded-full bg-primary" />
         </Button>
 
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted hover:text-text">
           <Plus className="h-[18px] w-[18px]" />
         </Button>
 
         <Link
           href="/dashboard/account"
-          className="flex items-center gap-2 rounded-xl border border-border bg-surface/50 px-2 py-1.5 text-sm text-foreground transition-colors hover:border-primary/30"
+          className="flex items-center gap-2 rounded-xl border border-border bg-surface/50 px-2 py-1.5 text-sm text-text transition-colors hover:border-border-strong"
         >
           {user.image ? (
             <img src={user.image} alt={user.name || ""} className="h-7 w-7 rounded-lg object-cover" />

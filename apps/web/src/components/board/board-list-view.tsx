@@ -50,10 +50,10 @@ interface ListViewProps {
 }
 
 const priorityStyles: Record<string, string> = {
-  Urgent: "bg-red-500/10 text-red-500 border-red-500/20",
-  High: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  Medium: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  Low: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  Urgent: "bg-destructive/10 text-destructive border-destructive/20",
+  High: "bg-warning/10 text-warning border-warning/20",
+  Medium: "bg-primary/10 text-primary border-primary/20",
+  Low: "bg-surface text-muted border-border",
 };
 
 export function ListView({ board }: ListViewProps) {
@@ -79,11 +79,11 @@ export function ListView({ board }: ListViewProps) {
     <div className="flex flex-col">
       {/* Header */}
       <div className="grid grid-cols-12 gap-2 border-b border-border px-4 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted">
-        <div className="col-span-5 pl-6">Task</div>
-        <div className="col-span-2">Priority</div>
-        <div className="col-span-2">Labels</div>
-        <div className="col-span-1">Due</div>
-        <div className="col-span-2">Assignees</div>
+        <div className="col-span-5 pl-6">Tugas</div>
+        <div className="col-span-2">Prioritas</div>
+        <div className="col-span-2">Label</div>
+        <div className="col-span-1">Tenggat</div>
+        <div className="col-span-2">Penanggung Jawab</div>
       </div>
 
       {/* Rows */}
@@ -132,7 +132,7 @@ export function ListView({ board }: ListViewProps) {
                           className={cn(
                             "inline-block rounded-md border px-1.5 py-0.5 text-[10px] font-medium",
                             priorityStyles[task.priority] ??
-                              "bg-gray-500/10 text-gray-500 border-gray-500/20"
+                              "bg-surface text-muted border-border"
                           )}
                         >
                           {task.priority}
@@ -161,7 +161,7 @@ export function ListView({ board }: ListViewProps) {
                         {task.dueDate ? (
                           <span className="flex items-center gap-0.5">
                             <Calendar className="h-3 w-3" />
-                            {new Date(task.dueDate).toLocaleDateString("en-US", {
+                            {new Date(task.dueDate).toLocaleDateString("id-ID", {
                               month: "short",
                               day: "numeric",
                             })}

@@ -65,7 +65,7 @@ function TimelineItem({ activity, isLast, index }: { activity: Activity; isLast:
         <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted">
           <span>{activity.date}</span>
           {activity.points !== undefined && (
-            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] text-primary">+{activity.points} pts</span>
+            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] text-primary">+{activity.points} poin</span>
           )}
         </div>
       </div>

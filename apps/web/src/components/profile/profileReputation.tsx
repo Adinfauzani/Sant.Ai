@@ -15,10 +15,10 @@ interface Props {
 const LEVELS = ["Beginner", "Active", "Lead", "Expert"];
 
 const LEVEL_THRESHOLDS: Record<string, { min: number; max: number; color: string }> = {
-  Beginner: { min: 0, max: 49, color: "from-primary/60 to-primary" },
-  Active: { min: 50, max: 199, color: "from-primary to-accent" },
-  Lead: { min: 200, max: 499, color: "from-accent to-primary" },
-  Expert: { min: 500, max: 9999, color: "from-primary via-accent to-primary" },
+  Beginner: { min: 0, max: 49, color: "from-primary/50 to-primary" },
+  Active: { min: 50, max: 199, color: "from-primary to-brand" },
+  Lead: { min: 200, max: 499, color: "from-brand to-primary" },
+  Expert: { min: 500, max: 9999, color: "from-primary via-brand to-primary" },
 };
 
 function getLevelProgress(points: number, level: string) {
@@ -30,7 +30,7 @@ function getLevelProgress(points: number, level: string) {
 
 function getNextLevel(level: string): string {
   const idx = LEVELS.indexOf(level);
-  return idx < LEVELS.length - 1 ? LEVELS[idx + 1] : "Max";
+  return idx < LEVELS.length - 1 ? LEVELS[idx + 1] : "Maksimal";
 }
 
 export default function ProfileReputation({ points, level, weeklyProgress, monthlyProgress, streak }: Props) {
@@ -85,7 +85,7 @@ export default function ProfileReputation({ points, level, weeklyProgress, month
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="rounded-lg border border-border bg-background p-2 text-center">
-                    <Flame className="mx-auto mb-0.5 h-3.5 w-3.5 text-orange-500" />
+                    <Flame className="mx-auto mb-0.5 h-3.5 w-3.5 text-warning" />
                     <p className="text-xs font-bold text-text">{streak}</p>
                     <p className="text-[9px] text-muted">hari beruntun</p>
                   </div>
@@ -97,7 +97,7 @@ export default function ProfileReputation({ points, level, weeklyProgress, month
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="rounded-lg border border-border bg-background p-2 text-center">
-                    <TrendingUp className="mx-auto mb-0.5 h-3.5 w-3.5 text-emerald-500" />
+                    <TrendingUp className="mx-auto mb-0.5 h-3.5 w-3.5 text-success" />
                     <p className="text-xs font-bold text-text">{weeklyProgress}%</p>
                     <p className="text-[9px] text-muted">minggu ini</p>
                   </div>

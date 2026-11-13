@@ -11,16 +11,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card } from "./_components";
-import { fetchDashboardStats, defaultStats, fetchArticles, fetchYouTube } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchDashboardStats, defaultStats, fetchArticles, fetchYouTube } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
-const COLORS = ["#2563eb", "#8b5cf6", "#f59e0b", "#10b981", "#ef4444", "#06b6d4", "#ec4899"];
+const COLORS = ["var(--color-chart-1)", "var(--color-chart-2)", "var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-5)"];
 
 function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload) return null;
   return (
-    <div className="rounded-xl border border-border bg-card p-3 text-xs shadow-sm">
-      <p className="mb-1 font-semibold text-text">{label}</p>
+    <div className="rounded-lg border border-border bg-popover p-3 text-xs text-popover-foreground">
+      <p className="mb-1 font-semibold">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="text-muted" style={{ color: p.color }}>{p.name}: {p.value.toLocaleString()}</p>
       ))}
@@ -30,21 +30,21 @@ function ChartTooltip({ active, payload, label }: any) {
 
 function StatCard({ label, value, change, up, icon: Icon }: { label: string; value: string; change: string; up: boolean; icon: React.ElementType }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-primary/20">
-      <div className="flex items-start justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-          <Icon className="h-5 w-5 text-primary" />
+    <div className="rounded-xl border border-border bg-card p-5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex size-10 items-center justify-center rounded-lg border border-primary/20 bg-primary/10">
+          <Icon className="size-5 text-primary" />
         </div>
         <span className={cn(
           "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium",
-          up ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500",
+          up ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
         )}>
-          {up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+          {up ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />}
           {change}
         </span>
       </div>
-      <p className="mt-4 font-heading text-2xl font-bold text-foreground">{value}</p>
-      <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
+      <p className="mt-4 font-heading text-2xl font-bold text-text">{value}</p>
+      <p className="mt-0.5 text-xs text-muted">{label}</p>
     </div>
   );
 }
@@ -92,22 +92,28 @@ export default function DashboardHome() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Data Intelligence Command Center &mdash; {new Date().toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+        <h1 className="font-heading text-2xl font-semibold text-text">Dasbor</h1>
+        <p className="mt-1 text-sm text-muted">
+          Data Intelligence Command Center &mdash;{" "}
+          {new Date().toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Total Articles" value={stats.totalArticles.toLocaleString()} change="+0%" up={true} icon={Newspaper} />
-        <StatCard label="Total Videos" value={stats.totalVideos.toLocaleString()} change="+0%" up={true} icon={Youtube} />
-        <StatCard label="Total Keywords" value={stats.totalKeywords.toLocaleString()} change={stats.totalKeywords > 0 ? "+" + stats.totalKeywords : "0"} up={true} icon={Hash} />
-        <StatCard label="Active Sources" value={stats.activeSources.toLocaleString()} change={stats.activeSources > 0 ? "+" + stats.activeSources : "0"} up={true} icon={Radio} />
+        <StatCard label="Total Artikel" value={stats.totalArticles.toLocaleString()} change="+0%" up={true} icon={Newspaper} />
+        <StatCard label="Total Video" value={stats.totalVideos.toLocaleString()} change="+0%" up={true} icon={Youtube} />
+        <StatCard label="Total Kata Kunci" value={stats.totalKeywords.toLocaleString()} change={stats.totalKeywords > 0 ? "+" + stats.totalKeywords : "0"} up={true} icon={Hash} />
+        <StatCard label="Sumber Aktif" value={stats.activeSources.toLocaleString()} change={stats.activeSources > 0 ? "+" + stats.activeSources : "0"} up={true} icon={Radio} />
       </div>
 
       {/* Public Issue Analytics */}
-      <Card title="Public Issue Analytics">
+      <Card title="Analisis Isu Publik">
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendData}>
@@ -119,9 +125,9 @@ export default function DashboardHome() {
                   </linearGradient>
                 ))}
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
               <Tooltip content={<ChartTooltip />} />
               {["pendidikan", "teknologi", "ekonomi", "kesehatan", "sosial", "lingkungan", "politik"].map((key, i) => (
                 <Area key={key} type="monotone" dataKey={key} name={key.charAt(0).toUpperCase() + key.slice(1)} stroke={COLORS[i]} fill={`url(#dash-grad-${key})`} strokeWidth={1.5} />
@@ -131,10 +137,10 @@ export default function DashboardHome() {
         </div>
         <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-7">
           {categoryRanking.map((cat) => (
-            <div key={cat.name} className="rounded-lg border border-border/50 bg-surface/30 px-3 py-2.5 text-center transition-colors hover:border-border">
-              <p className="text-[10px] font-medium text-foreground">{cat.name}</p>
+            <div key={cat.name} className="rounded-lg border border-border bg-surface/40 px-3 py-2.5 text-center">
+              <p className="text-[10px] font-medium text-text">{cat.name}</p>
               <p className="mt-0.5 text-lg font-bold" style={{ color: cat.color }}>{cat.mentions}</p>
-              <span className="text-[9px] font-medium text-emerald-500">+{cat.growth}%</span>
+              <span className="text-[9px] font-medium text-success">+{cat.growth}%</span>
             </div>
           ))}
         </div>
@@ -142,64 +148,70 @@ export default function DashboardHome() {
 
       {/* Digital Literacy + Security */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Digital Literacy Analytics">
+        <Card title="Analisis Literasi Digital">
           <div className="space-y-2">
             {stats.categories.filter((c) => ["Pendidikan", "Teknologi", "Sosial"].includes(c.name)).slice(0, 5).map((t) => (
-              <div key={t.name} className="flex items-center justify-between rounded-lg border border-border/50 bg-surface/30 px-4 py-3 transition-colors hover:bg-surface/50">
+              <div key={t.name} className="flex items-center justify-between rounded-lg border border-border bg-surface/40 px-4 py-3 transition-colors hover:bg-surface">
                 <div>
-                  <p className="text-sm font-medium text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.count.toLocaleString()} articles</p>
+                  <p className="text-sm font-medium text-text">{t.name}</p>
+                  <p className="text-xs text-muted">{t.count.toLocaleString()} artikel</p>
                 </div>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-500">
-                  <TrendingUp className="h-3.5 w-3.5" />{Math.round(Math.random() * 30 + 10)}%
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-success">
+                  <TrendingUp className="size-3.5" />{Math.round(Math.random() * 30 + 10)}%
                 </span>
               </div>
             ))}
             {stats.categories.length === 0 && (
-              <p className="py-6 text-center text-sm text-muted-foreground">No data yet. Run GNews fetcher to populate.</p>
+              <p className="py-6 text-center text-sm text-muted">
+                Belum ada data. Jalankan fetcher GNews untuk mengisinya.
+              </p>
             )}
           </div>
         </Card>
 
-        <Card title="Digital Security Analytics">
+        <Card title="Analisis Keamanan Digital">
           <div className="space-y-2">
             {stats.categories.filter((c) => ["Keamanan Digital", "Teknologi", "Hukum"].includes(c.name)).slice(0, 5).map((t) => (
-              <div key={t.name} className="flex items-center justify-between rounded-lg border border-border/50 bg-surface/30 px-4 py-3 transition-colors hover:bg-surface/50">
+              <div key={t.name} className="flex items-center justify-between rounded-lg border border-border bg-surface/40 px-4 py-3 transition-colors hover:bg-surface">
                 <div>
-                  <p className="text-sm font-medium text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.count.toLocaleString()} articles</p>
+                  <p className="text-sm font-medium text-text">{t.name}</p>
+                  <p className="text-xs text-muted">{t.count.toLocaleString()} artikel</p>
                 </div>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500">
-                  <TrendingUp className="h-3.5 w-3.5" />+{Math.round(Math.random() * 20 + 5)}%
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-destructive">
+                  <TrendingUp className="size-3.5" />+{Math.round(Math.random() * 20 + 5)}%
                 </span>
               </div>
             ))}
             {stats.categories.length === 0 && (
-              <p className="py-6 text-center text-sm text-muted-foreground">No data yet. Data appears after first fetch.</p>
+              <p className="py-6 text-center text-sm text-muted">
+                Belum ada data. Data muncul setelah fetch pertama.
+              </p>
             )}
           </div>
         </Card>
       </div>
 
       {/* Recent Activity */}
-      <Card title="Recent Activity">
+      <Card title="Aktivitas Terakhir">
         <div className="space-y-1">
           {activity.length > 0 ? activity.map((a, i) => (
-            <div key={i} className="flex items-center gap-3 rounded-lg border border-border/50 bg-surface/30 px-4 py-3 transition-colors hover:bg-surface/50">
+            <div key={i} className="flex items-center gap-3 rounded-lg border border-border bg-surface/40 px-4 py-3 transition-colors hover:bg-surface">
               <div className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-lg",
-                a.type === "article" ? "bg-blue-500/10" : "bg-red-500/10",
+                "flex size-8 items-center justify-center rounded-lg",
+                a.type === "article" ? "bg-primary/10" : "bg-destructive/10",
               )}>
-                {a.type === "article" ? <Newspaper className="h-4 w-4 text-blue-500" /> : <Youtube className="h-4 w-4 text-red-500" />}
+                {a.type === "article" ? <Newspaper className="size-4 text-primary" /> : <Youtube className="size-4 text-destructive" />}
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{a.title}</p>
-                <p className="text-xs text-muted-foreground">{a.source}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-text">{a.title}</p>
+                <p className="text-xs text-muted">{a.source}</p>
               </div>
-              <span className="shrink-0 text-xs text-muted-foreground">{new Date(a.time).toLocaleDateString("id-ID")}</span>
+              <span className="shrink-0 text-xs text-muted">{new Date(a.time).toLocaleDateString("id-ID")}</span>
             </div>
           )) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">No activity yet. Data appears after GNews and YouTube fetchers run.</p>
+            <p className="py-8 text-center text-sm text-muted">
+              Belum ada aktivitas. Data muncul setelah fetcher GNews dan YouTube jalan.
+            </p>
           )}
         </div>
       </Card>

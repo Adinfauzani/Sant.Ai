@@ -35,8 +35,8 @@ import {
   User,
   Tag,
   AlertCircle,
-  Loader,
 } from "lucide-react";
+import { TwinOrbit } from "@santai/ui/twinOrbit";
 import {
   updateTask,
   deleteTask,
@@ -52,7 +52,7 @@ import {
   removeTaskLabel,
   getTaskDetail,
   getBoardActivity,
-} from "@/lib/board-actions";
+} from "@/lib/board/board-actions";
 import { cn } from "@/lib/utils";
 
 interface TaskDialogProps {
@@ -66,10 +66,10 @@ interface TaskDialogProps {
 }
 
 const priorityOptions = [
-  { value: "Urgent", color: "bg-red-500", text: "text-red-500" },
-  { value: "High", color: "bg-orange-500", text: "text-orange-500" },
-  { value: "Medium", color: "bg-blue-500", text: "text-blue-500" },
-  { value: "Low", color: "bg-gray-400", text: "text-gray-400" },
+  { value: "Urgent", color: "bg-destructive", text: "text-destructive" },
+  { value: "High", color: "bg-warning", text: "text-warning" },
+  { value: "Medium", color: "bg-primary", text: "text-primary" },
+  { value: "Low", color: "bg-border-strong", text: "text-muted" },
 ];
 
 export function TaskDialog({
@@ -210,7 +210,7 @@ export function TaskDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl h-[80vh] overflow-y-auto">
           <div className="flex items-center justify-center py-20">
-            <Loader className="h-6 w-6 animate-spin text-muted" />
+            <TwinOrbit className="size-6 text-muted" />
           </div>
         </DialogContent>
       </Dialog>
@@ -269,7 +269,7 @@ export function TaskDialog({
                       setTitleEditing(false);
                     }
                   }}
-                  className="w-full text-xl font-bold bg-transparent outline-none border-b border-border pb-1 focus:border-primary"
+                  className="w-full text-xl font-bold bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background border-b border-border pb-1 focus:border-primary"
                 />
               ) : (
                 <h2
@@ -286,9 +286,7 @@ export function TaskDialog({
               <div className="flex-1 space-y-6">
                 {/* Description */}
                 <div>
-                  <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
-                    Description
-                  </h4>
+                  <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">Deskripsi</h4>
                   <textarea
                     value={task.description}
                     onChange={(e) =>
@@ -297,8 +295,8 @@ export function TaskDialog({
                     onBlur={() => {
                       handleUpdate({ description: task.description });
                     }}
-                    placeholder="Add a description in Markdown..."
-                    className="min-h-[80px] w-full resize-none rounded-lg border border-border bg-background p-3 text-sm outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted"
+                    placeholder="Tulis deskripsi pakai Markdown…"
+                    className="min-h-[80px] w-full resize-none rounded-lg border border-input bg-background p-3 text-sm focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background placeholder:text-muted"
                   />
                 </div>
 
@@ -314,15 +312,13 @@ export function TaskDialog({
                       className="h-6 text-xs"
                       onClick={() => setNewChecklistTitle("Untitled Checklist")}
                     >
-                      <Plus className="mr-1 h-3 w-3" />
-                      Add Checklist
-                    </Button>
+                      <Plus className="mr-1 h-3 w-3" />Tambah Checklist</Button>
                   </div>
 
                   {newChecklistTitle && (
                     <div className="mb-2 flex items-center gap-1.5">
                       <Input
-                        placeholder="Checklist title"
+                        placeholder="Judul checklist"
                         value={newChecklistTitle}
                         onChange={(e) => setNewChecklistTitle(e.target.value)}
                         onKeyDown={(e) => {
@@ -335,9 +331,7 @@ export function TaskDialog({
                         size="sm"
                         className="h-7 text-xs"
                         onClick={handleAddChecklist}
-                      >
-                        Add
-                      </Button>
+                      >Tambah</Button>
                     </div>
                   )}
 
@@ -370,7 +364,7 @@ export function TaskDialog({
                               </span>
                               <button
                                 onClick={() => deleteChecklistItem(item.id)}
-                                className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-500 transition-opacity"
+                                className="opacity-0 group-hover:opacity-100 text-muted hover:text-destructive transition-opacity"
                               >
                                 <X className="h-3 w-3" />
                               </button>
@@ -379,7 +373,7 @@ export function TaskDialog({
                         </div>
                         <div className="mt-2 flex items-center gap-1.5">
                           <Input
-                            placeholder="Add item..."
+                            placeholder="Tambah item…"
                             value={newItemContent[cl.id] ?? ""}
                             onChange={(e) =>
                               setNewItemContent((prev) => ({
@@ -438,7 +432,7 @@ export function TaskDialog({
                   <div className="mt-3 flex items-start gap-2">
                     <div className="flex-1">
                       <textarea
-                        placeholder="Write a comment..."
+                        placeholder="Tulis komentar…"
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         onKeyDown={(e) => {
@@ -447,7 +441,7 @@ export function TaskDialog({
                             handleComment();
                           }
                         }}
-                        className="w-full resize-none rounded-lg border border-border bg-background p-2 text-sm outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted min-h-[36px]"
+                        className="w-full resize-none rounded-lg border border-input bg-background p-2 text-sm focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background placeholder:text-muted min-h-[36px]"
                         rows={1}
                       />
                     </div>
@@ -456,9 +450,7 @@ export function TaskDialog({
                       className="h-9"
                       onClick={handleComment}
                       disabled={!comment.trim()}
-                    >
-                      Send
-                    </Button>
+                    >Kirim</Button>
                   </div>
                 </div>
               </div>
@@ -467,17 +459,13 @@ export function TaskDialog({
               <div className="w-56 shrink-0 space-y-4">
                 {/* Status/Column */}
                 <div>
-                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                    Status
-                  </h5>
+                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Status</h5>
                   <p className="text-sm">{task.column?.name ?? "Unknown"}</p>
                 </div>
 
                 {/* Priority */}
                 <div>
-                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                    Priority
-                  </h5>
+                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Prioritas</h5>
                   <Select
                     value={task.priority}
                     onValueChange={(v) => handleUpdate({ priority: v })}
@@ -500,9 +488,7 @@ export function TaskDialog({
 
                 {/* Assignees */}
                 <div>
-                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                    Assignees
-                  </h5>
+                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Penanggung Jawab</h5>
                   <div className="space-y-1">
                     {members.map((m) => {
                       const assigned = task.assignees?.some(
@@ -515,8 +501,8 @@ export function TaskDialog({
                           className={cn(
                             "flex w-full items-center gap-2 rounded-lg px-2 py-1 text-xs transition-colors",
                             assigned
-                              ? "bg-primary/10 text-foreground"
-                              : "text-muted hover:bg-accent/50 hover:text-foreground"
+                              ? "bg-primary/10 text-text"
+                              : "text-muted hover:bg-accent/50 hover:text-text"
                           )}
                         >
                           <Avatar className="h-5 w-5">
@@ -538,9 +524,7 @@ export function TaskDialog({
 
                 {/* Labels */}
                 <div>
-                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                    Labels
-                  </h5>
+                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Label</h5>
                   <div className="space-y-1">
                     {labels.map((l) => {
                       const has = task.labels?.some(
@@ -553,8 +537,8 @@ export function TaskDialog({
                           className={cn(
                             "flex w-full items-center gap-2 rounded-lg px-2 py-1 text-xs transition-colors",
                             has
-                              ? "text-foreground"
-                              : "text-muted hover:bg-accent/50 hover:text-foreground"
+                              ? "text-text"
+                              : "text-muted hover:bg-accent/50 hover:text-text"
                           )}
                         >
                           <div
@@ -571,9 +555,7 @@ export function TaskDialog({
 
                 {/* Due date */}
                 <div>
-                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                    Due Date
-                  </h5>
+                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Tenggat Waktu</h5>
                   <Input
                     type="date"
                     value={
@@ -592,9 +574,7 @@ export function TaskDialog({
 
                 {/* Created by */}
                 <div>
-                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
-                    Created By
-                  </h5>
+                  <h5 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Dibuat Oleh</h5>
                   <div className="flex items-center gap-2">
                     <Avatar className="h-5 w-5">
                       {task.createdBy?.image ? (
@@ -626,7 +606,7 @@ export function TaskDialog({
                     <div className="mt-2 max-h-40 space-y-1.5 overflow-y-auto">
                       {activity.slice(0, 20).map((a: any) => (
                         <div key={a.id} className="text-[10px] text-muted">
-                          <span className="font-medium text-foreground">
+                          <span className="font-medium text-text">
                             {a.actor?.name}
                           </span>{" "}
                           {a.action}
@@ -635,7 +615,7 @@ export function TaskDialog({
                         </div>
                       ))}
                       {activity.length === 0 && (
-                        <p className="text-[10px] text-muted">No activity yet</p>
+                        <p className="text-[10px] text-muted">Belum ada aktivitas</p>
                       )}
                     </div>
                   )}
@@ -646,12 +626,10 @@ export function TaskDialog({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-full justify-start text-xs text-red-500 hover:text-red-500 hover:bg-red-500/10"
+                    className="h-8 w-full justify-start text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={handleDelete}
                   >
-                    <Trash className="mr-1.5 h-3.5 w-3.5" />
-                    Delete Task
-                  </Button>
+                    <Trash className="mr-1.5 h-3.5 w-3.5" />Hapus Tugas</Button>
                 </div>
               </div>
             </div>

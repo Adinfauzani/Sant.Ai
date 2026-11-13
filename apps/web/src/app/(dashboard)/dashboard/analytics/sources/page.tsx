@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card } from "../../_components";
-import { fetchSources, fetchArticles, fetchYouTube, SourceItem } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchSources, fetchArticles, fetchYouTube, SourceItem } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
-const COLORS = ["#2563eb", "#ef4444", "#1d9bf0", "#e4405f", "#000000"];
+const COLORS = ["var(--color-chart-1)", "var(--color-chart-2)", "var(--color-chart-3)", "var(--color-chart-4)", "var(--color-chart-5)"];
 
 function CT({ active, payload, label }: any) {
   if (!active || !payload) return null;
@@ -59,14 +59,14 @@ export default function SourcesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Sources</h1>
-        <p className="mt-0.5 text-xs text-muted">Source distribution, activity, and comparison</p>
+        <h1 className="font-heading text-2xl font-bold text-text">Sumber</h1>
+        <p className="mt-0.5 text-xs text-muted">Sebaran, aktivitas, dan perbandingan sumber</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Source Distribution">
+        <Card title="Sebaran Sumber">
           {sourceDist.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No sources yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada sumber.</p>
           ) : (
             <>
               <div className="flex items-center justify-center h-56">
@@ -92,19 +92,19 @@ export default function SourcesPage() {
           )}
         </Card>
 
-        <Card title="Source Comparison">
+        <Card title="Perbandingan Sumber">
           {comparisonData.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No comparison data yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada data perbandingan.</p>
           ) : (
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                  <XAxis dataKey="name" tick={{ fontSize: 8, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 8, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
                   <Tooltip content={<CT />} />
-                  <Bar dataKey="lastMonth" name="Last Month" fill="#52525b" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="thisMonth" name="This Month" fill="#2563eb" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="lastMonth" name="Bulan Lalu" fill="var(--color-border-strong)" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="thisMonth" name="Bulan Ini" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -112,9 +112,9 @@ export default function SourcesPage() {
         </Card>
       </div>
 
-      <Card title="Most Active Sources">
+      <Card title="Sumber Paling Aktif">
         {activeSources.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No sources yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada sumber.</p>
         ) : (
           <div className="space-y-2">
             {activeSources.map((s) => (
@@ -125,7 +125,7 @@ export default function SourcesPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] text-muted">{s.articles.toLocaleString()} articles</span>
-                  <span className="text-[9px] font-medium text-emerald-500">+{s.growth}%</span>
+                  <span className="text-[9px] font-medium text-success">+{s.growth}%</span>
                 </div>
               </div>
             ))}

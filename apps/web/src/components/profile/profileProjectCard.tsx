@@ -3,7 +3,8 @@
 import { useTransition } from "react";
 import { Pin } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { togglePinProject } from "@/lib/actions";
+import { TwinOrbit } from "@santai/ui/twinOrbit";
+import { togglePinProject } from "@/lib/projects/actions";
 import ProjectCard from "@/components/profile/projectCard";
 import { toast } from "sonner";
 
@@ -27,9 +28,9 @@ export default function ProfileProjectCard({ project, isPinned, isOwner }: Props
     startTransition(async () => {
       try {
         await togglePinProject(project.id);
-        toast.success(isPinned ? "Unpinned project" : "Pinned project");
+        toast.success(isPinned ? "Sematan proyek dilepas" : "Proyek disematkan");
       } catch (e: any) {
-        toast.error(e.message || "Failed to update pin");
+        toast.error(e.message || "Gagal memperbarui sematan");
       }
     });
   }
@@ -46,15 +47,18 @@ export default function ProfileProjectCard({ project, isPinned, isOwner }: Props
             "absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded opacity-0 transition-all group-hover:opacity-100 hover:bg-surface",
             isPinned && "opacity-100",
           )}
-          title={isPinned ? "Unpin project" : "Pin to profile"}
+          title={isPinned ? "Lepas sematan" : "Sematkan ke profil"}
         >
-          <Pin
-            className={cn(
-              "h-3.5 w-3.5 transition-colors",
-              isPinned ? "fill-primary text-primary" : "text-muted",
-              pending && "animate-pulse",
-            )}
-          />
+          {pending ? (
+            <TwinOrbit className="size-3.5 text-primary" />
+          ) : (
+            <Pin
+              className={cn(
+                "h-3.5 w-3.5 transition-colors",
+                isPinned ? "fill-primary text-primary" : "text-muted",
+              )}
+            />
+          )}
         </button>
       )}
     </div>

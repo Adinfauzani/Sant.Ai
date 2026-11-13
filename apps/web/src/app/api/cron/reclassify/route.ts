@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { classifyArticle } from "@/lib/classifier";
+import { classifyArticle } from "@/lib/content/classifier";
 
 export async function GET() {
   const articles = await prisma.article.findMany({ orderBy: { publishedAt: "desc" } });

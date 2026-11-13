@@ -944,13 +944,18 @@ model Notification {
 /// ── AI MU chat (schema `model`) ─────────────────────
 
 model AiMuChat {
-  id        String            @id @default(cuid())
-  userId    String?
-  title     String            @default("Percakapan baru")
-  messages  AiMuChatMessage[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  id         String            @id @default(cuid())
+  userId     String?
+  title      String            @default("Percakapan baru")
+  pinned     Boolean           @default(false)
+  archivedAt DateTime?
+  projectId  String?
+  messages   AiMuChatMessage[]
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
 
+  @@index([userId, updatedAt])
+  @@index([userId, archivedAt])
   @@map("aimu_chat")
   @@schema("model")
 }

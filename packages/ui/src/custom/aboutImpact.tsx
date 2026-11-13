@@ -22,14 +22,11 @@ const orbitPos = [
 export function AboutImpact() {
   return (
     <section className="relative overflow-hidden border-t border-border section-padding">
-      {/* canvas shapes */}
+      {/* single-accent canvas shape */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/3 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute left-0 top-1/2 h-20 w-20 -translate-y-1/2 rounded-full border border-primary/10" />
-        <div className="absolute right-0 top-1/2 h-14 w-14 -translate-y-1/2 rotate-12 rounded-2xl border-2 border-primary/10" />
-        <div className="absolute left-1/3 top-10 h-2 w-2 rounded-full bg-cyan-400/60" />
-        <div className="absolute right-1/3 bottom-12 h-3 w-3 rounded-full bg-primary/50" />
+        <div className="absolute left-1/2 top-1/3 size-72 -translate-x-1/2 rounded-full bg-primary/6 blur-3xl" />
       </div>
+
       <div className="container-main relative">
         <div className="section-header text-center">
           <p className="section-label">Dampak</p>
@@ -38,17 +35,19 @@ export function AboutImpact() {
             Dampaknya nggak berhenti di mahasiswa. Dari kampus, ikut menyentuh banyak pihak.
           </p>
         </div>
+
         {/* mobile / tablet: grid kompak */}
         <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
-          {impact.map((d, i) => {
+          {impact.map((d) => {
             const Icon = d.icon;
             return (
-              <div key={d.title} className="relative overflow-hidden rounded-2xl border border-border bg-card p-5">
-                <span aria-hidden="true" className={`pointer-events-none absolute -right-3 -top-3 h-12 w-12 rounded-full ${i % 2 === 0 ? "border-2 border-cyan-400/20" : "bg-primary/5"}`} />
-                <span aria-hidden="true" className={`pointer-events-none absolute -bottom-3 -right-3 h-7 w-7 rotate-12 rounded-md border-2 ${i % 2 === 0 ? "border-amber-400/20" : "border-emerald-400/20"}`} />
+              <div
+                key={d.title}
+                className="relative overflow-hidden rounded-xl border border-border bg-card p-5"
+              >
                 <div className="mb-3 flex items-center gap-3">
-                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/10 text-primary">
-                    <Icon className="h-4 w-4" />
+                  <span className="grid size-9 place-items-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+                    <Icon className="size-4" />
                   </span>
                   <h3 className="text-sm font-bold text-text">{d.title}</h3>
                 </div>
@@ -61,7 +60,12 @@ export function AboutImpact() {
         {/* desktop: orbit konsentris */}
         <div className="relative mx-auto hidden aspect-square w-full max-w-2xl lg:block">
           {/* SVG orbit : cincin + garis radial */}
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden="true">
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="absolute inset-0 size-full"
+            aria-hidden="true"
+          >
             <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border-base)" strokeOpacity="0.45" strokeWidth="0.35" />
             <circle cx="50" cy="50" r="24" fill="none" stroke="var(--border-base)" strokeOpacity="0.18" strokeWidth="0.3" />
             {orbitPos.map((p, i) => {
@@ -87,11 +91,11 @@ export function AboutImpact() {
 
           {/* inti : Mahasiswa */}
           <div className="absolute left-1/2 top-1/2 z-20 w-44 -translate-x-1/2 -translate-y-1/2">
-            <div className="flex flex-col items-center rounded-3xl border border-primary/40 bg-primary/10 p-5 text-center shadow-lg shadow-primary/5 backdrop-blur-sm">
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-primary text-white">
-                <GraduationCap className="h-5 w-5" />
+            <div className="flex flex-col items-center rounded-xl border border-primary/40 bg-primary/10 p-5 text-center">
+              <span className="grid size-11 place-items-center rounded-lg bg-primary text-primary-foreground">
+                <GraduationCap className="size-5" />
               </span>
-              <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary">Inti</p>
+              <p className="mt-2 text-xs font-bold tracking-widest text-primary uppercase">Inti</p>
               <h3 className="mt-0.5 font-heading text-lg font-bold text-text">Mahasiswa</h3>
               <p className="mt-1 text-xs leading-relaxed text-muted">{impact[0].text}</p>
             </div>
@@ -107,9 +111,9 @@ export function AboutImpact() {
                 className="absolute z-10 w-32 -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${p.x}%`, top: `${p.y}%` }}
               >
-                <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-3 text-center shadow-sm">
-                  <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary">
-                    <Icon className="h-4 w-4" />
+                <div className="flex flex-col items-center rounded-xl border border-border bg-card p-3 text-center">
+                  <span className="grid size-8 place-items-center rounded-md border border-primary/20 bg-primary/10 text-primary">
+                    <Icon className="size-4" />
                   </span>
                   <h3 className="mt-1.5 text-xs font-bold text-text">{d.title}</h3>
                   <p className="mt-1 text-[10px] leading-relaxed text-muted">{d.text}</p>

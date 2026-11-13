@@ -43,7 +43,7 @@ import {
   moveTask,
   reorderColumns,
   reorderTasks,
-} from "@/lib/board-actions";
+} from "@/lib/board/board-actions";
 import { cn } from "@/lib/utils";
 
 interface BoardData {
@@ -381,7 +381,7 @@ export function KanbanBoard({ board, isOwner }: KanbanBoardProps) {
                 <div className="flex w-[280px] shrink-0 flex-col rounded-xl border-2 border-dashed border-border bg-surface/30 p-3">
                   <Input
                     autoFocus
-                    placeholder="Column name"
+                    placeholder="Nama kolom"
                     value={newColumnName}
                     onChange={(e) => setNewColumnName(e.target.value)}
                     onKeyDown={(e) => {
@@ -391,9 +391,7 @@ export function KanbanBoard({ board, isOwner }: KanbanBoardProps) {
                     className="mb-2"
                   />
                   <div className="flex gap-1.5">
-                    <Button size="sm" onClick={handleAddColumn}>
-                      Add
-                    </Button>
+                    <Button size="sm" onClick={handleAddColumn}>Tambah</Button>
                     <Button
                       size="sm"
                       variant="outline"
@@ -401,19 +399,15 @@ export function KanbanBoard({ board, isOwner }: KanbanBoardProps) {
                         setShowAddColumn(false);
                         setNewColumnName("");
                       }}
-                    >
-                      Cancel
-                    </Button>
+                    >Batal</Button>
                   </div>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowAddColumn(true)}
-                  className="flex w-[280px] shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border text-sm text-muted transition-colors hover:border-primary/30 hover:text-foreground"
+                  className="flex w-[280px] shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border text-sm text-muted transition-colors hover:border-border-strong hover:text-text"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add Column
-                </button>
+                  <Plus className="h-4 w-4" />Tambah Kolom</button>
               )}
             </div>
           </SortableContext>
@@ -436,10 +430,10 @@ export function KanbanBoard({ board, isOwner }: KanbanBoardProps) {
       {addingToColumn && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/20 pt-[20vh]">
           <div className="w-96 rounded-xl border border-border bg-background p-4 shadow-xl">
-            <h3 className="mb-3 text-sm font-medium">Add Task</h3>
+            <h3 className="mb-3 text-sm font-medium">Tambah Tugas</h3>
             <Input
               autoFocus
-              placeholder="Task title"
+              placeholder="Judul tugas"
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               onKeyDown={(e) => {
@@ -459,12 +453,8 @@ export function KanbanBoard({ board, isOwner }: KanbanBoardProps) {
                   setAddingToColumn(null);
                   setNewTaskTitle("");
                 }}
-              >
-                Cancel
-              </Button>
-              <Button size="sm" onClick={handleCreateTask}>
-                Add
-              </Button>
+              >Batal</Button>
+              <Button size="sm" onClick={handleCreateTask}>Tambah</Button>
             </div>
           </div>
         </div>

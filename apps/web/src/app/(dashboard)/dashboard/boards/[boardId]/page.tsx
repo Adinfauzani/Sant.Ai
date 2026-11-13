@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db";
 import { BoardDetailClient } from "./_boardDetailClient";
 

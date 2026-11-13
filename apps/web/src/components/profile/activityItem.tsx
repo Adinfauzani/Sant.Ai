@@ -18,7 +18,7 @@ export default function ActivityItem({ icon, description, date, points }: Props)
         <p className="mt-0.5 text-[10px] text-muted">{date}</p>
       </div>
       {points !== undefined && (
-        <span className={cn("shrink-0 text-xs font-semibold", points >= 0 ? "text-emerald-500" : "text-muted")}>
+        <span className={cn("shrink-0 text-xs font-semibold", points >= 0 ? "text-success" : "text-muted")}>
           {points >= 0 ? `+${points}` : points}
         </span>
       )}

@@ -1,7 +1,7 @@
 import Navbar from "@/components/layout/navbar";
 import Footer from "@santai/ui/footer";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
-import { getShowcaseProjects } from "@/lib/showcase";
+import { getShowcaseProjects } from "@/lib/data/showcase";
 import ShowcaseClient from "./_showcaseClient";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +21,7 @@ export default async function ShowcasePage() {
           <div className="container-main relative">
             <div className="mx-auto max-w-2xl text-center">
               <p className="mb-1 editorial-label">Showcase</p>
-              <h1 className="editorial-xl text-text">Project Showcase</h1>
+              <h1 className="editorial-xl text-text">Showcase Karya</h1>
               <p className="mt-3 editorial-body mx-auto text-muted">
                 Eksplorasi proyek inovatif yang dibuat oleh mahasiswa Fakultas Ilmu Komputer, Universitas Saintek Muhammadiyah.
               </p>

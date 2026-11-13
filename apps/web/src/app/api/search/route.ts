@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getAuthSession } from "@/lib/auth"
+import { getAuthSession } from "@/lib/auth/auth"
 import { prisma } from "@/lib/db"
 import { headers } from "next/headers"
-import { SearchCategory, SearchHit, SearchResponse } from "@/lib/search"
+import { SearchCategory, SearchHit, SearchResponse } from "@/lib/data/search"
 
 const ADMIN_ROLES = ["sudo", "admin", "moderator"]
 

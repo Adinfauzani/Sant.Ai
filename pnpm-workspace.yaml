@@ -4,6 +4,7 @@ packages:
 
 allowBuilds:
   "@firebase/util": true
+  "@openrouter/sdk": false
   "@prisma/engines": true
   esbuild: true
   prisma: true

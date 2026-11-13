@@ -15,7 +15,7 @@ import {
   Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSession } from "@/lib/authClient";
+import { useSession } from "@/lib/auth/authClient";
 import AimuAnimatedFace from "@/components/ai/aimuAnimatedFace";
 
 interface NavItem {
@@ -28,11 +28,11 @@ interface NavItem {
 }
 
 const aiShortcuts = [
-  { label: "New Chat", icon: MessageSquare, href: "/ai" },
-  { label: "Study Mode", icon: BookOpen, href: "/ai?mode=study" },
-  { label: "AI Workspace", icon: Brain, href: "/ai?mode=workspace" },
-  { label: "Summarize", icon: FileText, href: "/ai?mode=summarize" },
-  { label: "Recent Chats", icon: Clock, href: "/ai?history=true" },
+  { label: "Obrolan Baru", icon: MessageSquare, href: "/ai" },
+  { label: "Mode Belajar", icon: BookOpen, href: "/ai?mode=study" },
+  { label: "Ruang Kerja AI", icon: Brain, href: "/ai?mode=workspace" },
+  { label: "Ringkas", icon: FileText, href: "/ai?mode=summarize" },
+  { label: "Obrolan Terakhir", icon: Clock, href: "/ai?history=true" },
 ];
 
 export default function MobileNav() {
@@ -55,14 +55,14 @@ export default function MobileNav() {
   const items: NavItem[] = [
     {
       key: "home",
-      label: "Home",
+      label: "Beranda",
       href: "/",
       icon: Home,
       active: pathname === "/",
     },
     {
       key: "about",
-      label: "About",
+      label: "Tentang",
       href: "/about",
       icon: BookOpen,
       active: pathname === "/about",
@@ -77,14 +77,14 @@ export default function MobileNav() {
     },
     {
       key: "community",
-      label: "Community",
+      label: "Komunitas",
       href: "/community",
       icon: Globe,
       active: pathname.startsWith("/community"),
     },
     {
       key: "profile",
-      label: isLoggedIn ? "Profile" : "Sign In",
+      label: isLoggedIn ? "Profil" : "Masuk",
       href: isLoggedIn
         ? username
           ? `/${username}`
@@ -120,7 +120,7 @@ export default function MobileNav() {
       aria-label="Mobile navigation"
     >
       <div
-        className="mx-3 mb-2 rounded-2xl border border-neutral-200 bg-card shadow-sm backdrop-blur-sm"
+        className="mx-3 mb-2 rounded-xl border border-border bg-background/85 shadow-lg backdrop-blur-xl"
         style={{
           paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom, 0px))",
         }}
@@ -140,10 +140,12 @@ export default function MobileNav() {
                 >
                   <Link
                     href={item.href}
-                    className="-mt-6 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-primary text-white shadow-md ring-2 ring-card transition-all duration-150 active:scale-95"
+                    className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-primary p-0.5 text-primary-foreground shadow-lg ring-4 ring-background transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring"
                     aria-label={item.label}
                   >
-                    <AimuAnimatedFace />
+                    <span className="flex h-full w-full items-center justify-center overflow-hidden rounded-full">
+                      <AimuAnimatedFace />
+                    </span>
                   </Link>
 
                   {longPress && (
@@ -152,8 +154,8 @@ export default function MobileNav() {
                         className="fixed inset-0 z-40"
                         onClick={() => setLongPress(false)}
                       />
-                      <div className="absolute bottom-full left-1/2 z-50 mb-3 w-44 -translate-x-1/2 rounded-xl border border-neutral-200 bg-card p-1.5 shadow-lg">
-                        <p className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted">
+                      <div className="absolute bottom-full left-1/2 z-50 mb-3 w-48 -translate-x-1/2 rounded-lg border border-border bg-popover p-1.5 shadow-lg">
+                        <p className="px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-wider text-muted">
                           AI MU
                         </p>
                         <div className="border-t border-border" />
@@ -162,7 +164,7 @@ export default function MobileNav() {
                             key={s.label}
                             href={s.href}
                             onClick={() => setLongPress(false)}
-                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs text-text transition-colors hover:bg-surface"
+                            className="flex items-center gap-2 rounded-md px-2.5 py-2 text-xs text-text transition-colors hover:bg-surface"
                           >
                             <s.icon className="h-3.5 w-3.5 text-primary" />
                             {s.label}
@@ -182,7 +184,7 @@ export default function MobileNav() {
                 key={item.key}
                 href={item.href}
                 className={cn(
-                  "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-150 active:scale-95",
+                  "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   item.active
                     ? "bg-primary/10 text-primary"
                     : "text-muted hover:text-text",

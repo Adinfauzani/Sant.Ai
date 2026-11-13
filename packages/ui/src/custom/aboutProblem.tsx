@@ -65,16 +65,19 @@ export function AboutProblem() {
 
         {/* Narasi kenapa */}
         <div className="relative mx-auto max-w-4xl">
-          <div aria-hidden="true" className="pointer-events-none absolute -left-14 top-4 h-32 w-32 rounded-full bg-red-500/5 blur-2xl" />
-          <div aria-hidden="true" className="pointer-events-none absolute -right-14 bottom-4 h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
-          <div className="relative grid gap-6 rounded-3xl border border-border bg-card/70 p-6 backdrop-blur-sm sm:grid-cols-2 sm:p-10">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-14 bottom-4 size-32 rounded-full bg-primary/8 blur-2xl"
+          />
+          <div className="relative grid gap-6 rounded-xl border border-border bg-card p-6 sm:grid-cols-2 sm:p-10">
             <div>
               <p className="editorial-label">Akar masalahnya</p>
               <p className="mt-4 text-[15px] leading-relaxed text-text sm:text-base">
-                Gap antara <span className="font-bold text-red-500">apa yang diajarin di kelas</span> dan
-                <span className="font-bold"> apa yang beneran diminta industri</span> makin lebar tiap tahun.
-                Mahasiswa lulus dengan teori kuat, tapi kurang pengalaman ngoding di tim, ngurus deadline,
-                dan mikir kayak engineer beneran.
+                Gap antara{" "}
+                <span className="font-bold text-destructive">apa yang diajarin di kelas</span> dan
+                <span className="font-bold"> apa yang beneran diminta industri</span> makin lebar tiap
+                tahun. Mahasiswa lulus dengan teori kuat, tapi kurang pengalaman ngoding di tim, ngurus
+                deadline, dan mikir kayak engineer beneran.
               </p>
               <p className="mt-4 text-[15px] leading-relaxed text-muted sm:text-base">
                 Route kerjanya pun sering nggak jelas. CV kosong, nggak punya portofolio, dan nggak tau harus
@@ -99,28 +102,31 @@ export function AboutProblem() {
             </div>
           </div>
 
-        {/* pohon / garis cabang melengkung */}
-        <div className="mx-auto max-w-md">
-          <div aria-hidden="true" className="relative mt-6 hidden h-14 w-full lg:block">
-            {/* tengah berakar -> bercabang ke dua arah */}
-            <svg viewBox="0 0 100 14" preserveAspectRatio="xMidYMax meet" className="h-14 w-full">
-              <path d="M50 0 C50 5, 16 5, 6 14" fill="none" stroke="var(--border-base)" strokeWidth="2" strokeDasharray="5 5" />
-              <path d="M50 0 C50 5, 84 5, 94 14" fill="none" stroke="var(--border-base)" strokeWidth="2" strokeDasharray="5 5" />
-              <circle cx="50" cy="0" r="0.9" fill="var(--primary-base)" />
-              <circle cx="6" cy="14" r="1.4" fill="var(--red-400, #f87171)" />
-              <circle cx="94" cy="14" r="1.4" fill="var(--primary-base)" />
-            </svg>
+          {/* pohon / garis cabang melengkung */}
+          <div className="mx-auto max-w-md">
+            <div aria-hidden="true" className="relative mt-6 hidden h-14 w-full lg:block">
+              <svg viewBox="0 0 100 14" preserveAspectRatio="xMidYMax meet" className="h-14 w-full">
+                <path d="M50 0 C50 5, 16 5, 6 14" fill="none" stroke="var(--border-base)" strokeWidth="2" strokeDasharray="5 5" />
+                <path d="M50 0 C50 5, 84 5, 94 14" fill="none" stroke="var(--border-base)" strokeWidth="2" strokeDasharray="5 5" />
+                <circle cx="50" cy="0" r="0.9" fill="var(--primary-base)" />
+                <circle cx="6" cy="14" r="1.4" fill="var(--danger-base)" />
+                <circle cx="94" cy="14" r="1.4" fill="var(--primary-base)" />
+              </svg>
+            </div>
           </div>
-        </div>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <p className="mb-4 text-sm font-bold text-text">Masalah yang sering dialami mahasiswa</p>
+          <div className="rounded-xl border border-border bg-card p-6">
+            <p className="mb-4 text-sm font-bold text-text">
+              Masalah yang sering dialami mahasiswa
+            </p>
             <div className="space-y-5">
               {painPoints.map((item) => (
                 <div key={item.title} className="flex items-start gap-3">
-                  <span className="mt-0.5 rounded-md bg-red-500/10 px-2 py-1 text-xs font-bold text-red-600 dark:text-red-400">x</span>
+                  <span className="mt-0.5 rounded-md bg-destructive/10 px-2 py-1 text-xs font-bold text-destructive">
+                    x
+                  </span>
                   <div>
                     <p className="text-sm font-semibold text-text">{item.title}</p>
                     <p className="mt-0.5 text-xs leading-relaxed text-muted">{item.text}</p>
@@ -130,13 +136,13 @@ export function AboutProblem() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/40 bg-primary/5 p-6">
+          <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
             <p className="mb-4 text-sm font-bold text-text">Cara Sant.Ai menjawabnya</p>
             <div className="space-y-5">
               {solutions.map((item) => (
                 <div key={item.title} className="flex items-start gap-3">
-                  <span className="mt-0.5 rounded-md bg-primary p-1 text-white">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
+                  <span className="mt-0.5 grid size-6 place-items-center rounded-md bg-primary text-primary-foreground">
+                    <CheckCircle2 className="size-3.5" />
                   </span>
                   <div>
                     <p className="text-sm font-semibold text-text">{item.title}</p>

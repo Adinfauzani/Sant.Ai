@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus, Edit3, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
-import { fetchKeywords, type KeywordItem } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchKeywords, type KeywordItem } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
 export default function MgmtKeywordsPage() {
   const [items, setItems] = useState<KeywordItem[]>([]);
@@ -34,8 +34,8 @@ export default function MgmtKeywordsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-text">Manage Keywords</h1>
-        <p className="mt-0.5 text-xs text-muted">Create, read, update, and delete keyword mappings</p>
+        <h1 className="font-heading text-2xl font-bold text-text">Kelola Kata Kunci</h1>
+        <p className="mt-0.5 text-xs text-muted">Buat, baca, ubah, dan hapus pemetaan kata kunci</p>
       </div>
 
       <div className="flex gap-2">
@@ -43,10 +43,10 @@ export default function MgmtKeywordsPage() {
           value={newWord}
           onChange={(e) => setNewWord(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && add()}
-          placeholder="Add new keyword..."
-          className="flex-1 rounded-xl border border-border bg-surface/30 px-3 py-2 text-xs text-text outline-none placeholder:text-muted transition-colors focus:border-primary"
+          placeholder="Tambah kata kunci baru..."
+          className="flex-1 rounded-xl border border-border bg-surface/30 px-3 py-2 text-xs text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background placeholder:text-muted transition-colors focus:border-primary"
         />
-        <button onClick={add} className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-primary/90">
+        <button onClick={add} className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90">
           <Plus className="h-3.5 w-3.5" />
           Create
         </button>
@@ -61,9 +61,9 @@ export default function MgmtKeywordsPage() {
         }
       >
         {loading ? (
-          <p className="py-4 text-center text-[10px] text-muted">Loading...</p>
+          <p className="py-4 text-center text-[10px] text-muted">Memuat…</p>
         ) : items.length === 0 ? (
-          <p className="py-4 text-center text-[10px] text-muted">No keywords yet</p>
+          <p className="py-4 text-center text-[10px] text-muted">Belum ada kata kunci</p>
         ) : (
           <div className="space-y-1">
             {items.map((k) => (
@@ -84,7 +84,7 @@ export default function MgmtKeywordsPage() {
                   <button className="flex h-6 w-6 items-center justify-center rounded-lg text-muted hover:bg-surface hover:text-text">
                     <Edit3 className="h-3 w-3" />
                   </button>
-                  <button onClick={() => remove(k.id)} className="flex h-6 w-6 items-center justify-center rounded-lg text-muted hover:bg-surface hover:text-red-500">
+                  <button onClick={() => remove(k.id)} className="flex h-6 w-6 items-center justify-center rounded-lg text-muted hover:bg-surface hover:text-destructive">
                     <Trash2 className="h-3 w-3" />
                   </button>
                 </div>

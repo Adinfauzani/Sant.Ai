@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchRSS } from "@/lib/fetchers/rss";
+import { fetchRSS } from "@/lib/content/fetchers/rss";
 
 export async function GET() {
   const result = await fetchRSS();

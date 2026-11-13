@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
-import { togglePostLike } from "@/lib/communityActions";
+import { togglePostLike } from "@/lib/community/communityActions";
 
 export default function LikeButton({
   postId,

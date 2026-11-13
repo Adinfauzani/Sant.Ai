@@ -6,8 +6,8 @@ import { TrendingUp, TrendingDown, Play } from "lucide-react";
 import { YouTubeEmbed } from "@santai/ui/youtubeEmbed";
 import { cn } from "@/lib/utils";
 import { Card } from "../../_components";
-import { fetchArticles, fetchYouTube, fetchDashboardStats, ArticleItem, YouTubeItem, defaultStats } from "@/lib/data";
-import { usePolling } from "@/lib/usePolling";
+import { fetchArticles, fetchYouTube, fetchDashboardStats, ArticleItem, YouTubeItem, defaultStats } from "@/lib/data/data";
+import { usePolling } from "@/hooks/usePolling";
 
 function fmtDate(d: string) { return d ? d.split("T")[0] : ""; }
 
@@ -71,7 +71,7 @@ export default function IsuPublikPage() {
             className={cn(
               "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all",
               active === i
-                ? "bg-primary text-white"
+                ? "bg-primary text-primary-foreground"
                 : "border border-border text-muted hover:text-text",
             )}
           >
@@ -82,16 +82,16 @@ export default function IsuPublikPage() {
 
       <Card title={`Trends — ${catName || "(all)"}`}>
         {trendData.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No data yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada data.</p>
         ) : (
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                <XAxis dataKey="name" tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CT />} />
-                <Bar dataKey="articles" name="Articles" fill="#2563eb" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="articles" name="Artikel" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -101,7 +101,7 @@ export default function IsuPublikPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Articles">
           {catArticles.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No articles for this category yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada artikel untuk kategori ini.</p>
           ) : (
             <div className="space-y-2">
               {catArticles.map((a) => (
@@ -116,15 +116,15 @@ export default function IsuPublikPage() {
 
         <Card title="Videos">
           {catVideos.length === 0 ? (
-            <p className="py-8 text-center text-[10px] text-muted">No videos for this category yet.</p>
+            <p className="py-8 text-center text-[10px] text-muted">Belum ada video untuk kategori ini.</p>
           ) : (
             <div className="space-y-2">
               {catVideos.map((v) => (
                 <button key={v.id} onClick={() => setPlayingVideo({ videoId: v.videoId, title: v.title })}
                   className="w-full rounded-xl bg-surface/20 px-3 py-2 text-left transition-colors hover:bg-surface/40">
                   <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-red-500/10">
-                      <Play className="h-3.5 w-3.5 text-red-500" />
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+                      <Play className="h-3.5 w-3.5 text-destructive" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="line-clamp-1 text-xs font-medium text-text">{v.title}</p>
@@ -138,18 +138,18 @@ export default function IsuPublikPage() {
         </Card>
       </div>
 
-      <Card title="Category Growth Comparison">
+      <Card title="Perbandingan Pertumbuhan Kategori">
         {growthData.length === 0 ? (
-          <p className="py-8 text-center text-[10px] text-muted">No data yet.</p>
+          <p className="py-8 text-center text-[10px] text-muted">Belum ada data.</p>
         ) : (
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={growthData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                <XAxis dataKey="name" tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fill: "#a1a1aa" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fill: "var(--color-muted)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CT />} />
-                <Bar dataKey="growth" name="Articles (×10)" fill="#10b981" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="growth" name="Artikel (×10)" fill="var(--color-success)" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

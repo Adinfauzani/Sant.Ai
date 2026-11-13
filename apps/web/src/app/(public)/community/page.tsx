@@ -1,7 +1,7 @@
 import Navbar from "@/components/layout/navbar";
 import Footer from "@santai/ui/footer";
 import { ScientificBackground } from "@santai/ui/scientificBackground";
-import { getCommunityData } from "@/lib/community";
+import { getCommunityData } from "@/lib/community/community";
 import CommunityClient from "./_communityClient";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export default async function CommunityPage() {
           <div className="container-main relative">
             <div className="mx-auto max-w-2xl text-center">
               <p className="mb-1 editorial-label">Community</p>
-              <h1 className="editorial-xl text-text">Community Hub</h1>
+              <h1 className="editorial-xl text-text">Pusat Komunitas</h1>
               <p className="mt-3 editorial-body mx-auto text-muted">
                 Terhubung dengan mahasiswa dari Sains Data, Teknik Informatika, dan Sistem Informasi untuk berkolaborasi dan berinovasi.
               </p>

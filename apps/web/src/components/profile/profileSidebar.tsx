@@ -53,11 +53,11 @@ export default function ProfileSidebar({ user, stats, badges, techStack, isOwner
       <div className="flex justify-center gap-4 md:justify-start">
         <div className="flex items-center gap-1.5 text-xs text-muted">
           <Users className="h-3.5 w-3.5" />
-          <span><strong className="text-text">{stats.followers}</strong> followers</span>
+          <span><strong className="text-text">{stats.followers}</strong> pengikut</span>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted">
           <UserPlus className="h-3.5 w-3.5" />
-          <span><strong className="text-text">{stats.following}</strong> following</span>
+          <span><strong className="text-text">{stats.following}</strong> mengikuti</span>
         </div>
       </div>
 
@@ -77,7 +77,7 @@ export default function ProfileSidebar({ user, stats, badges, techStack, isOwner
         )}
         <div className="flex items-center gap-1.5 text-[11px] text-muted">
           <Calendar className="h-3 w-3 shrink-0" />
-          <span>Joined {new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
+          <span>Bergabung {new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function ProfileSidebar({ user, stats, badges, techStack, isOwner
         <>
           <Separator />
           <div>
-            <h3 className="mb-2.5 text-[10px] font-semibold uppercase tracking-widest text-muted">Achievements</h3>
+            <h3 className="mb-2.5 text-[10px] font-semibold uppercase tracking-widest text-muted">Pencapaian</h3>
             <ProfileBadges badges={badges} />
           </div>
         </>

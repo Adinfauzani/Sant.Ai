@@ -41,7 +41,7 @@ export default function TechStack({ technologies }: Props) {
           return (
             <Tooltip key={tech}>
               <TooltipTrigger asChild>
-                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-[10px] font-medium text-muted transition-all hover:border-primary/30 hover:text-primary hover:bg-primary-soft cursor-default">
+                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-surface px-2 py-1 text-[10px] font-medium text-muted transition-all hover:border-border-strong hover:text-primary hover:bg-hover cursor-default">
                   <span className="flex h-4 w-4 items-center justify-center rounded text-[8px] font-bold text-primary">
                     {logo}
                   </span>

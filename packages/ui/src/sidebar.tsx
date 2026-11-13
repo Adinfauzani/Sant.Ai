@@ -214,7 +214,7 @@ const Sidebar = React.forwardRef<
           >
             <SheetHeader className="sr-only">
               <SheetTitle>Sidebar</SheetTitle>
-              <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+              <SheetDescription>Menampilkan sidebar untuk layar kecil.</SheetDescription>
             </SheetHeader>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
@@ -528,7 +528,7 @@ const sidebarMenuButtonVariants = cva(
       variant: {
         default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         outline:
-          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+          "bg-background shadow-[0_0_0_1px_var(--color-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--color-border-strong)]",
       },
       size: {
         default: "h-8 text-sm",

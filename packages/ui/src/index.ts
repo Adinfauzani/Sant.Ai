@@ -25,6 +25,7 @@ export * from "./sidebar";
 export * from "./skeleton";
 export * from "./switch";
 export * from "./tooltip";
+export * from "./trace";
 export * from "./use-mobile";
 export * from "./usePolling";
 export * from "./utils";

@@ -6,7 +6,7 @@ import { LayoutDashboard, FolderGit2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@santai/ui/scrollArea";
 
-import { PROFILE_TABS, type ProfileTabKey } from "@/lib/profileTabs";
+import { PROFILE_TABS, type ProfileTabKey } from "@/lib/profile/profileTabs";
 
 const TAB_ICONS: Record<string, React.ElementType> = {
   LayoutDashboard,

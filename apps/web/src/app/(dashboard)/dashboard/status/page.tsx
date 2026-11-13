@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -8,11 +8,11 @@ import { AlertTriangle, Clock } from "lucide-react";
 const ALLOWED_ROLES = new Set(["sudo"]);
 
 const statusStyles: Record<string, string> = {
-  Operational: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
-  DegradedPerformance: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800",
-  PartialOutage: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800",
-  MajorOutage: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800",
-  UnderMaintenance: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  Operational: "bg-success/10 text-success dark:text-success border-border dark:border-border",
+  DegradedPerformance: "bg-warning/10 text-warning dark:text-warning border-border dark:border-border",
+  PartialOutage: "bg-warning/10 text-warning dark:text-warning border-border dark:border-border",
+  MajorOutage: "bg-destructive/10 text-destructive dark:text-destructive border-border dark:border-border",
+  UnderMaintenance: "bg-primary/10 text-primary dark:text-primary border-border dark:border-border",
 };
 
 export default async function StatusOverviewPage() {
@@ -33,26 +33,26 @@ export default async function StatusOverviewPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-text">Status Center</h1>
-        <p className="text-xs text-muted">Monitor and manage your services, incidents, and maintenance.</p>
+        <h1 className="text-xl font-bold text-text">Pusat Status</h1>
+        <p className="text-xs text-muted">Pantau dan kelola layanan, insiden, serta pemeliharaanmu.</p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted">Total Services</p>
+          <p className="text-xs text-muted">Total Layanan</p>
           <p className="mt-1 text-2xl font-bold text-text">{totalServices}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted">Active Incidents</p>
+          <p className="text-xs text-muted">Insiden Aktif</p>
           <p className="mt-1 text-2xl font-bold text-text">{incidents.length}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
           <p className="text-xs text-muted">Uptime</p>
-          <p className="mt-1 text-2xl font-bold text-emerald-500">{uptimePercent}%</p>
+          <p className="mt-1 text-2xl font-bold text-success">{uptimePercent}%</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted">Upcoming Maintenance</p>
+          <p className="text-xs text-muted">Pemeliharaan Mendatang</p>
           <p className="mt-1 text-2xl font-bold text-text">{maintenances.length}</p>
         </div>
       </div>
@@ -60,8 +60,8 @@ export default async function StatusOverviewPage() {
       {/* Services List */}
       <div className="rounded-xl border border-border bg-card">
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
-          <h2 className="text-sm font-semibold text-text">Services</h2>
-          <Link href="/dashboard/status/monitors" className="text-[10px] text-primary hover:underline">Manage Monitors</Link>
+          <h2 className="text-sm font-semibold text-text">Layanan</h2>
+          <Link href="/dashboard/status/monitors" className="text-[10px] text-primary hover:underline">Kelola Monitor</Link>
         </div>
         <div className="divide-y divide-border">
           {services.map((svc) => (
@@ -76,51 +76,51 @@ export default async function StatusOverviewPage() {
             </div>
           ))}
           {services.length === 0 && (
-            <p className="px-5 py-8 text-center text-xs text-muted">No services configured yet.</p>
+            <p className="px-5 py-8 text-center text-xs text-muted">Belum ada layanan yang diatur.</p>
           )}
         </div>
       </div>
 
-      {/* Active Incidents & Maintenance */}
+      {/* Active Insiden & Pemeliharaan */}
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border px-5 py-3">
-            <h2 className="text-sm font-semibold text-text">Active Incidents</h2>
-            <Link href="/dashboard/status/incidents" className="text-[10px] text-primary hover:underline">View All</Link>
+            <h2 className="text-sm font-semibold text-text">Insiden Aktif</h2>
+            <Link href="/dashboard/status/incidents" className="text-[10px] text-primary hover:underline">Lihat Semua</Link>
           </div>
           <div className="divide-y divide-border">
             {incidents.map((inc) => (
               <div key={inc.id} className="px-5 py-3">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0" />
                   <p className="text-xs font-medium text-text">{inc.title}</p>
                 </div>
                 <p className="mt-0.5 text-[10px] text-muted">{inc.status} · {new Date(inc.createdAt).toLocaleDateString()}</p>
               </div>
             ))}
             {incidents.length === 0 && (
-              <p className="px-5 py-8 text-center text-xs text-muted">No active incidents. All services operational.</p>
+              <p className="px-5 py-8 text-center text-xs text-muted">Tidak ada insiden aktif. Semua layanan beroperasi normal.</p>
             )}
           </div>
         </div>
 
         <div className="rounded-xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border px-5 py-3">
-            <h2 className="text-sm font-semibold text-text">Upcoming Maintenance</h2>
-            <Link href="/dashboard/status/maintenance" className="text-[10px] text-primary hover:underline">View All</Link>
+            <h2 className="text-sm font-semibold text-text">Pemeliharaan Mendatang</h2>
+            <Link href="/dashboard/status/maintenance" className="text-[10px] text-primary hover:underline">Lihat Semua</Link>
           </div>
           <div className="divide-y divide-border">
             {maintenances.map((m) => (
               <div key={m.id} className="px-5 py-3">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                  <Clock className="h-3.5 w-3.5 text-primary shrink-0" />
                   <p className="text-xs font-medium text-text">{m.title}</p>
                 </div>
                 <p className="mt-0.5 text-[10px] text-muted">{m.status} · {new Date(m.scheduledAt).toLocaleDateString()}</p>
               </div>
             ))}
             {maintenances.length === 0 && (
-              <p className="px-5 py-8 text-center text-xs text-muted">No scheduled maintenance.</p>
+              <p className="px-5 py-8 text-center text-xs text-muted">Belum ada pemeliharaan terjadwal.</p>
             )}
           </div>
         </div>

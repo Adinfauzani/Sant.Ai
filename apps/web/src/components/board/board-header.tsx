@@ -34,7 +34,7 @@ import { Separator } from "@santai/ui/separator";
 import { SidebarTrigger } from "@santai/ui/sidebar";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { deleteBoard, updateBoard } from "@/lib/board-actions";
+import { deleteBoard, updateBoard } from "@/lib/board/board-actions";
 
 interface BoardHeaderProps {
   board?: {
@@ -111,7 +111,7 @@ export function BoardHeader({ board, currentView, onViewChange, isOwner, boardId
                 "rounded-md p-1.5 transition-colors",
                 currentView === "kanban"
                   ? "bg-accent text-accent-foreground"
-                  : "text-muted hover:text-foreground"
+                  : "text-muted hover:text-text"
               )}
             >
               <KanbanIcon className="h-4 w-4" />
@@ -122,7 +122,7 @@ export function BoardHeader({ board, currentView, onViewChange, isOwner, boardId
                 "rounded-md p-1.5 transition-colors",
                 currentView === "list"
                   ? "bg-accent text-accent-foreground"
-                  : "text-muted hover:text-foreground"
+                  : "text-muted hover:text-text"
               )}
             >
               <List className="h-4 w-4" />
@@ -151,23 +151,17 @@ export function BoardHeader({ board, currentView, onViewChange, isOwner, boardId
               {isOwner && (
                 <>
                   <DropdownMenuItem onClick={() => setShowSettings(true)}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Board Settings
-                  </DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />Pengaturan Papan</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => setShowDelete(true)}
-                    className="text-red-500"
+                    className="text-destructive"
                   >
-                    <Trash className="mr-2 h-4 w-4" />
-                    Delete Board
-                  </DropdownMenuItem>
+                    <Trash className="mr-2 h-4 w-4" />Hapus Papan</DropdownMenuItem>
                 </>
               )}
               <DropdownMenuItem disabled>
-                <Share className="mr-2 h-4 w-4" />
-                Share
-              </DropdownMenuItem>
+                <Share className="mr-2 h-4 w-4" />Bagikan</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -176,16 +170,16 @@ export function BoardHeader({ board, currentView, onViewChange, isOwner, boardId
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Board Settings</DialogTitle>
-            <DialogDescription>Update your board details</DialogDescription>
+            <DialogTitle>Pengaturan Papan</DialogTitle>
+            <DialogDescription>Ubah detail papan kamu</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Nama</Label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="desc">Description</Label>
+              <Label htmlFor="desc">Deskripsi</Label>
               <Input
                 id="desc"
                 value={description}
@@ -194,10 +188,8 @@ export function BoardHeader({ board, currentView, onViewChange, isOwner, boardId
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSettings(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleUpdate}>Save</Button>
+            <Button variant="outline" onClick={() => setShowSettings(false)}>Batal</Button>
+            <Button onClick={handleUpdate}>Simpan</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -205,17 +197,15 @@ export function BoardHeader({ board, currentView, onViewChange, isOwner, boardId
       <Dialog open={showDelete} onOpenChange={setShowDelete}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Board</DialogTitle>
+            <DialogTitle>Hapus Papan</DialogTitle>
             <DialogDescription>
               This will permanently delete &ldquo;{board?.name}&rdquo; and all its tasks.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDelete(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setShowDelete(false)}>Batal</Button>
             <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? "Lagi hapus…" : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

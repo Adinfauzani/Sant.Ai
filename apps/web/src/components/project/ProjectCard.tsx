@@ -2,11 +2,10 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Users, Star, ArrowRight,
-} from "lucide-react";
+import { Users, Star, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@santai/ui/progress";
+import { TwinOrbit } from "@santai/ui/twinOrbit";
 import {
   Tooltip, TooltipTrigger, TooltipContent, TooltipProvider,
 } from "@santai/ui/tooltip";
@@ -48,16 +47,16 @@ export interface ProjectCardData {
 
 /* ─── Status config ─────────────────────────────────── */
 
-const statusConfig: Record<string, { label: string; emoji: string }> = {
-  Live:        { label: "Live",        emoji: "🟢" },
-  Open:        { label: "Open",        emoji: "🟢" },
-  Recruiting:  { label: "Recruiting",  emoji: "🟢" },
-  "In Progress": { label: "In Progress", emoji: "🟡" },
-  Featured:    { label: "Featured",    emoji: "🔵" },
-  Active:      { label: "Active",      emoji: "🟢" },
-  Planning:    { label: "Planning",    emoji: "🟡" },
-  Review:      { label: "Review",      emoji: "🔵" },
-  Completed:   { label: "Completed",   emoji: "⚪" },
+const statusConfig: Record<string, { label: string; dot: string }> = {
+  Live:        { label: "Live",        dot: "bg-success" },
+  Open:        { label: "Open",        dot: "bg-success" },
+  Recruiting:  { label: "Recruiting",  dot: "bg-success" },
+  "In Progress": { label: "In Progress", dot: "bg-warning" },
+  Featured:    { label: "Featured",    dot: "bg-primary" },
+  Active:      { label: "Active",      dot: "bg-success" },
+  Planning:    { label: "Planning",    dot: "bg-warning" },
+  Review:      { label: "Review",      dot: "bg-primary" },
+  Completed:   { label: "Completed",   dot: "bg-border-strong" },
 };
 
 /* ─── Component ─────────────────────────────────────── */
@@ -105,9 +104,6 @@ export default function ProjectCard({
 
   const status = statusConfig[data.status] ?? statusConfig.Planning;
 
-  /* ── Accent border ── */
-  const accentBorder = accent ? "border-primary/20" : undefined;
-
   const visibleTags = data.techStack.slice(0, 3);
   const overflowCount = data.techStack.length - 3;
 
@@ -119,21 +115,22 @@ export default function ProjectCard({
     >
       <div
         className={cn(
-          "flex flex-col rounded-xl border bg-card p-6 shadow-sm transition-all duration-200 ease-out",
-          "group-hover:-translate-y-1 group-hover:scale-[1.015] group-hover:border-primary",
-          accentBorder ? `border ${accentBorder}` : "border-border",
-          hovered ? "border-primary" : accentBorder ?? "border-border",
+          "flex flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150",
+          hovered && "border-border-strong",
         )}
       >
         {/* ── Thin accent top bar ── */}
         {accent && (
-          <div className="bg-gradient-to-r h-0.5 -mx-6 -mt-6 mb-4 rounded-t-xl from-primary/20 to-primary/5" />
+          <div
+            aria-hidden="true"
+            className="-mx-6 -mt-6 mb-4 h-0.5 rounded-t-xl bg-gradient-to-r from-primary/40 to-primary/5"
+          />
         )}
 
         {/* ── Status badge ── */}
         <div className="flex items-center justify-between">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 font-mono text-[11px] font-semibold text-muted ring-1 ring-border">
-            <span className="text-xs leading-none">{status.emoji}</span>
+            <span className={cn("size-1.5 rounded-full", status.dot)} aria-hidden="true" />
             {status.label}
           </span>
         </div>
@@ -159,7 +156,7 @@ export default function ProjectCard({
           {visibleTags.map((t) => (
             <span
               key={t}
-              className="rounded-md bg-primary/5 px-2 py-0.5 font-mono text-[10px] text-primary"
+              className="rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-text-secondary"
             >
               {t}
             </span>
@@ -168,7 +165,7 @@ export default function ProjectCard({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="cursor-help rounded-md bg-surface px-2 py-0.5 font-mono text-[10px] text-muted ring-1 ring-border transition-colors hover:bg-border">
+                  <span className="cursor-help rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-muted transition-colors hover:text-text">
                     +{overflowCount}
                   </span>
                 </TooltipTrigger>
@@ -189,14 +186,9 @@ export default function ProjectCard({
           )}
         </div>
 
-        {/* ── Creator section (revealed on hover) ── */}
-        <div
-          className={cn(
-            "mt-4 flex items-center gap-3 overflow-hidden transition-all duration-300 ease-out",
-            hovered ? "max-h-10 opacity-100" : "max-h-0 opacity-0",
-          )}
-        >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary ring-2 ring-card">
+        {/* ── Creator ── */}
+        <div className="mt-4 flex items-center gap-3">
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary ring-2 ring-card">
             {data.creatorName?.[0]?.toUpperCase() || "?"}
           </div>
           <div className="min-w-0 flex-1">
@@ -210,12 +202,7 @@ export default function ProjectCard({
         </div>
 
         {/* ── Separator ── */}
-        <div
-          className={cn(
-            "mt-4 border-t border-border transition-all duration-300",
-            hovered ? "opacity-100" : "opacity-0",
-          )}
-        />
+        <div className="mt-4 border-t border-border" />
 
         {/* ── Progress ── */}
         <div ref={progressRef} className="mt-4">
@@ -225,28 +212,20 @@ export default function ProjectCard({
             </span>
             <span className="font-mono text-[10px] text-muted">{data.progress}%</span>
           </div>
-          <Progress
-            value={progressVisible ? data.progress : 0}
-            className="h-1.5"
-          />
+          <Progress value={progressVisible ? data.progress : 0} className="h-1.5" />
         </div>
 
-        {/* ── Metadata (revealed on hover) ── */}
-        <div
-          className={cn(
-            "mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 overflow-hidden transition-all duration-300 delay-75 ease-out",
-            hovered ? "max-h-8 opacity-100" : "max-h-0 opacity-0",
-          )}
-        >
+        {/* ── Metadata ── */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-muted">
           {data.contributors !== undefined && (
-            <span className="flex items-center gap-1 text-[10px] text-muted">
+            <span className="flex items-center gap-1">
               <Users className="h-3 w-3" />
               {data.contributors} Contributors
             </span>
           )}
           {data.rating !== undefined && (
-            <span className="flex items-center gap-1 text-[10px] text-muted">
-              <Star className="h-3 w-3 fill-accent text-accent" />
+            <span className="flex items-center gap-1">
+              <Star className="h-3 w-3 fill-warning text-warning" />
               {data.rating.toFixed(1)} Rating
             </span>
           )}
@@ -256,18 +235,12 @@ export default function ProjectCard({
         <div className="mt-4 flex items-center gap-2">
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 text-xs font-medium transition-all duration-200",
+              "inline-flex items-center gap-1.5 text-xs font-medium transition-colors",
               href ? "text-primary" : "text-muted",
-              "group-hover:gap-2.5",
             )}
           >
-            {hovered && href ? "Open Workspace" : "View Workspace"}
-            <ArrowRight
-              className={cn(
-                "h-3.5 w-3.5 transition-transform duration-200",
-                hovered && "translate-x-1",
-              )}
-            />
+            {href ? "View Workspace" : "Open Workspace"}
+            <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>
@@ -279,29 +252,9 @@ export default function ProjectCard({
 
 export function ProjectCardSkeleton() {
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="h-5 w-20 animate-pulse rounded-full bg-border" />
-      </div>
-      <div className="mt-4 h-6 w-3/4 animate-pulse rounded bg-border" />
-      <div className="mt-2 h-3 w-full animate-pulse rounded bg-border" />
-      <div className="mt-1 h-3 w-2/3 animate-pulse rounded bg-border" />
-      <div className="mt-4 flex gap-1.5">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-5 w-14 animate-pulse rounded-md bg-border" />
-        ))}
-      </div>
-      <div className="mt-4 border-t border-border" />
-      <div className="mt-4">
-        <div className="mb-1.5 flex items-center justify-between">
-          <div className="h-3 w-16 animate-pulse rounded bg-border" />
-          <div className="h-3 w-8 animate-pulse rounded bg-border" />
-        </div>
-        <div className="h-1.5 w-full animate-pulse rounded-full bg-border" />
-      </div>
-      <div className="mt-4">
-        <div className="h-4 w-28 animate-pulse rounded bg-border" />
-      </div>
+    <div className="flex min-h-[220px] flex-col items-center justify-center gap-3 rounded-lg border border-border bg-card p-6">
+      <TwinOrbit className="size-6 text-muted" />
+      <p className="text-xs text-muted">Memuat proyek...</p>
     </div>
   );
 }
@@ -314,20 +267,20 @@ export function ProjectCardEmpty({
   createHref?: string;
 }) {
   return (
-    <div className="col-span-full rounded-xl border border-border bg-card p-12 text-center shadow-sm">
-      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-surface">
+    <div className="col-span-full rounded-xl border border-border bg-card p-12 text-center">
+      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-xl border border-border bg-surface">
         <Users className="h-6 w-6 text-muted" />
       </div>
       <h3 className="font-heading text-lg font-semibold text-text">
-        No projects yet
+        Belum ada proyek
       </h3>
       <p className="mt-1 text-sm text-muted">
-        Be the first to create a project and start collaborating.
+        Jadilah yang pertama membuat proyek dan mulai kolaborasi.
       </p>
       {createHref && (
-        <Link href={createHref}>
-          <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-primary">
-            Create Project
+        <Link href={createHref} className="mt-5 inline-block">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
+            Buat Proyek
             <ArrowRight className="h-4 w-4" />
           </span>
         </Link>

@@ -55,10 +55,10 @@ export default function ContactPage() {
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/30"
+                    className="rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Icon className="h-5 w-5" />
+                    <div className="mb-4 flex size-10 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+                      <Icon className="size-5" />
                     </div>
                     <h3 className="font-heading text-sm font-bold text-text">{item.title}</h3>
                     <p className="mt-2 text-xs leading-relaxed text-muted">{item.description}</p>

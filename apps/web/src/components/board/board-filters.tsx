@@ -55,7 +55,7 @@ export function BoardFilters({ members, labels, onFilterChange }: FilterProps) {
       <div className="relative flex-1 max-w-xs">
         <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" />
         <Input
-          placeholder="Search tasks..."
+          placeholder="Cari tugas…"
           className="h-8 pl-8 text-sm"
           value={filters.search}
           onChange={(e) => updateFilter("search", e.target.value)}
@@ -63,7 +63,7 @@ export function BoardFilters({ members, labels, onFilterChange }: FilterProps) {
         {filters.search && (
           <button
             onClick={() => updateFilter("search", "")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-text"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -72,10 +72,10 @@ export function BoardFilters({ members, labels, onFilterChange }: FilterProps) {
 
       <Select value={filters.assigneeId} onValueChange={(v) => updateFilter("assigneeId", v)}>
         <SelectTrigger className="h-8 w-[130px] text-xs">
-          <SelectValue placeholder="Assignee" />
+          <SelectValue placeholder="Penanggung jawab" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Members</SelectItem>
+          <SelectItem value="all">Semua Anggota</SelectItem>
           {members.map((m) => (
             <SelectItem key={m.user.id} value={m.user.id}>
               {m.user.name}
@@ -89,7 +89,7 @@ export function BoardFilters({ members, labels, onFilterChange }: FilterProps) {
           <SelectValue placeholder="Label" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Labels</SelectItem>
+          <SelectItem value="all">Semua Label</SelectItem>
           {labels.map((l) => (
             <SelectItem key={l.id} value={l.id}>
               <div className="flex items-center gap-1.5">
@@ -103,10 +103,10 @@ export function BoardFilters({ members, labels, onFilterChange }: FilterProps) {
 
       <Select value={filters.priority} onValueChange={(v) => updateFilter("priority", v)}>
         <SelectTrigger className="h-8 w-[120px] text-xs">
-          <SelectValue placeholder="Priority" />
+          <SelectValue placeholder="Prioritas" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Priority</SelectItem>
+          <SelectItem value="all">Semua Prioritas</SelectItem>
           <SelectItem value="Urgent">Urgent</SelectItem>
           <SelectItem value="High">High</SelectItem>
           <SelectItem value="Medium">Medium</SelectItem>
@@ -116,9 +116,7 @@ export function BoardFilters({ members, labels, onFilterChange }: FilterProps) {
 
       {hasFilters && (
         <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={clearFilters}>
-          <X className="mr-1 h-3 w-3" />
-          Clear
-        </Button>
+          <X className="mr-1 h-3 w-3" />Bersihkan</Button>
       )}
     </div>
   );

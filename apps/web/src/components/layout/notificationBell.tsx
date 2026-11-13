@@ -3,20 +3,20 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, CheckCheck } from "lucide-react";
-import { useSession } from "@/lib/authClient";
+import { useSession } from "@/lib/auth/authClient";
 import {
   fetchNotifications,
   markNotificationRead,
   markAllNotificationsRead,
   type NotificationsPayload,
-} from "@/lib/notifications";
+} from "@/lib/notifications/notifications";
 import { cn } from "@/lib/utils";
 
 const TYPE_ICONS: Record<string, string> = {
-  project: "bg-blue-500/15 text-blue-400",
-  community: "bg-purple-500/15 text-purple-400",
-  event: "bg-amber-500/15 text-amber-400",
-  system: "bg-zinc-500/15 text-zinc-400",
+  project: "bg-primary/10 text-primary",
+  community: "bg-primary/15 text-primary",
+  event: "bg-warning/15 text-warning",
+  system: "bg-surface text-muted",
 };
 
 function timeAgo(iso: string): string {
@@ -87,34 +87,48 @@ export default function NotificationBell() {
   return (
     <div className="relative" ref={ref}>
       <button
+        type="button"
         onClick={handleOpen}
-        className="relative flex h-8 w-8 items-center justify-center rounded-md text-muted hover:bg-surface hover:text-text"
-        aria-label="Notifications"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Notifikasi"
+        className="relative flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <Bell className="h-4 w-4" />
         {data.unread > 0 && (
-          <span className="absolute right-1.5 top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-0.5 text-[8px] font-bold leading-none text-white ring-2 ring-background">
+          <span className="absolute right-1.5 top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-0.5 text-[8px] font-bold leading-none text-primary-foreground ring-2 ring-background">
             {data.unread > 9 ? "9+" : data.unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-background shadow-lg">
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-50 mt-1.5 w-96 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg border border-border bg-popover shadow-lg"
+        >
           <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
-            <p className="text-sm font-semibold text-text">Notifications</p>
+            <p className="font-heading text-sm font-semibold tracking-tight text-text">
+              Notifikasi
+            </p>
             {data.unread > 0 && (
               <button
+                type="button"
                 onClick={handleMarkAll}
-                className="inline-flex items-center gap-1 text-[10px] font-medium text-primary hover:text-primary/80"
+                className="inline-flex items-center gap-1 text-[10px] font-medium text-primary transition-colors hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <CheckCheck className="h-3 w-3" /> Mark all read
+                <CheckCheck className="h-3 w-3" /> Tandai semua dibaca
               </button>
             )}
           </div>
 
           {data.items.length === 0 ? (
-            <div className="py-8 text-center text-xs text-muted">Belum ada notifikasi</div>
+            <div className="px-4 py-10 text-center">
+              <p className="text-xs font-medium text-text">Belum ada notifikasi</p>
+              <p className="mt-1 text-[11px] text-muted">
+                Kabar terbaru soal komunitas, event, dan proyek akan muncul di sini.
+              </p>
+            </div>
           ) : (
             <div className="max-h-96 overflow-y-auto">
               {data.items.map((n) => (

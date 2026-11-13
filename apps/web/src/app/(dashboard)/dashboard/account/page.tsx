@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Mail, Shield, Trophy, User, Award } from "lucide-react";
-import { getAuthSession } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db";
 import { Card } from "../_components";
 
@@ -46,9 +46,9 @@ export default async function AccountPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">Dashboard</p>
+        <p className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">Dasbor</p>
         <h1 className="mt-2 font-heading text-2xl font-bold text-text md:text-3xl">Akun</h1>
-        <p className="mt-2 text-sm text-muted">Kelola informasi akun dashboard Sant.Ai Anda.</p>
+        <p className="mt-2 text-sm text-muted">Kelola informasi akun dasbor Sant.Ai kamu.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
