@@ -2,20 +2,72 @@
 
 import { useChat, type UIMessage } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { ArrowDown, Bot, MessageSquareText, Send, Sparkles, X } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useSession } from "@/lib/authClient";
+import { useSession } from "@/lib/auth/authClient";
 import {
+  archiveAimChat,
   createAimChat,
   deleteAimChat,
+  deleteAimMessagesFrom,
   listAimChats,
   renameAimChat,
-} from "@/lib/aimuActions";
+  restoreAimChat,
+  setAimChatPinned,
+  setAimChatProject,
+  type AimChatSummary,
+} from "@/lib/ai/aimuActions";
+import { AimuHoloSphere } from "@/components/ai/aimuHoloSphere";
+import { AiChatSidebar } from "@/components/ai/aiChatSidebar";
+import { ChatComposer, type PickedFile } from "@/components/ai/chatComposer";
+import { ChatHeader } from "@/components/ai/chatHeader";
+import { Typing } from "@/components/loading-ui/typing";
+import {
+  Chat,
+  ChatMessages,
+  ChatEmptyState,
+  ChatFooter,
+  MessageScroller,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerButton,
+  ChatMessageRow,
+  UserBubble,
+  AssistantText,
+  AiMessageActions,
+  UserMessageActions,
+  shareText,
+  type MessageFeedback,
+  SuggestionList,
+  MessageTrace,
+  type TracePhase,
+  MessageSources,
+  extractSources,
+  CodeBlock,
+  InlineCode,
+} from "@/components/ai/elements";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@santai/ui/dialog";
+import { SidebarProvider } from "@santai/ui/sidebar";
+import { useIsMobile } from "@santai/ui/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@santai/ui/sheet";
 
 export interface AiChatInitialMessage {
   id: string;
@@ -37,7 +89,10 @@ type AttachedFile = { name?: string; mime?: string; base64?: string };
 
 function parseFileMarkers(text: string): Array<AttachedFile & { raw: string }> {
   const files: Array<AttachedFile & { raw: string }> = [];
-  const re = new RegExp(`\\n${FILE_MARK}FILE\\u0000([^\\u0000]+)\\u0000([^\\u0000]+)\\u0000([^\\u0000]+)`, "g");
+  const re = new RegExp(
+    `\\n${FILE_MARK}FILE\\u0000([^\\u0000]+)\\u0000([^\\u0000]+)\\u0000([^\\u0000]+)`,
+    "g",
+  );
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
     files.push({
@@ -51,16 +106,32 @@ function parseFileMarkers(text: string): Array<AttachedFile & { raw: string }> {
 }
 
 function stripFileMarkers(text: string): string {
-  return text.replace(new RegExp(`\\n${FILE_MARK}FILE\\u0000[^\\u0000]+\\u0000[^\\u0000]+\\u0000[^\\u0000]+`, "g"), "");
+  return text.replace(
+    new RegExp(
+      `\\n${FILE_MARK}FILE\\u0000[^\\u0000]+\\u0000[^\\u0000]+\\u0000[^\\u0000]+`,
+      "g",
+    ),
+    "",
+  );
 }
 
-function messageFiles(parts: Array<{ type: string; text?: string }>): Array<AttachedFile> {
-  return parseFileMarkers(messageText(parts)).map(({ raw, ...f }) => ({ name: f.name, mime: f.mime, base64: f.base64 }));
+function messageFiles(
+  parts: Array<{ type: string; text?: string }>,
+): Array<AttachedFile> {
+  return parseFileMarkers(messageText(parts)).map(({ raw, ...f }) => ({
+    name: f.name,
+    mime: f.mime,
+    base64: f.base64,
+  }));
 }
 
-function buildFilePayload(text: string, files: Array<{ name: string; mime: string; base64: string }>): string {
+function buildFilePayload(
+  text: string,
+  files: Array<{ name: string; mime: string; base64: string }>,
+): string {
   return files.reduce(
-    (acc, f) => `${acc}\n${FILE_MARK}FILE\u0000${f.name}\u0000${f.mime}\u0000${f.base64}`,
+    (acc, f) =>
+      `${acc}\n${FILE_MARK}FILE\u0000${f.name}\u0000${f.mime}\u0000${f.base64}`,
     text,
   );
 }
@@ -72,55 +143,140 @@ const suggestions = [
   "Ide topik skripsi IT simple",
 ];
 
+function greetingFor(date: Date): string {
+  const hour = date.getHours();
+  if (hour < 11) return "Selamat Pagi";
+  if (hour < 15) return "Selamat Siang";
+  if (hour < 18) return "Selamat Sore";
+  return "Selamat Malam";
+}
+
+/** Key penyimpanan lokal untuk tanda suka/tidak suka pada respons AI. */
+const FEEDBACK_KEY = "ai-mu:feedback";
+
+function titleFromMessage(text: string, fileCount: number): string {
+  const clean = stripFileMarkers(text).replace(/\s+/g, " ").trim();
+  if (!clean) return fileCount > 0 ? "Lampiran" : "Percakapan baru";
+  return clean.length > 48 ? `${clean.slice(0, 48).trim()}…` : clean;
+}
+
 const mdComponents = {
   p: ({ children }: { children?: ReactNode }) => (
     <p className="mb-2 last:mb-0">{children}</p>
   ),
   ul: ({ children }: { children?: ReactNode }) => (
-    <ul className="mb-2 list-disc space-y-1 pl-5 last:mb-0">{children}</ul>
+    <ul className="mb-2 list-disc space-y-1 pl-5 marker:text-muted last:mb-0">
+      {children}
+    </ul>
   ),
   ol: ({ children }: { children?: ReactNode }) => (
-    <ol className="mb-2 list-decimal space-y-1 pl-5 last:mb-0">{children}</ol>
+    <ol className="mb-2 list-decimal space-y-1 pl-5 marker:text-muted last:mb-0">
+      {children}
+    </ol>
   ),
-  li: ({ children }: { children?: ReactNode }) => <li>{children}</li>,
+  li: ({ children }: { children?: ReactNode }) => (
+    <li className="pl-0.5">{children}</li>
+  ),
   strong: ({ children }: { children?: ReactNode }) => (
-    <strong className="font-semibold">{children}</strong>
+    <strong className="font-semibold text-text">{children}</strong>
   ),
-  em: ({ children }: { children?: ReactNode }) => <em>{children}</em>,
+  em: ({ children }: { children?: ReactNode }) => (
+    <em className="italic text-text-secondary">{children}</em>
+  ),
+  del: ({ children }: { children?: ReactNode }) => (
+    <del className="text-muted">{children}</del>
+  ),
   a: ({ href, children }: { href?: string; children?: ReactNode }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="break-words text-primary underline underline-offset-2"
+    >
       {children}
     </a>
   ),
-  code: ({ children }: { children?: ReactNode }) => (
-    <code className="rounded bg-border/50 px-1 py-0.5 font-mono text-[0.85em]">{children}</code>
-  ),
-  pre: ({ children }: { children?: ReactNode }) => (
-    <pre className="mb-2 overflow-x-auto rounded-lg bg-surface/80 p-3 text-xs leading-relaxed last:mb-0">
-      {children}
-    </pre>
-  ),
+  code: ({
+    className,
+    children,
+  }: {
+    className?: string;
+    children?: ReactNode;
+  }) => {
+    const isBlock = /language-/.test(className ?? "");
+    if (isBlock) {
+      return <code className={cn("font-mono text-xs", className)}>{children}</code>;
+    }
+    return <InlineCode className={className}>{children}</InlineCode>;
+  },
+  pre: ({ children }: { children?: ReactNode }) => {
+    const child = Array.isArray(children) ? children[0] : children;
+    const props = (child && typeof child === "object" && "props" in (child as object))
+      ? ((child as { props?: { className?: string; children?: ReactNode } }).props ?? {})
+      : {};
+    const language = /language-([\w-]+)/.exec(props.className ?? "")?.[1];
+    const code = typeof props.children === "string" ? props.children : undefined;
+    return (
+      <div className="mb-2 last:mb-0">
+        <CodeBlock language={language} code={code}>{children}</CodeBlock>
+      </div>
+    );
+  },
   h1: ({ children }: { children?: ReactNode }) => (
-    <h1 className="mb-2 text-base font-semibold last:mb-0">{children}</h1>
+    <h1 className="mb-2 text-base font-semibold text-text last:mb-0">
+      {children}
+    </h1>
   ),
   h2: ({ children }: { children?: ReactNode }) => (
-    <h2 className="mb-2 text-[15px] font-semibold last:mb-0">{children}</h2>
+    <h2 className="mb-2 text-[15px] font-semibold text-text last:mb-0">
+      {children}
+    </h2>
   ),
   h3: ({ children }: { children?: ReactNode }) => (
-    <h3 className="mb-2 text-sm font-semibold last:mb-0">{children}</h3>
+    <h3 className="mb-2 text-sm font-semibold text-text last:mb-0">
+      {children}
+    </h3>
+  ),
+  h4: ({ children }: { children?: ReactNode }) => (
+    <h4 className="mb-1.5 text-sm font-semibold text-text last:mb-0">
+      {children}
+    </h4>
+  ),
+  blockquote: ({ children }: { children?: ReactNode }) => (
+    <blockquote className="mb-2 border-l-2 border-border pl-3 text-text-secondary last:mb-0 [&>p]:mb-0">
+      {children}
+    </blockquote>
   ),
   table: ({ children }: { children?: ReactNode }) => (
-    <div className="mb-2 overflow-x-auto last:mb-0">
+    <div className="mb-2 max-w-full overflow-x-auto rounded-lg border border-border last:mb-0">
       <table className="w-full border-collapse text-xs">{children}</table>
     </div>
   ),
   th: ({ children }: { children?: ReactNode }) => (
-    <th className="border border-border bg-surface/60 px-2 py-1.5 text-left font-semibold">{children}</th>
+    <th className="border-b border-border bg-surface/60 px-2 py-1.5 text-left font-semibold">
+      {children}
+    </th>
   ),
   td: ({ children }: { children?: ReactNode }) => (
-    <td className="border border-border px-2 py-1.5">{children}</td>
+    <td className="border-b border-border px-2 py-1.5 align-top">{children}</td>
   ),
-  hr: () => <hr className="my-2 border-border" />,
+  img: ({ src, alt }: { src?: string | Blob; alt?: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={typeof src === "string" ? src : undefined}
+      alt={alt ?? ""}
+      className="mb-2 max-w-full rounded-lg border border-border last:mb-0"
+    />
+  ),
+  input: ({ checked, type }: { checked?: boolean; type?: string }) => (
+    <input
+      type={type ?? "checkbox"}
+      checked={checked}
+      readOnly
+      className="mr-1 size-3.5 accent-primary align-middle"
+    />
+  ),
+  hr: () => <hr className="my-3 border-border" />,
 };
 
 export function AiChat({
@@ -132,61 +288,204 @@ export function AiChat({
   chatId?: string;
   initialMessages?: AiChatInitialMessage[];
   guest?: boolean;
-  chats?: Array<{ id: string; title: string; updatedAt: Date }>;
+  chats?: AimChatSummary[];
 }) {
-  const router = useRouter();
-  const [input, setInput] = useState("");
   const { data: session } = useSession();
+  const router = useRouter();
+  const isMobile = useIsMobile();
   const userInitial = session?.user?.name?.charAt(0).toUpperCase() ?? "U";
-  const [chats, setChats] = useState<Array<{ id: string; title: string; updatedAt: Date }> | undefined>(initialChats);
-  const [renamingId, setRenamingId] = useState<string | null>(null);
-  const [renameValue, setRenameValue] = useState("");
-  const [pickedFiles, setPickedFiles] = useState<Array<{ name: string; mime: string; base64: string }>>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const firstName = session?.user?.name?.trim().split(/\s+/)[0];
+  const profileHref = session?.user
+    ? `/${(session.user as { username?: string }).username ?? ""}`
+    : "/ai";
 
-  const initialUiMessages: UIMessage[] =
-    initialMessages.length > 0
-      ? initialMessages.map<UIMessage>((m) => ({
-          id: m.id,
-          role: m.role,
-          parts: [{ type: "text", text: m.content }],
-        }))
-      : [];
+  const [input, setInput] = useState("");
+  const [chats, setChats] = useState<AimChatSummary[] | undefined>(
+    initialChats,
+  );
+  const [activeChatId, setActiveChatId] = useState<string | undefined>(chatId);
+  const [pickedFiles, setPickedFiles] = useState<PickedFile[]>([]);
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { messages, sendMessage, status, error, setMessages } = useChat({
-    id: chatId,
-    messages: initialUiMessages,
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-      body: chatId ? { chatId } : undefined,
-    }),
-  });
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [withinBottom, setWithinBottom] = useState(true);
+  // Status ciut/lebar sidebar disimpan supaya tidak berubah tiap muat ulang.
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("aimu:sidebar-collapsed") === "1") {
+        setCollapsed(true);
+      }
+    } catch {
+      /* localStorage bisa diblokir */
+    }
+  }, []);
 
   useEffect(() => {
-    if (!withinBottom || !containerRef.current) return;
-    containerRef.current.scrollTop = containerRef.current.scrollHeight;
-  }, [messages, status, withinBottom]);
+    try {
+      window.localStorage.setItem(
+        "aimu:sidebar-collapsed",
+        collapsed ? "1" : "0",
+      );
+    } catch {
+      /* abaikan */
+    }
+  }, [collapsed]);
+  /** Pesan pengguna yang sedang diedit: id, isi lama, dan posisinya. */
+  const [editing, setEditing] = useState<{
+    id: string;
+    text: string;
+    index: number;
+  } | null>(null);
+  /** Balasan yang menunggu konfirmasi penghapusan. */
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    text: string;
+    index: number;
+  } | null>(null);
+  const [feedback, setFeedback] = useState<
+    Record<string, MessageFeedback | undefined>
+  >({});
+  const sidebarCollapsed = collapsed && !isMobile;
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const chatIdRef = useRef<string | undefined>(chatId);
+  /** Ref elemen markdown tiap respons AI, untuk menyalin teks hasil render. */
+  const bodyRefs = useRef(new Map<string, HTMLDivElement>());
 
-  const handleScroll = () => {
-    const el = containerRef.current;
-    if (!el) return;
-    setWithinBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 80);
-  };
+  const initialUiMessages = (
+    initialMessages.length > 0
+      ? initialMessages.map((m) => ({
+          id: m.id,
+          role: m.role,
+          parts: [{ type: "text" as const, text: m.content }],
+        }))
+      : []
+  ) as UIMessage[];
 
-  const scrollToBottom = () => {
-    const el = containerRef.current;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    setWithinBottom(true);
-  };
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: () => (chatIdRef.current ? { chatId: chatIdRef.current } : {}),
+      }),
+    [],
+  );
+
+  const { messages, sendMessage, regenerate, stop, status, error, setMessages } =
+    useChat({
+      id: chatId,
+      messages: initialUiMessages as never,
+      transport: transport as never,
+    });
+
+
 
   const isBusy = status === "submitted" || status === "streaming";
+  const activeChatTitle = guest
+    ? "Percakapan tamu"
+    : (chats?.find((chat) => chat.id === activeChatId)?.title ??
+      "Percakapan baru");
 
   const userMsgCount = messages.filter((m) => m.role === "user").length;
   const guestLocked = guest && userMsgCount >= 1;
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(FEEDBACK_KEY);
+      if (!raw) return;
+      setFeedback(JSON.parse(raw) as Record<string, MessageFeedback>);
+    } catch {
+      // localStorage tidak tersedia: feedback hanya hidup di memori.
+    }
+  }, []);
+
+  const updateFeedback = (id: string, value: MessageFeedback) => {
+    setFeedback((prev) => {
+      const next = { ...prev, [id]: prev[id] === value ? undefined : value };
+      try {
+        window.localStorage.setItem(FEEDBACK_KEY, JSON.stringify(next));
+      } catch {
+        // abaikan kegagalan penyimpanan lokal
+      }
+      return next;
+    });
+  };
+
+  /** Teks hasil render respons (innerText), atau teks mentah bila belum dirender. */
+  const renderedText = (m: UIMessage) =>
+    bodyRefs.current.get(m.id)?.innerText?.trim() || messageText(m.parts);
+
+  const startEdit = (id: string, text: string, index: number) => {
+    setEditing({ id, text, index });
+    setInput(text);
+    setPickedFiles([]);
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setInput("");
+  };
+
+  /** Memotong percakapan dari satu pesan dan menyinkronkan transkrip server. */
+  const truncateFrom = async (target: {
+    id: string;
+    text: string;
+    index: number;
+  }) => {
+    setMessages((prev) => prev.slice(0, target.index));
+    const id = chatIdRef.current;
+    if (!id || guest) return;
+    try {
+      await deleteAimMessagesFrom(id, target.id, target.text);
+    } catch {
+      // Transkrip server tidak tersinkron, tampilan tetap dipotong.
+    }
+  };
+
+  const retryFrom = async (target: {
+    id: string;
+    text: string;
+    index: number;
+  }) => {
+    if (isBusy) return;
+    await truncateFrom(target);
+    void sendMessage({ text: target.text });
+  };
+
+  const deleteFrom = async (target: {
+    id: string;
+    text: string;
+    index: number;
+  }) => {
+    setPendingDelete(null);
+    await truncateFrom(target);
+    toast.success("Pesan dihapus.");
+  };
+
+  /** Mengisi composer dengan prompt sebelumnya supaya bisa dikirim ulang. */
+  const editPrompt = (index: number) => {
+    for (let i = index - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role !== "user") continue;
+      startEdit(m.id, stripFileMarkers(messageText(m.parts)), i);
+      return;
+    }
+  };
+
+  const handleNewChat = () => {
+    setInput("");
+    setPickedFiles([]);
+    setEditing(null);
+    setPendingDelete(null);
+    setMessages([]);
+    chatIdRef.current = undefined;
+    setActiveChatId(undefined);
+    window.history.replaceState(null, "", "/chat");
+  };
 
   const handleCommand = (text: string): boolean => {
     const cmd = text.trim().toLowerCase();
@@ -206,7 +505,7 @@ export function AiChat({
       return true;
     }
     if (cmd === "/new") {
-      void handleNewChat();
+      handleNewChat();
       return true;
     }
     if (cmd === "/clear") {
@@ -216,47 +515,57 @@ export function AiChat({
     return false;
   };
 
-  const onSubmit = () => {
+  /**
+   * Percakapan hanya dibuat setelah pesan pertama dikirim. Judulnya diambil
+   * dari isi pesan pertama, jadi tidak pernah "Percakapan baru" yang kosong.
+   */
+  const ensureChat = async (text: string, fileCount: number) => {
+    if (chatIdRef.current || guest) return;
+    const res = await createAimChat(titleFromMessage(text, fileCount));
+    chatIdRef.current = res.id;
+    setActiveChatId(res.id);
+    window.history.replaceState(null, "", `/chat/${res.id}`);
+    await refreshChats();
+  };
+
+  /** Kirim prompt siap pakai (mis. saran di layar sambutan) + simpan chat. */
+  const sendPrompt = async (text: string) => {
+    if (isBusy || guestLocked) return;
+    setInput("");
+    try {
+      await ensureChat(text, 0);
+    } catch {
+      // Gagal membuat percakapan: jawaban tetap dikirim tanpa disimpan.
+    }
+    void sendMessage({ text });
+  };
+
+  const onSubmit = async () => {
     const text = input.trim();
     if (guestLocked) return;
     if (!text && pickedFiles.length === 0) return;
     if (isBusy) return;
     if (text.startsWith("/") && handleCommand(text)) return;
     const payload = buildFilePayload(text, pickedFiles);
+    const fileCount = pickedFiles.length;
     setPickedFiles([]);
     setInput("");
-    setWithinBottom(true);
-    void sendMessage({ text: payload });
-  };
 
-const handleNewChat = async () => {
-    try {
-      const res = await createAimChat();
-      setInput("");
-      router.push(`/chat/${res.id}`);
-    } catch {
-      router.push("/chat?coba=1");
+    if (editing) {
+      // Pesan yang diedit menggantikan pesan lama beserta balasan berikutnya.
+      const target = editing;
+      setEditing(null);
+      await truncateFrom(target);
+      void sendMessage({ text: payload });
+      return;
     }
-  };
 
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const list = Array.from(e.target.files ?? []);
-    if (list.length === 0) return;
-    void (async () => {
-      const results: Array<{ name: string; mime: string; base64: string }> = [];
-      for (const f of list) {
-        const buf = await f.arrayBuffer();
-        const bytes = new Uint8Array(buf);
-        let binary = "";
-        const chunk = 0x8000;
-        for (let i = 0; i < bytes.length; i += chunk) {
-          binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-        }
-        results.push({ name: f.name, mime: f.type || "application/octet-stream", base64: btoa(binary) });
-      }
-      setPickedFiles((prev) => [...prev, ...results]);
-    })();
-    e.target.value = "";
+    try {
+      await ensureChat(payload, fileCount);
+    } catch {
+      // Gagal membuat percakapan: jawaban tetap dikirim tanpa disimpan.
+    }
+    void sendMessage({ text: payload });
   };
 
   const refreshChats = async () => {
@@ -267,364 +576,350 @@ const handleNewChat = async () => {
     }
   };
 
-  const handleRename = async (id: string) => {
-    if (!renameValue.trim()) {
-      setRenamingId(null);
-      return;
+  /** Kembali ke layar /chat kosong tanpa membuat baris percakapan baru. */
+  const resetToChat = () => {
+    chatIdRef.current = undefined;
+    setActiveChatId(undefined);
+    setMessages([]);
+    window.history.replaceState(null, "", "/chat");
+  };
+
+  const handleRename = async (id: string, title: string) => {
+    try {
+      await renameAimChat(id, title);
+      await refreshChats();
+    } catch {
+      toast.error("Gagal mengganti nama percakapan.");
     }
-    await renameAimChat(id, renameValue);
-    setRenamingId(null);
-    await refreshChats();
   };
 
   const handleDelete = async (id: string) => {
-    await deleteAimChat(id);
-    if (id === chatId) {
-      router.replace("/chat");
-    } else {
+    try {
+      await deleteAimChat(id);
+    } catch {
+      toast.error("Gagal menghapus percakapan.");
+      return;
+    }
+    if (id === activeChatId) resetToChat();
+    await refreshChats();
+  };
+
+  const handleTogglePin = async (id: string, pinned: boolean) => {
+    try {
+      await setAimChatPinned(id, pinned);
       await refreshChats();
+    } catch {
+      toast.error("Gagal memperbarui sematan percakapan.");
     }
   };
 
+  const handleArchive = async (id: string) => {
+    try {
+      await archiveAimChat(id);
+      if (id === activeChatId) resetToChat();
+      await refreshChats();
+      toast.success("Percakapan diarsipkan.");
+    } catch {
+      toast.error("Gagal mengarsipkan percakapan.");
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    try {
+      await restoreAimChat(id);
+      await refreshChats();
+      toast.success("Percakapan dipulihkan.");
+    } catch {
+      toast.error("Gagal memulihkan percakapan.");
+    }
+  };
+
+  const handleMoveToProject = async (id: string, projectId: string | null) => {
+    try {
+      await setAimChatProject(id, projectId);
+      await refreshChats();
+      toast.success(
+        projectId
+          ? "Percakapan ditautkan ke proyek."
+          : "Percakapan dilepas dari proyek.",
+      );
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal memindahkan percakapan.",
+      );
+    }
+  };
+
+  /** Tombol + di sidebar: buat baris percakapan lalu buka percakapan itu. */
+  const handleCreateConversation = async () => {
+    if (guest) {
+      router.push("/login?next=/chat");
+      return;
+    }
+    if (isBusy) stop();
+    try {
+      const created = await createAimChat();
+      await refreshChats();
+      setDrawerOpen(false);
+      router.push(`/chat/${created.id}`);
+    } catch {
+      toast.error("Gagal membuat percakapan baru.");
+    }
+  };
+
+  const sidebar = (onNavigate?: () => void) => (
+    <AiChatSidebar
+      chats={chats ?? []}
+      activeChatId={activeChatId}
+      collapsed={sidebarCollapsed}
+      onToggleCollapsed={() => setCollapsed((c) => !c)}
+      onCreateChat={handleCreateConversation}
+      onRename={handleRename}
+      onDelete={handleDelete}
+      onTogglePin={handleTogglePin}
+      onArchive={handleArchive}
+      onRestore={handleRestore}
+      onMoveToProject={handleMoveToProject}
+      onNavigate={onNavigate}
+    />
+  );
+
   return (
-    <div className="fixed inset-0 z-50 flex h-full overflow-hidden bg-card">
-      {chats && (
-        <aside className="flex h-full w-64 shrink-0 flex-col border-r border-border bg-surface/30">
-          <div className="p-3">
-            <button
-              type="button"
-              onClick={handleNewChat}
-              disabled={isBusy}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-text transition-colors hover:bg-surface disabled:opacity-40"
-            >
-              <MessageSquareText className="h-3.5 w-3.5" />
-              + Percakapan baru
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto px-2 pb-3">
-            {chats.length === 0 && (
-              <p className="px-2 py-4 text-center text-[11px] text-muted">Belum ada percakapan</p>
+    <div className="fixed inset-0 z-50 bg-background">
+      <div className="flex h-dvh w-full overflow-hidden bg-background">
+        <SidebarProvider
+          open={!sidebarCollapsed}
+          onOpenChange={(open) => setCollapsed(!open)}
+          className="flex h-full min-h-0 w-full"
+        >
+          <aside
+            className={cn(
+              "group hidden shrink-0 flex-col border-r border-aimu-border bg-aimu-bg transition-[width] duration-200 ease-out md:flex",
+              sidebarCollapsed ? "w-[68px]" : "w-[280px]",
             )}
-            {chats.map((c) => {
-              const isActive = c.id === chatId;
-              const isRenaming = renamingId === c.id;
-              return (
-                <div
-                  key={c.id}
-                  className={cn(
-                    "group relative mb-1 rounded-lg transition-colors",
-                    isActive ? "bg-primary/10" : "hover:bg-surface",
-                  )}
-                >
-                  {isRenaming ? (
-                    <form
-                      className="flex items-center gap-1 px-2 py-1.5"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        void handleRename(c.id);
-                      }}
-                    >
-                      <input
-                        autoFocus
-                        value={renameValue}
-                        onChange={(e) => setRenameValue(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Escape") setRenamingId(null);
-                        }}
-                        className="min-w-0 flex-1 rounded border border-border bg-card px-1.5 py-0.5 text-xs text-text outline-none"
-                      />
-                      <button
-                        type="submit"
-                        className="rounded bg-primary px-1.5 py-0.5 text-[10px] font-medium text-white"
-                      >
-                        OK
-                      </button>
-                    </form>
-                  ) : (
-                    <>
-                      <Link
-                        href={`/chat/${c.id}`}
-                        title={c.title}
-                        className="block px-3 py-2 text-left text-xs"
-                      >
-                        <span className={cn("line-clamp-2", isActive ? "text-text" : "text-muted")}>
-                          {c.title}
-                        </span>
-                      </Link>
-                      <div className="absolute right-1 top-1 hidden gap-0.5 group-hover:flex">
-                        <button
-                          type="button"
-                          aria-label="Rename"
-                          onClick={() => {
-                            setRenamingId(c.id);
-                            setRenameValue(c.title);
-                          }}
-                          className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-border"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
-                        </button>
-                        <button
-                          type="button"
-                          aria-label="Delete"
-                          onClick={() => void handleDelete(c.id)}
-                          className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-border hover:text-red-500"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /></svg>
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </aside>
-      )}
-
-      <div className="flex h-full min-w-0 flex-1 flex-col">
-      <div className="flex items-center gap-3 border-b border-border px-5 py-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Bot className="h-5 w-5" />
-        </div>
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-text">AI MU</p>
-          <p className="text-[11px] text-muted">Asisten Sant.Ai · in-house</p>
-        </div>
-        <span className="flex items-center gap-1.5 rounded-full bg-surface/50 px-2 py-1 text-[10px] font-medium text-muted">
-          {isBusy ? (
-            <span className="flex items-center gap-[3px]">
-              {[0, 1, 2].map((i) => (
-                <span
-                  key={i}
-                  className="h-1.5 w-1.5 rounded-full bg-primary typing-dot"
-                  style={{ animationDelay: `${i * 0.15}s` }}
-                />
-              ))}
-            </span>
-          ) : (
-            <>
-              <span className="h-1.5 w-1.5 rounded-full bg-muted" />
-              <span className="font-mono">{error ? "gagal" : "siap"}</span>
-            </>
-          )}
-        </span>
-        {!guest && (
-          <button
-            type="button"
-            onClick={handleNewChat}
-            disabled={isBusy}
-            className="hidden rounded-lg border border-border bg-surface/50 px-3 py-1.5 text-xs text-muted transition-colors hover:text-text sm:block disabled:opacity-40"
+            data-collapsible={sidebarCollapsed ? "icon" : ""}
           >
-            + Percakapan baru
-          </button>
-        )}
-        <Link
-          href={session?.user ? `/${(session.user as any)?.username ?? ""}` : "/ai"}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface/50 text-muted transition-colors hover:text-text"
-          aria-label="Tutup dan kembali"
-        >
-          <X className="h-4 w-4" />
-        </Link>
-      </div>
+            {sidebar()}
+          </aside>
 
-      <div className="relative flex-1">
-        <div ref={containerRef} onScroll={handleScroll} className="absolute inset-0 space-y-4 overflow-y-auto px-5 py-5">
-          {messages.length === 0 && (
-            <div className="flex h-full flex-col items-center justify-center gap-5 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Sparkles className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-text">Halo, saya AI MU!</p>
-                <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-muted">
-                  Tanya apa saja: bantu tugas, jelaskan konsep, atau diskusi ide.
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => {
-                      setInput("");
-                      setWithinBottom(true);
-                      void sendMessage({ text: s });
-                    }}
-                    disabled={isBusy || guestLocked}
-                    className="rounded-full border border-border bg-surface/40 px-3 py-1.5 text-xs text-muted transition-colors hover:border-primary/40 hover:text-text disabled:opacity-40"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {messages.map((m) => {
-            const isUser = m.role === "user";
-            return (
-              <div key={m.id} className={`flex items-start gap-2.5 ${isUser ? "justify-end" : ""}`}>
-                {!isUser && (
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Bot className="h-4 w-4" />
-                  </div>
-                )}
-                <div className="max-w-[70%] sm:max-w-[75%]">
-                  {!isUser && (
-                    <p className="mb-1 ml-0.5 text-[11px] font-medium text-muted">AI MU</p>
-                  )}
-                  <div
-                    className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed text-text ${
-                      isUser ? "rounded-tr-sm bg-primary/10" : "rounded-tl-sm bg-surface/60"
-                    }`}
-                  >
-                    {isUser ? (
-                      <div className="whitespace-pre-wrap">{stripFileMarkers(messageText(m.parts))}</div>
-                    ) : (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
-                        {messageText(m.parts)}
-                      </ReactMarkdown>
-                    )}
-                    {isUser && messageFiles(m.parts).length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {messageFiles(m.parts).map((f, i) => (
-                          <a
-                            key={i}
-                            href={`data:${f.mime ?? "application/octet-stream"};base64,${f.base64 ?? ""}`}
-                            download={f.name}
-                            className="flex max-w-[200px] items-center gap-1.5 rounded-lg border border-border bg-background/50 px-2 py-1"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                            <span className="truncate text-[11px] text-muted">{f.name}</span>
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {isUser && (
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
-                    {userInitial}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          {isBusy && (() => {
-            const last = messages[messages.length - 1];
-            const lastIsAi = last && last.role !== "user";
-            const lastHasText = last && messageText(last.parts).length > 0;
-            if (lastIsAi && !lastHasText) return null;
-            return (
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Bot className="h-4 w-4" />
-                </div>
-                <div className="rounded-2xl rounded-tl-sm bg-surface/60 px-4 py-3">
-                  <p className="mb-2 flex items-center gap-2 text-[11px] font-medium text-muted">
-                    <span className="text-primary">AI MU</span>
-                    <span>sedang mengetik</span>
-                  </p>
-                  <span className="flex items-center gap-[4px]">
-                    {[0, 1, 2].map((i) => (
-                      <span
-                        key={i}
-                        className="h-2 w-2 rounded-full bg-primary typing-dot"
-                        style={{ animationDelay: `${i * 0.15}s` }}
-                      />
-                    ))}
-                  </span>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-
-        {!withinBottom && (
-          <button
-            type="button"
-            onClick={scrollToBottom}
-            className="absolute bottom-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-text shadow-md transition-colors hover:bg-surface"
-            aria-label="Gulir ke bawah"
-          >
-            <ArrowDown className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-
-      {guestLocked ? (
-        <div className="border-t border-border bg-surface/50 p-4">
-          <p className="mb-3 text-center text-xs text-muted">
-            Penasaran lebih dalam? Login untuk lanjut menyimpan percakapanmu.
-          </p>
-          <Link
-            href="/login?next=/chat"
-            className="mx-auto flex w-full max-w-md items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            Login untuk lanjut chat
-          </Link>
-        </div>
-      ) : (
-        <form
-          className="border-t border-border p-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmit();
-          }}
-        >
-          {pickedFiles.length > 0 && (
-            <div className="mb-2 flex flex-wrap gap-1.5">
-              {pickedFiles.map((f, i) => (
-                <span key={i} className="flex items-center gap-1.5 rounded-lg border border-border bg-surface/40 px-2 py-1">
-                  <span className="truncate max-w-[160px] text-[11px] text-text">{f.name}</span>
-                  <button
-                    type="button"
-                    aria-label="Hapus lampiran"
-                    onClick={() => setPickedFiles((prev) => prev.filter((_, j) => j !== i))}
-                    className="text-muted hover:text-red-500"
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-          <div className="flex items-end gap-2">
-            <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFiles} />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              aria-label="Lampirkan file"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface/20 text-muted transition-colors hover:text-text"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </button>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  onSubmit();
-                }
-              }}
-              placeholder={guest ? "Coba 1 pertanyaan tanpa login..." : "Tanya AI MU apa saja... (/help untuk perintah)"}
-              rows={1}
-              className="max-h-32 flex-1 resize-none rounded-xl border border-border bg-surface/20 px-4 py-3 text-sm text-text outline-none transition-colors placeholder:text-muted/50 focus:border-primary"
+          <Chat className="min-w-0 flex-1 bg-background">
+            <ChatHeader
+              title={activeChatTitle}
+              busy={isBusy}
+              hasError={Boolean(error)}
+              guest={guest}
+              onOpenDrawer={() => setDrawerOpen(true)}
+              onNewChat={handleCreateConversation}
+              closeHref={profileHref}
             />
-            <button
-              type="submit"
-              disabled={isBusy || (!input.trim() && pickedFiles.length === 0)}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white transition-opacity hover:opacity-90 disabled:opacity-40"
-              aria-label="Kirim"
-            >
-              <Send className="h-4 w-4" />
-            </button>
-          </div>
-          {error && <p className="mt-2 text-xs text-red-500">{error.message}</p>}
-        </form>
-      )}
+
+            <ChatMessages className="relative min-h-0 flex-1">
+              {messages.length === 0 ? (
+                <div className="relative z-10 flex h-full flex-col overflow-y-auto pb-40 md:pb-44">
+                  <ChatEmptyState
+                    className="flex-1 px-6"
+                    icon={<AimuHoloSphere size={88} className="mx-auto" />}
+                    title={
+                      firstName
+                        ? `${greetingFor(new Date())}, ${firstName}`
+                        : "Halo, Sahabat Santai"
+                    }
+                    description="Mulai percakapan dengan AI MU. Tanyakan ide, analisis, atau bantuan penulisan dan kode."
+                    actions={
+                      <SuggestionList
+                        items={suggestions}
+                        onSelect={(s) => void sendPrompt(s)}
+                        disabled={isBusy || guestLocked}
+                      />
+                    }
+                  />
+                </div>
+              ) : (
+                <MessageScroller className="absolute inset-0 z-10">
+                  <MessageScrollerContent>
+                    {messages.map((m, index) => {
+                      const isUser = m.role === "user";
+                      const files = isUser ? messageFiles(m.parts) : [];
+                      const userText = isUser ? stripFileMarkers(messageText(m.parts)) : "";
+                      const assistantText = isUser ? "" : messageText(m.parts);
+                      const isLatest = index === messages.length - 1;
+                      const streamingThis = !isUser && isBusy && isLatest;
+                      const phase: TracePhase = streamingThis
+                        ? (assistantText.length > 0 ? "streaming" : "waiting")
+                        : "done";
+                      let priorUserFiles: Array<{ name?: string }> = [];
+                      if (!isUser) {
+                        for (let i = index - 1; i >= 0; i--) {
+                          if (messages[i].role === "user") {
+                            priorUserFiles = messageFiles(messages[i].parts);
+                            break;
+                          }
+                        }
+                      }
+                      const sources = !isUser && !streamingThis ? extractSources(assistantText) : [];
+
+                      return (
+                        <MessageScrollerItem key={m.id} messageId={m.id}>
+                          <ChatMessageRow
+                            role={isUser ? "user" : "assistant"}
+                          >
+                            {!isUser && (streamingThis || isLatest) ? (
+                              <MessageTrace
+                                files={priorUserFiles}
+                                phase={phase}
+                                failed={Boolean(error) && isLatest}
+                              />
+                            ) : null}
+
+                            {isUser ? (
+                              <UserBubble text={userText} />
+                            ) : (
+                              <AssistantText>
+                                <div
+                                  ref={(el) => {
+                                    if (el) bodyRefs.current.set(m.id, el);
+                                    else bodyRefs.current.delete(m.id);
+                                  }}
+                                  className="w-full min-w-0 break-words"
+                                >
+                                  {assistantText ? (
+                                    <ReactMarkdown
+                                      remarkPlugins={[remarkGfm]}
+                                      rehypePlugins={[[rehypeHighlight, { ignoreMissing: true }]]}
+                                      components={mdComponents}
+                                    >
+                                      {assistantText}
+                                    </ReactMarkdown>
+                                  ) : null}
+                                </div>
+                              </AssistantText>
+                            )}
+
+                            {!isUser && sources.length > 0 ? (
+                              <MessageSources sources={sources} />
+                            ) : null}
+
+                            {files.length > 0 ? (
+                              <div className="flex flex-wrap justify-end gap-1.5 self-end">
+                                {files.map((f, i) => (
+                                  <a
+                                    key={`${m.id}-file-${i}`}
+                                    href={`data:${f.mime ?? "application/octet-stream"};base64,${f.base64 ?? ""}`}
+                                    download={f.name}
+                                    className="max-w-[220px] truncate rounded-md border border-border bg-surface px-2 py-1 text-[11px] text-text-secondary hover:text-text"
+                                  >
+                                    {f.name ?? "Lampiran"}
+                                  </a>
+                                ))}
+                              </div>
+                            ) : null}
+
+                            {isUser ? (
+                              <div className="self-end">
+                                <UserMessageActions
+                                  text={userText}
+                                  disabled={isBusy}
+                                  onEdit={() => startEdit(m.id, userText, index)}
+                                  onShare={() => void shareText(userText, "Pesan AI MU")}
+                                  onRetry={() => void retryFrom({ id: m.id, text: userText, index })}
+                                  onDelete={() => setPendingDelete({ id: m.id, text: userText, index })}
+                                />
+                              </div>
+                            ) : !streamingThis ? (
+                              <div className="self-start">
+                                <AiMessageActions
+                                  text={renderedText(m)}
+                                  markdown={messageText(m.parts)}
+                                  feedback={feedback[m.id]}
+                                  busy={isBusy}
+                                  onFeedback={(value) => updateFeedback(m.id, value)}
+                                  onShare={() => void shareText(renderedText(m), "Respons AI MU")}
+                                  onRegenerate={() => {
+                                    if (isBusy) return;
+                                    void regenerate({ messageId: m.id });
+                                  }}
+                                  onEditPrompt={() => editPrompt(index)}
+                                />
+                              </div>
+                            ) : null}
+                          </ChatMessageRow>
+                        </MessageScrollerItem>
+                      );
+                    })}
+
+                    {isBusy &&
+                      (() => {
+                        const last = messages[messages.length - 1];
+                        const lastIsAi = last && last.role !== "user";
+                        const lastHasText = last && messageText(last.parts).length > 0;
+                        if (lastIsAi && !lastHasText) return null;
+                        return (
+                          <MessageScrollerItem messageId="typing">
+                            <ChatMessageRow role="assistant">
+                              <AssistantText>
+                                <Typing className="h-2 w-12 text-primary" />
+                              </AssistantText>
+                            </ChatMessageRow>
+                          </MessageScrollerItem>
+                        );
+                      })()}
+                  </MessageScrollerContent>
+                  <MessageScrollerButton />
+                </MessageScroller>
+              )}
+
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-8 md:px-6 md:pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <div className="pointer-events-auto mx-auto w-full max-w-3xl">
+                  <ChatComposer
+                    input={input}
+                    onInputChange={setInput}
+                    files={pickedFiles}
+                    onFilesChange={setPickedFiles}
+                    editing={editing !== null}
+                    onCancelEdit={cancelEdit}
+                    onSubmit={() => void onSubmit()}
+                    isBusy={isBusy}
+                    onStop={() => stop()}
+                    guest={guest}
+                    guestLocked={guestLocked}
+                    error={error}
+                    textareaRef={textareaRef}
+                  />
+                  <p className="mt-2 text-center text-[11px] text-muted">
+                    AI MU dapat membuat kesalahan. Verifikasi informasi penting.
+                  </p>
+                </div>
+              </div>
+            </ChatMessages>
+          </Chat>
+
+          <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <SheetContent side="left" className="w-[288px] p-0">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Navigasi AI MU</SheetTitle>
+                <SheetDescription>Navigasi dan riwayat percakapan AI MU.</SheetDescription>
+              </SheetHeader>
+              {sidebar(() => setDrawerOpen(false))}
+            </SheetContent>
+          </Sheet>
+
+          <Dialog open={pendingDelete !== null} onOpenChange={(open) => { if (!open) setPendingDelete(null); }}>
+            <DialogContent className="max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Hapus pesan?</DialogTitle>
+                <DialogDescription>
+                  Pesan ini dan semua balasan setelahnya akan dihapus dari percakapan. Tindakan ini tidak bisa dibatalkan.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="mt-4">
+                <button type="button" onClick={() => setPendingDelete(null)} className="rounded-lg border border-border px-3 py-2 text-sm text-text transition-colors hover:bg-surface">Batal</button>
+                <button type="button" onClick={() => { if (pendingDelete) void deleteFrom(pendingDelete); }} className="rounded-lg bg-destructive px-3 py-2 text-sm font-medium text-destructive-foreground transition-opacity hover:opacity-90">Hapus</button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </SidebarProvider>
       </div>
     </div>
   );
